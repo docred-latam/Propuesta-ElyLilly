@@ -95,7 +95,7 @@
                       const r = hero.getBoundingClientRect();
                       const p = Math.min(1, Math.max(0, -r.top / Math.max(1, r.height - alto)));
                       const tel = escena.querySelector('.hist-tel3d');
-                      if (tel) tel.style.transform = `rotateX(${(1 - p) * 42}deg) translateY(${(1 - p) * 26}px) scale(${0.86 + p * 0.3})`;
+                      if (tel) tel.style.transform = `rotateX(${(1 - p) * 42}deg) translateY(${(1 - p) * 26}px) scale(${0.86 + p * 0.19})`;
                     }
                     // Capturas del prototipo: la imagen recorre el visor entera, de su primera fila a la última,
                     // mientras la sección atraviesa la pantalla. Así se ve todo el contenido sin recortarlo.

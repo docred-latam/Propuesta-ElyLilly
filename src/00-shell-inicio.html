@@ -504,8 +504,9 @@
   /* ===== Hero y parrilla · lenguaje de Framer con la voz de Lilly ===== */
   /* El hero dura dos pantallas de scroll: el contenido queda fijo mientras el teléfono se endereza. */
   .hist-hero { height: 200vh; position: relative; }
-  .hist-hero-fijo { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; justify-content: flex-start;
-    gap: clamp(24px, 4vh, 44px); padding: clamp(76px, 11vh, 124px) 0 0; overflow: hidden; }
+  .hist-hero-fijo { position: sticky; top: 0; height: 100vh; display: grid; grid-template-columns: 1fr; align-content: center;
+    gap: clamp(24px, 4vh, 44px); padding: clamp(76px, 11vh, 124px) 0 clamp(24px, 4vh, 48px); overflow: hidden; }
+  @media (min-width: 1000px) { .hist-hero-fijo { grid-template-columns: 1.04fr .96fr; align-items: center; column-gap: clamp(32px, 4vw, 72px); padding-top: clamp(56px, 8vh, 96px); } }
   .hist-hero-col { max-width: 62rem; }
   /* La píldora se parte en dos líneas antes que desbordar: a 420px no cabía y arrastraba toda la historia */
   .hist-pill { display: inline-flex; align-items: center; gap: 9px; min-height: 34px; padding: 6px 15px; border-radius: 9999px;
@@ -546,13 +547,14 @@
   @media (prefers-reduced-motion: reduce) { .gen-palabra { opacity: 1; filter: none; animation: none; } }
 
   /* Escena del hero: el teléfono acostado que se endereza con el scroll (referencia: macbook-scroll). */
-  .hist-escena { position: relative; flex: 1 1 auto; min-height: 220px; display: flex; align-items: flex-end; justify-content: center;
-    perspective: 1400px; perspective-origin: 50% 20%; overflow: hidden; }
-  .hist-escena-luz { position: absolute; inset: auto 0 -30% 0; height: 85%; pointer-events: none;
+  .hist-escena { position: relative; min-height: 0; height: 100%; display: flex; align-items: center; justify-content: center;
+    perspective: 1500px; perspective-origin: 50% 45%; }
+  .hist-escena-luz { position: absolute; inset: auto 0 -12% 0; height: 80%; pointer-events: none;
     background: radial-gradient(52% 100% at 50% 100%, rgba(213,43,30,.46), transparent 72%); filter: blur(34px); }
   .hist-tel3d-caja { position: relative; transform-style: preserve-3d; display: flex; justify-content: center; align-items: flex-end; height: 100%; }
-  .hist-tel3d { width: min(46vh, 350px); transform-origin: 50% 100%; transform: rotateX(42deg) translateY(26px) scale(.86);
+  .hist-tel3d { height: min(66vh, 620px); width: auto; max-width: 100%; transform-origin: 50% 70%; transform: rotateX(42deg) translateY(26px) scale(.86);
     filter: drop-shadow(0 30px 60px rgba(0,0,0,.65)); will-change: transform; }
+  @media (max-width: 999px) { .hist-tel3d { height: min(46vh, 420px); } }
 </style>
 </head>
 <body :class="solo ? '!bg-transparent' : ''" class="font-sans bg-[#0B0B0D] text-white h-screen overflow-hidden antialiased" x-data="app()" x-init="init()" x-cloak>
