@@ -18,6 +18,26 @@
                   { t: 'Back office', d: 'La trazabilidad, en PostHog', i: 'chart-column', p: 'dashboard', e: null },
                   { t: 'Arquitectura', d: 'Sobre qué se construye', i: 'layers', p: 'arquitectura', e: null },
                 ],
+                // Las palabras aparecen una a una, con desenfoque que se despeja (efecto «text generate»).
+                generar(el, paso, retraso) {
+                  if (!el || el.dataset.generado) return;
+                  el.dataset.generado = '1';
+                  let i = 0;
+                  el.childNodes.forEach((nodo) => {
+                    if (nodo.nodeType !== 3) return;            // los <br> se conservan tal cual
+                    const frag = document.createDocumentFragment();
+                    nodo.textContent.split(/(\s+)/).forEach((trozo) => {
+                      if (!trozo.trim()) { frag.appendChild(document.createTextNode(trozo)); return; }
+                      const sp = document.createElement('span');
+                      sp.className = 'gen-palabra';
+                      sp.textContent = trozo;
+                      sp.style.animationDelay = (retraso + i * paso) + 'ms';
+                      i++;
+                      frag.appendChild(sp);
+                    });
+                    nodo.parentNode.replaceChild(frag, nodo);
+                  });
+                },
                 montar() {
                   const raiz = this.$refs.scroll;
                   const suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches && !document.body.classList.contains('sin-animacion');
@@ -43,6 +63,10 @@
                     es.forEach((e) => {
                       if (!e.isIntersecting) return;
                       e.target.classList.add('is-dentro');
+                      if (e.target.classList.contains('hist-hero') && suave) {
+                        this.generar(e.target.querySelector('.hist-hero-h1'), 105, 120);
+                        this.generar(e.target.querySelector('.hist-hero-p'), 22, 900);
+                      }
                       e.target.querySelectorAll('.hist-foto').forEach((f) => f.classList.add('is-revelada'));
                       io.unobserve(e.target);
                     });

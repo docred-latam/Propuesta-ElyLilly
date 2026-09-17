@@ -535,6 +535,12 @@
   .hist-celda-d { font-size: 14.5px; line-height: 1.45; text-wrap: pretty; }
   .hist-celda-f { position: absolute; top: 22px; right: 18px; opacity: 0; transform: translateX(-4px); transition: all .25s; color: #E8412F; }
   .hist-celda:hover .hist-celda-f, .hist-celda:focus-visible .hist-celda-f { opacity: 1; transform: none; }
+
+  /* Texto que se «genera»: cada palabra entra con el desenfoque despejándose (referencia: text-generate-effect). */
+  .gen-palabra { display: inline-block; opacity: 0; filter: blur(9px); animation: gen-palabra .72s cubic-bezier(.32,.72,0,1) forwards; }
+  @keyframes gen-palabra { to { opacity: 1; filter: blur(0); } }
+  .sin-animacion .gen-palabra, .hist-hero-h1 .gen-palabra:only-child { opacity: 1; filter: none; animation: none; }
+  @media (prefers-reduced-motion: reduce) { .gen-palabra { opacity: 1; filter: none; animation: none; } }
 </style>
 </head>
 <body :class="solo ? '!bg-transparent' : ''" class="font-sans bg-[#0B0B0D] text-white h-screen overflow-hidden antialiased" x-data="app()" x-init="init()" x-cloak>

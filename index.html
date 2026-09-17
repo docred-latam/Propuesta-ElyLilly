@@ -535,6 +535,12 @@
   .hist-celda-d { font-size: 14.5px; line-height: 1.45; text-wrap: pretty; }
   .hist-celda-f { position: absolute; top: 22px; right: 18px; opacity: 0; transform: translateX(-4px); transition: all .25s; color: #E8412F; }
   .hist-celda:hover .hist-celda-f, .hist-celda:focus-visible .hist-celda-f { opacity: 1; transform: none; }
+
+  /* Texto que se «genera»: cada palabra entra con el desenfoque despejándose (referencia: text-generate-effect). */
+  .gen-palabra { display: inline-block; opacity: 0; filter: blur(9px); animation: gen-palabra .72s cubic-bezier(.32,.72,0,1) forwards; }
+  @keyframes gen-palabra { to { opacity: 1; filter: blur(0); } }
+  .sin-animacion .gen-palabra, .hist-hero-h1 .gen-palabra:only-child { opacity: 1; filter: none; animation: none; }
+  @media (prefers-reduced-motion: reduce) { .gen-palabra { opacity: 1; filter: none; animation: none; } }
 </style>
 </head>
 <body :class="solo ? '!bg-transparent' : ''" class="font-sans bg-[#0B0B0D] text-white h-screen overflow-hidden antialiased" x-data="app()" x-init="init()" x-cloak>
@@ -1772,6 +1778,26 @@
                   { t: 'Back office', d: 'La trazabilidad, en PostHog', i: 'chart-column', p: 'dashboard', e: null },
                   { t: 'Arquitectura', d: 'Sobre qué se construye', i: 'layers', p: 'arquitectura', e: null },
                 ],
+                // Las palabras aparecen una a una, con desenfoque que se despeja (efecto «text generate»).
+                generar(el, paso, retraso) {
+                  if (!el || el.dataset.generado) return;
+                  el.dataset.generado = '1';
+                  let i = 0;
+                  el.childNodes.forEach((nodo) => {
+                    if (nodo.nodeType !== 3) return;            // los <br> se conservan tal cual
+                    const frag = document.createDocumentFragment();
+                    nodo.textContent.split(/(\s+)/).forEach((trozo) => {
+                      if (!trozo.trim()) { frag.appendChild(document.createTextNode(trozo)); return; }
+                      const sp = document.createElement('span');
+                      sp.className = 'gen-palabra';
+                      sp.textContent = trozo;
+                      sp.style.animationDelay = (retraso + i * paso) + 'ms';
+                      i++;
+                      frag.appendChild(sp);
+                    });
+                    nodo.parentNode.replaceChild(frag, nodo);
+                  });
+                },
                 montar() {
                   const raiz = this.$refs.scroll;
                   const suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches && !document.body.classList.contains('sin-animacion');
@@ -1797,6 +1823,10 @@
                     es.forEach((e) => {
                       if (!e.isIntersecting) return;
                       e.target.classList.add('is-dentro');
+                      if (e.target.classList.contains('hist-hero') && suave) {
+                        this.generar(e.target.querySelector('.hist-hero-h1'), 105, 120);
+                        this.generar(e.target.querySelector('.hist-hero-p'), 22, 900);
+                      }
                       e.target.querySelectorAll('.hist-foto').forEach((f) => f.classList.add('is-revelada'));
                       io.unobserve(e.target);
                     });
