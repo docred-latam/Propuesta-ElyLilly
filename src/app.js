@@ -243,7 +243,9 @@ function app() {
     // Escala para que el marco quepa: alto menos la barra del prototipo, ancho menos el panel de guía si está visible. Nunca más de 1.
     get escala() {
       const guiaW = (this.guia && this.ventana.w >= 1024) ? 380 : 0;
-      const aw = this.ventana.w - guiaW - 64, ah = this.ventana.h - 56 - 64 - 50; // 50 = selector de dispositivo bajo el marco
+      // En modo solo no hay barra superior ni selector: el marco puede ocupar casi toda la ventana.
+      const alto = this.solo ? 24 : 56 + 64 + 50, ancho = this.solo ? 24 : 64;
+      const aw = this.ventana.w - guiaW - ancho, ah = this.ventana.h - alto;
       return Math.max(.2, Math.min(1, aw / this.marco.w, ah / this.marco.h));
     },
     // Ámbito de la consulta: en iPhone con la hoja sin enfermedad elegida, la consulta es sobre todo Lilly 360.
