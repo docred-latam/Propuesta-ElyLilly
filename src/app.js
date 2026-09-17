@@ -443,7 +443,7 @@ function app() {
     montarSileo() {
       if (typeof sileo === 'undefined' || !this.$refs.main) return;
       // Ojo con los nombres de Sileo: theme 'dark' es la cápsula clara (#f2f2f2, texto en tinta), la que va sobre nuestro fondo claro.
-      sileo.mount(this.$refs.main, { position: 'top-center', theme: 'dark', palette: 'lilly', offset: { top: this.dispositivo === 'iphone' ? 52 : 16 }, options: { styles: { title: 'sileo-normal' } } });
+      sileo.mount(this.$refs.main, { position: 'top-center', theme: 'light' /* en Sileo el nombre va al revés: 'light' es la cápsula OSCURA, que es la que pidió Andrés */, palette: 'lilly', offset: { top: 12 } /* .proto-main ya empieza bajo la barra de estado de cada marco: 12 la deja sentada arriba en los tres */, options: { styles: { title: 'sileo-normal' } } });
       // Los avisos disparados antes del montaje (p. ej. desde ?p= en init) esperan aquí: si no, Sileo se montaría solo en el body.
       this._sileoListo = true; (this._sileoCola || []).splice(0).forEach(fn => fn());
     },
