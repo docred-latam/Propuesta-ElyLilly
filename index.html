@@ -464,6 +464,10 @@
   .hist-momento:hover { background: rgba(255,255,255,.05); }
   .hist-momento-v { margin-top: 10px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #D52B1E; opacity: 0; transition: opacity .2s; }
   .hist-momento:hover .hist-momento-v { opacity: 1; }
+
+  /* Cuando algo se abre encima, la barra de navegación se vela igual que el contenido: es parte del fondo. */
+  .ios-navbar.is-velada { filter: blur(8px) opacity(.55); pointer-events: none; }
+  .ios-navbar { transition: filter .35s cubic-bezier(.32,.72,0,1); }
 </style>
 </head>
 <body :class="solo ? '!bg-transparent' : ''" class="font-sans bg-[#0B0B0D] text-white h-screen overflow-hidden antialiased" x-data="app()" x-init="init()" x-cloak>
@@ -619,7 +623,7 @@
         <!-- Aurora solo en el Inicio, en los tres dispositivos: detrás del contenido, encima del .bg-scene, sin tocar el tinte de las otras pantallas -->
         <div x-show="pantalla === 'inicio' || pantalla === 'registro'"  class="aurora fade-in" aria-hidden="true"></div>
         <!-- Nav bar iOS 26: Atrás en círculo de vidrio, título compacto (el de la pieza en Detalle y Pieza), acciones orbe · bookmark · share -->
-        <div class="ios-navbar" :class="{ 'is-scrolled': scrolled }" x-show="!['inicio', 'guardados', 'perfil', 'registro', 'dashboard', 'arquitectura'].includes(pantalla) && !(dispositivo === 'iphone' && pantalla === 'tema')">
+        <div class="ios-navbar" :class="{ 'is-scrolled': scrolled, 'is-velada': modal || rag.abierto || rag.fuentesAbierto }" x-show="!['inicio', 'guardados', 'perfil', 'registro', 'dashboard', 'arquitectura'].includes(pantalla) && !(dispositivo === 'iphone' && pantalla === 'tema')">
           <button @click="atras()" class="ios-back glass press" aria-label="Atrás"><i data-lucide="chevron-left" class="h-[22px] w-[22px]"></i></button>
           <span class="truncate text-[17px] font-semibold text-ink pointer-events-none transition-opacity duration-300"
                 :class="['detalle', 'pieza'].includes(pantalla) && dispositivo === 'iphone' ? ['relative flex-1 min-w-0 px-3 text-left', scrolled ? 'opacity-100' : 'opacity-0'] : 'absolute left-1/2 -translate-x-1/2 max-w-[50%]'"
