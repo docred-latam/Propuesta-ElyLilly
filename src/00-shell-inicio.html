@@ -503,8 +503,8 @@
 
   /* ===== Hero y parrilla · lenguaje de Framer con la voz de Lilly ===== */
   /* El hero dura dos pantallas de scroll: el contenido queda fijo mientras el teléfono se endereza. */
-  .hist-hero { height: 200vh; position: relative; }
-  .hist-hero-fijo { position: sticky; top: 0; height: 100vh; display: grid; grid-template-columns: 1fr; align-content: center;
+  .hist-hero { height: 100vh; position: relative; }
+  .hist-hero-fijo { height: 100%; display: grid; grid-template-columns: 1fr; align-content: center;
     gap: clamp(24px, 4vh, 44px); padding: clamp(76px, 11vh, 124px) 0 clamp(24px, 4vh, 48px); overflow: hidden; }
   @media (min-width: 1000px) { .hist-hero-fijo { grid-template-columns: 1.04fr .96fr; align-items: center; column-gap: clamp(32px, 4vw, 72px); padding-top: clamp(56px, 8vh, 96px); } }
   .hist-hero-col { max-width: 62rem; }
@@ -551,9 +551,13 @@
     perspective: 1500px; perspective-origin: 50% 45%; }
   .hist-escena-luz { position: absolute; inset: auto 0 -12% 0; height: 80%; pointer-events: none;
     background: radial-gradient(52% 100% at 50% 100%, rgba(213,43,30,.46), transparent 72%); filter: blur(34px); }
-  .hist-tel3d-caja { position: relative; transform-style: preserve-3d; display: flex; justify-content: center; align-items: flex-end; height: 100%; }
-  .hist-tel3d { height: min(66vh, 620px); width: auto; max-width: 100%; transform-origin: 50% 70%; transform: rotateX(42deg) translateY(26px) scale(.86);
-    filter: drop-shadow(0 30px 60px rgba(0,0,0,.65)); will-change: transform; }
+  .hist-cometa { position: relative; transform-style: preserve-3d; will-change: transform; border-radius: 42px; }
+  .hist-tel3d { display: block; height: min(66vh, 620px); width: auto; max-width: 100%;
+    filter: drop-shadow(0 34px 70px rgba(0,0,0,.7)); }
+  .hist-destello { position: absolute; inset: 0; border-radius: 42px; pointer-events: none; opacity: .35;
+    mix-blend-mode: overlay; transition: opacity .3s;
+    mask-image: url(img/proto-hero.png); -webkit-mask-image: url(img/proto-hero.png);
+    mask-size: 100% 100%; -webkit-mask-size: 100% 100%; mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat; }
   @media (max-width: 999px) { .hist-tel3d { height: min(46vh, 420px); } }
 
   /* Puente hero → Óscar: la frase se descifra letra a letra (referencia: encrypted-text). */
