@@ -1,10 +1,7 @@
         <!-- Degradado para que el contenido se apague bajo la tab bar flotante (solo iPhone) -->
         <div x-show="dispositivo === 'iphone' && !sinCascaron.includes(pantalla) && !modal && !rag.abierto" class="tab-fade"></div>
 
-        <!-- iPad y escritorio no tienen isla: el estado «consultando» cae como pastilla desde arriba del área de contenido -->
-        <div x-show="dispositivo !== 'iphone' && rag.estado === 'pensando'" class="absolute top-4 left-1/2 -translate-x-1/2 z-[36]">
-          <span class="glass-strong siri-card inline-flex items-center gap-2.5 h-11 rounded-full pl-3 pr-5 text-[14px] font-semibold text-ink whitespace-nowrap"><span class="ios-orb is-active !h-5 !w-5"></span>Consultando estudios…</span>
-        </div>
+        <!-- iPad y escritorio no tienen isla: «Consultando estudios…» va como sileo.promise (app.js, ragEnviar) -->
 
         <!-- Fondo atenuado en large: tocarlo devuelve la hoja a medium -->
         <div x-show="dispositivo === 'iphone' && pantalla === 'tema'" class="absolute inset-0 z-[27]" @click="hojaIr('medium')"></div>
@@ -134,7 +131,7 @@
                     </template>
                     <div x-show="!hojaResultados.length" class="ios-row"><span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white border border-white/90 shadow-sm text-ink-3"><i data-lucide="search-x" class="h-[18px] w-[18px]"></i></span><span class="flex-1 text-[16px] text-ink-2" x-text="'Sin resultados' + (hoja.enfermedad ? ' en ' + enfermedades[hoja.enfermedad].corto : '')"></span></div>
                     <button x-show="!hojaResultados.length && hoja.enfermedad" @click="hojaQuitarEnfermedad()" class="ios-row press"><span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white border border-white/90 shadow-sm text-ink-2"><i data-lucide="layers" class="h-[18px] w-[18px]"></i></span><span class="flex-1 text-[16px] font-medium text-ink">Buscar en todas las enfermedades</span><i data-lucide="chevron-right" class="h-5 w-5 shrink-0 text-ink-3"></i></button>
-                    <button @click="ragEnviar(hoja.texto)" class="ios-row press"><span class="ios-orb !h-10 !w-10 shrink-0"></span><span class="flex-1 min-w-0"><span class="block text-[16px] font-medium text-ink truncate" x-text="'Preguntar a Lilly 360: “' + hoja.texto.trim() + '”'"></span><span class="block mt-0.5 text-[13px] text-ink-2">Consulta sobre estudios aprobados</span></span><span class="glass inline-flex h-7 items-center rounded-full px-2.5 text-[12px] font-medium text-ink-2">Fase 2</span></button>
+                    <button @click="ragEnviar(hoja.texto)" class="ios-row press"><span class="persona-disco h-10 w-10"><span class="persona" style="width:32px;height:32px" x-init="montarPersona($el, 32, rag.abierto ? 'listening' : 'idle', { rol: 'mini' })"></span></span><span class="flex-1 min-w-0"><span class="block text-[16px] font-medium text-ink truncate" x-text="'Preguntar a Lilly 360: “' + hoja.texto.trim() + '”'"></span><span class="block mt-0.5 text-[13px] text-ink-2">Consulta sobre estudios aprobados</span></span><span class="glass inline-flex h-7 items-center rounded-full px-2.5 text-[12px] font-medium text-ink-2">Fase 2</span></button>
                   </div>
                 </div>
               </div>
@@ -143,7 +140,7 @@
         </section>
 
         <!-- Modo consulta (RAG, fase 2): overlay sobre la pantalla actual; en iPhone ocupa el lugar de la hoja en large, en iPad y escritorio es un panel centrado -->
-        <div x-show="rag.abierto" x-transition.opacity.duration.250ms class="absolute inset-0 z-[33]" :class="dispositivo === 'iphone' ? '' : 'flex items-center justify-center p-6'">
+        <div x-show="rag.abierto"  class="absolute inset-0 z-[33] fade-in" :class="dispositivo === 'iphone' ? '' : 'flex items-center justify-center p-6'">
           <div x-show="dispositivo !== 'iphone'" class="absolute inset-0" @click="ragCerrar()"></div>
           <div class="consulta-panel glass-strong siri-card relative flex flex-col overflow-hidden" :class="dispositivo === 'iphone' ? '!absolute inset-x-0 bottom-0 top-2 rounded-t-[28px]' : 'w-full max-w-[640px] h-full max-h-[820px] rounded-[28px]'">
 
@@ -159,7 +156,7 @@
               <div x-show="!rag.hilo.length" class="min-h-full flex flex-col items-center justify-center text-center py-6 stagger">
                   <div class="flex items-center gap-7">
                     <button class="glass-icon !h-12 !w-12 press" aria-label="Historial"><i data-lucide="clock" class="h-5 w-5 text-ink-2"></i></button>
-                    <span class="siri-orb-3d"></span>
+                    <span class="persona" style="width:128px;height:128px" x-init="montarPersona($el, 128, personaEstado, { rol: 'grande' })" aria-hidden="true"></span>
                     <button @click="ragDictar()" class="glass-icon !h-12 !w-12 press" aria-label="Preguntar por voz"><i data-lucide="mic" class="h-5 w-5 text-ink-2"></i></button>
                   </div>
                   <p class="mt-7 text-[17px] text-ink-2">Hola, Dr.&nbsp;Óscar</p>
@@ -189,7 +186,7 @@
                       </div>
                     </div>
                   </template>
-                  <div x-show="rag.estado === 'pensando'" class="flex items-center gap-2 px-1 text-[13px] text-ink-3"><span class="ios-orb is-active !h-4 !w-4"></span>Consultando estudios…</div>
+                  <div x-show="rag.estado === 'pensando'" class="flex items-center gap-2.5 px-1 text-[13px] text-ink-3"><span class="persona-disco h-9 w-9"><span class="persona" style="width:32px;height:32px" x-init="montarPersona($el, 32, 'thinking', { rol: 'hilo' })"></span></span>Consultando estudios…</div>
               </div>
             </div>
 
@@ -251,9 +248,9 @@
         </div>
 
         <!-- Botón de consulta (fase 2): abre el panel. Un solo campo de texto por pantalla: el buscador de la hoja. -->
-        <div x-show="pantalla === 'tema' && !rag.abierto" x-transition.opacity.duration.300ms class="absolute z-30" :class="dispositivo === 'iphone' ? 'inset-x-4 bottom-5' : 'left-1/2 -translate-x-1/2 w-full max-w-[640px] bottom-6'">
+        <div x-show="pantalla === 'tema' && !rag.abierto"  class="absolute z-30 fade-in" :class="dispositivo === 'iphone' ? 'inset-x-4 bottom-5' : 'left-1/2 -translate-x-1/2 w-full max-w-[640px] bottom-6'">
           <button @click="ragAbrir()" class="glass-strong ios-ask w-full text-left press" aria-label="Preguntar a Lilly 360, consulta en fase 2">
-            <span class="ios-orb"></span>
+            <span class="persona-disco h-10 w-10"><span class="persona" style="width:32px;height:32px" x-init="montarPersona($el, 32, rag.abierto ? 'listening' : 'idle', { rol: 'mini' })"></span></span>
             <span class="flex-1 min-w-0 truncate text-[16px] font-medium text-ink">Preguntar a Lilly 360</span>
             <span class="glass mr-1 inline-flex h-7 shrink-0 items-center rounded-full px-2.5 text-[12px] font-medium text-ink-2">Fase 2</span>
           </button>

@@ -6,7 +6,7 @@
                          ir(n) { this.dir = n > this.paso ? 1 : -1; this.paso = n; this.menuPais = false; this.menuEsp = false; this.$nextTick(() => lucide.createIcons()); },
                          crear() { this.modo = 'crear'; this.ir(2); },
                          login() { this.modo = 'login'; this.ir(2); },
-                         seguirCorreo() { if (this.modo === 'login') this.entrar('Sesión iniciada'); else this.ir(3); },
+                         seguirCorreo(social) { if (!social && !/@/.test(this.correo)) { sileo.error('Correo no válido', { description: 'Revisa la dirección e inténtalo de nuevo' }); return; } if (this.modo === 'login') this.entrar('Sesión iniciada'); else this.ir(3); },
                          entrar(msg) { irRaiz('inicio'); hojaIr('small'); hud(msg || 'Cuenta creada'); } }"
                x-init="const q = new URLSearchParams(location.search); const n = +q.get('paso'); if (n >= 1 && n <= 5) { paso = n; if (n === 4) priv = false; } const m = q.get('menu'); if (m === 'pais') menuPais = true; if (m === 'esp') menuEsp = true; $nextTick(() => lucide.createIcons())">
 
@@ -44,8 +44,8 @@
                     </label>
                     <button @click="seguirCorreo()" class="ios-btn w-full mt-4 press">Continuar</button>
                     <div class="my-5 flex items-center gap-3 text-[13px] text-ink-3"><span class="h-px flex-1 bg-sep"></span>o<span class="h-px flex-1 bg-sep"></span></div>
-                    <button @click="seguirCorreo()" class="ios-btn-glass glass w-full press !justify-start gap-3 px-4"><span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white text-[14px] font-bold text-[#4285F4] shadow-sm">G</span><span class="flex-1 text-center pr-7">Continuar con Google</span></button>
-                    <button @click="seguirCorreo()" class="ios-btn-glass glass w-full mt-3 press !justify-start gap-3 px-4"><span class="inline-flex h-7 w-7 items-center justify-center rounded-md bg-[#0A66C2] text-[12px] font-bold text-white">in</span><span class="flex-1 text-center pr-7">Continuar con LinkedIn</span></button>
+                    <button @click="seguirCorreo(true)" class="ios-btn-glass glass w-full press !justify-start gap-3 px-4"><span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white text-[14px] font-bold text-[#4285F4] shadow-sm">G</span><span class="flex-1 text-center pr-7">Continuar con Google</span></button>
+                    <button @click="seguirCorreo(true)" class="ios-btn-glass glass w-full mt-3 press !justify-start gap-3 px-4"><span class="inline-flex h-7 w-7 items-center justify-center rounded-md bg-[#0A66C2] text-[12px] font-bold text-white">in</span><span class="flex-1 text-center pr-7">Continuar con LinkedIn</span></button>
                     <p class="mt-auto pt-6 text-center text-[12px] text-ink-3">Lilly 360 es solo para profesionales de la salud.</p>
                   </div>
                 </template>
@@ -93,7 +93,7 @@
                 <!-- Paso 5 · Listo -->
                 <template x-if="paso === 5">
                   <div class="flex-1 flex flex-col items-center justify-center text-center stagger" :class="dir > 0 ? 'reg-in' : 'reg-back'">
-                    <span class="ios-orb is-active !h-16 !w-16"></span>
+                    <span class="persona" style="width:96px;height:96px" x-init="const p = montarPersona($el, 96, 'speaking', { rol: 'registro' }); setTimeout(() => { if (p) p.setEstado('idle'); }, 2000)" aria-hidden="true"></span>
                     <h1 class="ios-large-title mt-6">Bienvenido, Dr.&nbsp;Óscar</h1>
                     <p class="mt-2 max-w-[320px] text-[15px] text-ink-2">Tu cuenta está verificada como profesional de la salud.</p>
                     <p class="mt-8 text-[13px] font-medium text-ink-2">Te puede interesar</p>

@@ -31,7 +31,9 @@
   };
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script src="src/sileo.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
+<script src="src/persona.js"></script>
 <style>
   /* ===== Tokens compartidos (ver design.md). Los tres agentes usan estas clases; no se redefinen en las pantallas. ===== */
   [x-cloak] { display: none !important; }
@@ -77,10 +79,9 @@
   .ios-sheet { border-radius: 28px 28px 0 0; padding-top: 8px; }
   .ios-sheet::before { content: ''; display: block; width: 36px; height: 5px; border-radius: 9999px; background: #C7C7CC; margin: 0 auto 10px; }
   .ios-ask { display: flex; align-items: center; gap: 10px; height: 52px; padding: 4px 6px 4px 6px; border-radius: 9999px; }
-  .ios-orb { width: 40px; height: 40px; border-radius: 9999px; flex: none; position: relative; overflow: hidden; isolation: isolate; box-shadow: 0 0 18px rgba(31,95,168,.30), 0 0 32px rgba(213,43,30,.18), inset 0 0 12px rgba(255,255,255,.7); }
-  .ios-orb::before { content: ''; position: absolute; inset: -35%; border-radius: inherit; background: conic-gradient(from 0deg, #D52B1E, #E24D3E, #F0705E, #F49C96, #F8C9CF, #FBDEE0, #FFF4F1, #E7EAF5, #CFE0FA, #779FD1, #1F5FA8, #4557B3, #6B4FBF, #A03D6E, #D52B1E); filter: blur(7px) saturate(1.25); }
-  .ios-orb::after  { content: ''; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(circle at 50% 42%, rgba(255,255,255,.78) 0, rgba(255,255,255,.34) 30%, rgba(255,255,255,0) 64%); }
-  .ios-orb[class*="!h-4"]::before, .ios-orb[class*="!h-5"]::before { filter: blur(3px) saturate(1.25); }
+  /* Alias vacíos: los orbes de IA ahora son Persona (src/persona.js). */
+  .ios-orb { width: 40px; height: 40px; border-radius: 9999px; flex: none; position: relative; }
+  .ios-orb.is-active { animation: none; }
   .ios-orb.is-active { animation: orb-spin 6s linear infinite; }
   .dynamic-island { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); height: 34px; min-width: 122px; border-radius: 9999px; background: #000; color: #fff; z-index: 40; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 14px; font-size: 12px; font-weight: 600; transition: min-width 400ms cubic-bezier(.2,.8,.2,1), height 400ms cubic-bezier(.2,.8,.2,1); overflow: hidden; }
   .dynamic-island.is-expanded { min-width: 220px; height: 38px; }
@@ -145,7 +146,7 @@
   .siri-glow::before { filter: blur(2.5px); }
   .siri-glow::after  { filter: blur(14px); opacity: .8; }
   .lilly-glow { position: absolute; inset: 0; border-radius: 42px; pointer-events: none; z-index: 35; }
-  .lilly-orb { width: 40px; height: 40px; border-radius: 9999px; flex: none; position: relative; overflow: hidden; isolation: isolate; }
+  .lilly-orb { width: 40px; height: 40px; border-radius: 9999px; flex: none; position: relative; }
   .siri-glow.is-on { opacity: 1; --siri-w: 7px; --siri-reveal: 140%;
     transition: opacity .4s ease-out, --siri-w .4s ease-out, --siri-reveal .45s ease-out;
     animation: siri-breathe 2.4s ease-in-out .4s infinite; }
@@ -229,11 +230,7 @@
   .ios-hoja.is-dimmed { filter: blur(6px) opacity(.6); }
   @property --orb3d { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
   /* Esfera tipo canica: conic difuminado que gira detrás, brillo arriba-izquierda y sombra interior fijos encima. */
-  .siri-orb-3d { position: relative; width: 132px; height: 132px; border-radius: 50%; overflow: hidden; isolation: isolate; flex: none;
-    box-shadow: inset -16px -20px 40px rgba(20,20,60,.32), inset 12px 14px 28px rgba(255,255,255,.4), 0 24px 56px rgba(31,95,168,.26), 0 8px 24px rgba(213,43,30,.14);
-    animation: orb-breathe 3.6s ease-in-out infinite; }
-  .siri-orb-3d::before { content: ''; position: absolute; inset: -25%; background: conic-gradient(from var(--orb3d), #D52B1E, #E24D3E, #F0705E, #F8C9CF, #FFF4F1, #CFE0FA, #779FD1, #1F5FA8, #4557B3, #6B4FBF, #A03D6E, #D52B1E); filter: blur(16px) saturate(1.15); animation: orb3d-spin 14s linear infinite; }
-  .siri-orb-3d::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(circle at 32% 26%, rgba(255,255,255,.95) 0, rgba(255,255,255,.42) 16%, rgba(255,255,255,0) 42%), radial-gradient(circle at 72% 82%, rgba(20,20,60,.32) 0, rgba(20,20,60,0) 48%); }
+  .siri-orb-3d { position: relative; width: 132px; height: 132px; border-radius: 50%; }
   @keyframes orb3d-spin { to { --orb3d: 360deg; } }
   @keyframes orb-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.045); } }
   /* Onda de voz: cuatro curvas translúcidas que se desplazan a distinta velocidad sobre vidrio oscuro. */
@@ -276,7 +273,11 @@
   .ios-tabbar-wrap.is-min .ios-tab[aria-selected="true"] span { display: none; }
   .ios-tabbar-wrap.is-min .ios-tab[aria-selected="true"] { padding: 0 12px; }
   .ios-tab { overflow: hidden; }
-  .ios-hud { position: absolute; left: 50%; top: 62px; transform: translateX(-50%); z-index: 38; height: 36px; display: inline-flex; align-items: center; gap: 8px; padding: 0 14px 0 10px; border-radius: 9999px; font-size: 14px; font-weight: 600; color: #1A1A1A; white-space: nowrap; }
+  /* Los avisos ahora son Sileo (src/sileo.js); .ios-hud se retiró. */
+  .sileo-normal { text-transform: none !important; }
+  /* ?captura=1: sin transiciones ni animaciones CSS. Chrome headless cambia el viewport capturado si hay animaciones en curso
+     (transform/height en vuelo) y el marco salía con tamaño y posición distintos en cada captura. Solo para pantallazos. */
+  .sin-animacion *, .sin-animacion *::before, .sin-animacion *::after { transition: none !important; animation: none !important; }
   :focus-visible { outline: 2px solid #1F5FA8; outline-offset: 2px; border-radius: inherit; }
   .ios-side-group { padding: 0 14px; margin: 18px 0 6px; font-size: 12px; font-weight: 600; color: #9AA0A6; }
   .ios-side-item.is-sub { height: 40px; font-size: 14px; }
@@ -327,6 +328,9 @@
   .reg-campo::placeholder { color: #9AA0A6; }
   .reg-menu { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 50; border-radius: 18px; overflow: hidden; background: rgba(255,255,255,.96); box-shadow: 0 12px 40px rgba(0,0,0,.14); animation: siri-card-in 250ms cubic-bezier(.32,.72,0,1) both; }
   @media (prefers-reduced-motion: reduce) { .reg-in, .reg-back, .reg-menu { animation: none !important; } }
+  /* ===== Persona (halo) ===== */
+  .persona { display: block; flex: none; }
+  .persona-disco { display: inline-flex; align-items: center; justify-content: center; flex: none; border-radius: 9999px; background: rgba(255,255,255,.85); border: 1px solid rgba(255,255,255,.95); box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04); }
 </style>
 </head>
 <body class="font-sans bg-[#0B0B0D] text-white h-screen overflow-hidden antialiased" x-data="app()" x-init="init()" x-cloak>
@@ -363,7 +367,7 @@
 <main class="pt-14 h-screen flex items-stretch overflow-hidden">
 
   <!-- Panel de guía (la narrativa de Óscar; es del prototipo, no del app) -->
-  <aside x-show="guia" x-transition.opacity class="proto-panel hidden lg:flex w-[380px] shrink-0 flex-col p-7 gap-5 overflow-y-auto">
+  <aside x-show="guia"  class="proto-panel fade-in hidden lg:flex w-[380px] shrink-0 flex-col p-7 gap-5 overflow-y-auto">
     <!-- Foto del momento: cambia con fundido al cambiar de pantalla -->
     <div class="guia-foto">
       <img :src="guiaActual.foto" :alt="guiaActual.titulo" loading="lazy" decoding="async" :style="'object-position:' + posFoto(guiaActual.foto)"
@@ -393,7 +397,7 @@
   </aside>
 
   <!-- Marco: uno solo, muta entre iPhone, iPad y ventana de escritorio y se escala para caber en la vista -->
-  <section x-show="pantalla !== 'dashboard'" x-transition.opacity.duration.300ms class="flex-1 flex items-center justify-center p-8 overflow-hidden">
+  <section x-show="pantalla !== 'dashboard'"  class="flex-1 flex items-center justify-center p-8 overflow-hidden fade-in">
     <div class="proto-fit" :style="`width:${marco.w * escala}px;height:${marco.h * escala}px`">
       <div class="proto-frame" :class="'is-' + dispositivo" :style="`width:${marco.w}px;height:${marco.h}px;transform:scale(${escala})`">
       <div class="bg-scene proto-screen text-ink" :data-tinte="pantalla === 'inicio' ? '' : enfermedad">
@@ -405,7 +409,7 @@
         <div x-show="dispositivo === 'iphone'" class="dynamic-island" :class="{ 'is-expanded': island || rag.estado === 'pensando' }">
           <template x-if="rag.estado === 'pensando'">
             <span class="flex items-center gap-2 whitespace-nowrap screen-enter">
-              <span class="ios-orb is-active !h-4 !w-4"></span>
+              <span class="persona" style="width:20px;height:20px" x-init="montarPersona($el, 20, 'thinking', { rol: 'isla', mono: true })"></span>
               <span>Consultando estudios…</span>
             </span>
           </template>
@@ -469,7 +473,7 @@
 
           <div class="proto-main" x-ref="main">
         <!-- Aurora solo en el Inicio, en los tres dispositivos: detrás del contenido, encima del .bg-scene, sin tocar el tinte de las otras pantallas -->
-        <div x-show="pantalla === 'inicio' || pantalla === 'registro'" x-transition.opacity.duration.600ms class="aurora" aria-hidden="true"></div>
+        <div x-show="pantalla === 'inicio' || pantalla === 'registro'"  class="aurora fade-in" aria-hidden="true"></div>
         <!-- Nav bar iOS 26: Atrás en círculo de vidrio, título compacto (el de la pieza en Detalle y Pieza), acciones orbe · bookmark · share -->
         <div class="ios-navbar" :class="{ 'is-scrolled': scrolled }" x-show="!['inicio', 'guardados', 'perfil', 'registro', 'dashboard'].includes(pantalla) && !(dispositivo === 'iphone' && pantalla === 'tema')">
           <button @click="atras()" class="ios-back glass press" aria-label="Atrás"><i data-lucide="chevron-left" class="h-[22px] w-[22px]"></i></button>
@@ -477,14 +481,13 @@
                 :class="['detalle', 'pieza'].includes(pantalla) && dispositivo === 'iphone' ? ['relative flex-1 min-w-0 px-3 text-left', scrolled ? 'opacity-100' : 'opacity-0'] : 'absolute left-1/2 -translate-x-1/2 max-w-[50%]'"
                 x-text="tituloNativo"></span>
           <div x-show="['detalle', 'pieza'].includes(pantalla)" class="flex items-center gap-2">
-            <button @click="ragAbrirCon(piezaActual)" class="ios-nav-circle glass press" aria-label="Preguntar a Lilly 360 sobre esta pieza"><span class="ios-orb !h-6 !w-6"></span></button>
+            <button @click="ragAbrirCon(piezaActual)" class="ios-nav-circle glass press" aria-label="Preguntar a Lilly 360 sobre esta pieza"><span class="persona" style="width:32px;height:32px" x-init="montarPersona($el, 32, rag.abierto ? 'listening' : 'idle', { rol: 'mini' })"></span></button>
             <button @click="guardar(piezaActual)" class="ios-nav-circle glass press" :aria-pressed="esGuardado(piezaActual) ? 'true' : 'false'" :aria-label="esGuardado(piezaActual) ? 'Quitar de Guardados' : 'Guardar'"><i data-lucide="bookmark" class="h-5 w-5"></i></button>
             <button @click="hud('Enlace copiado')" class="ios-nav-circle glass press" aria-label="Compartir"><i data-lucide="share" class="h-5 w-5"></i></button>
           </div>
         </div>
 
-        <!-- HUD de confirmación (M2): cápsula bajo la nav bar, 1,8 s. La isla queda solo para «En vivo hoy» y «Consultando…» -->
-        <div x-show="hudTexto" x-transition.opacity.duration.250ms class="glass-strong siri-card ios-hud" role="status" aria-live="polite"><i data-lucide="check" class="h-4 w-4 text-lilly"></i><span x-text="hudTexto"></span></div>
+        <!-- Los avisos (Guardado, Enlace copiado, Cuenta creada…) son toasts Sileo montados en .proto-main desde app.js -->
 
         <!-- Contenido (@container: @3xl tablet, @6xl escritorio): recibe la transición de pantalla y se re-dispara con `transicion` -->
         <div class="@container flex-1 overflow-y-auto scroll-hide phone-screen" x-ref="scroll"
@@ -1135,7 +1138,7 @@
                          ir(n) { this.dir = n > this.paso ? 1 : -1; this.paso = n; this.menuPais = false; this.menuEsp = false; this.$nextTick(() => lucide.createIcons()); },
                          crear() { this.modo = 'crear'; this.ir(2); },
                          login() { this.modo = 'login'; this.ir(2); },
-                         seguirCorreo() { if (this.modo === 'login') this.entrar('Sesión iniciada'); else this.ir(3); },
+                         seguirCorreo(social) { if (!social && !/@/.test(this.correo)) { sileo.error('Correo no válido', { description: 'Revisa la dirección e inténtalo de nuevo' }); return; } if (this.modo === 'login') this.entrar('Sesión iniciada'); else this.ir(3); },
                          entrar(msg) { irRaiz('inicio'); hojaIr('small'); hud(msg || 'Cuenta creada'); } }"
                x-init="const q = new URLSearchParams(location.search); const n = +q.get('paso'); if (n >= 1 && n <= 5) { paso = n; if (n === 4) priv = false; } const m = q.get('menu'); if (m === 'pais') menuPais = true; if (m === 'esp') menuEsp = true; $nextTick(() => lucide.createIcons())">
 
@@ -1173,8 +1176,8 @@
                     </label>
                     <button @click="seguirCorreo()" class="ios-btn w-full mt-4 press">Continuar</button>
                     <div class="my-5 flex items-center gap-3 text-[13px] text-ink-3"><span class="h-px flex-1 bg-sep"></span>o<span class="h-px flex-1 bg-sep"></span></div>
-                    <button @click="seguirCorreo()" class="ios-btn-glass glass w-full press !justify-start gap-3 px-4"><span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white text-[14px] font-bold text-[#4285F4] shadow-sm">G</span><span class="flex-1 text-center pr-7">Continuar con Google</span></button>
-                    <button @click="seguirCorreo()" class="ios-btn-glass glass w-full mt-3 press !justify-start gap-3 px-4"><span class="inline-flex h-7 w-7 items-center justify-center rounded-md bg-[#0A66C2] text-[12px] font-bold text-white">in</span><span class="flex-1 text-center pr-7">Continuar con LinkedIn</span></button>
+                    <button @click="seguirCorreo(true)" class="ios-btn-glass glass w-full press !justify-start gap-3 px-4"><span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white text-[14px] font-bold text-[#4285F4] shadow-sm">G</span><span class="flex-1 text-center pr-7">Continuar con Google</span></button>
+                    <button @click="seguirCorreo(true)" class="ios-btn-glass glass w-full mt-3 press !justify-start gap-3 px-4"><span class="inline-flex h-7 w-7 items-center justify-center rounded-md bg-[#0A66C2] text-[12px] font-bold text-white">in</span><span class="flex-1 text-center pr-7">Continuar con LinkedIn</span></button>
                     <p class="mt-auto pt-6 text-center text-[12px] text-ink-3">Lilly 360 es solo para profesionales de la salud.</p>
                   </div>
                 </template>
@@ -1222,7 +1225,7 @@
                 <!-- Paso 5 · Listo -->
                 <template x-if="paso === 5">
                   <div class="flex-1 flex flex-col items-center justify-center text-center stagger" :class="dir > 0 ? 'reg-in' : 'reg-back'">
-                    <span class="ios-orb is-active !h-16 !w-16"></span>
+                    <span class="persona" style="width:96px;height:96px" x-init="const p = montarPersona($el, 96, 'speaking', { rol: 'registro' }); setTimeout(() => { if (p) p.setEstado('idle'); }, 2000)" aria-hidden="true"></span>
                     <h1 class="ios-large-title mt-6">Bienvenido, Dr.&nbsp;Óscar</h1>
                     <p class="mt-2 max-w-[320px] text-[15px] text-ink-2">Tu cuenta está verificada como profesional de la salud.</p>
                     <p class="mt-8 text-[13px] font-medium text-ink-2">Te puede interesar</p>
@@ -1255,10 +1258,7 @@
         <!-- Degradado para que el contenido se apague bajo la tab bar flotante (solo iPhone) -->
         <div x-show="dispositivo === 'iphone' && !sinCascaron.includes(pantalla) && !modal && !rag.abierto" class="tab-fade"></div>
 
-        <!-- iPad y escritorio no tienen isla: el estado «consultando» cae como pastilla desde arriba del área de contenido -->
-        <div x-show="dispositivo !== 'iphone' && rag.estado === 'pensando'" class="absolute top-4 left-1/2 -translate-x-1/2 z-[36]">
-          <span class="glass-strong siri-card inline-flex items-center gap-2.5 h-11 rounded-full pl-3 pr-5 text-[14px] font-semibold text-ink whitespace-nowrap"><span class="ios-orb is-active !h-5 !w-5"></span>Consultando estudios…</span>
-        </div>
+        <!-- iPad y escritorio no tienen isla: «Consultando estudios…» va como sileo.promise (app.js, ragEnviar) -->
 
         <!-- Fondo atenuado en large: tocarlo devuelve la hoja a medium -->
         <div x-show="dispositivo === 'iphone' && pantalla === 'tema'" class="absolute inset-0 z-[27]" @click="hojaIr('medium')"></div>
@@ -1388,7 +1388,7 @@
                     </template>
                     <div x-show="!hojaResultados.length" class="ios-row"><span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white border border-white/90 shadow-sm text-ink-3"><i data-lucide="search-x" class="h-[18px] w-[18px]"></i></span><span class="flex-1 text-[16px] text-ink-2" x-text="'Sin resultados' + (hoja.enfermedad ? ' en ' + enfermedades[hoja.enfermedad].corto : '')"></span></div>
                     <button x-show="!hojaResultados.length && hoja.enfermedad" @click="hojaQuitarEnfermedad()" class="ios-row press"><span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white border border-white/90 shadow-sm text-ink-2"><i data-lucide="layers" class="h-[18px] w-[18px]"></i></span><span class="flex-1 text-[16px] font-medium text-ink">Buscar en todas las enfermedades</span><i data-lucide="chevron-right" class="h-5 w-5 shrink-0 text-ink-3"></i></button>
-                    <button @click="ragEnviar(hoja.texto)" class="ios-row press"><span class="ios-orb !h-10 !w-10 shrink-0"></span><span class="flex-1 min-w-0"><span class="block text-[16px] font-medium text-ink truncate" x-text="'Preguntar a Lilly 360: “' + hoja.texto.trim() + '”'"></span><span class="block mt-0.5 text-[13px] text-ink-2">Consulta sobre estudios aprobados</span></span><span class="glass inline-flex h-7 items-center rounded-full px-2.5 text-[12px] font-medium text-ink-2">Fase 2</span></button>
+                    <button @click="ragEnviar(hoja.texto)" class="ios-row press"><span class="persona-disco h-10 w-10"><span class="persona" style="width:32px;height:32px" x-init="montarPersona($el, 32, rag.abierto ? 'listening' : 'idle', { rol: 'mini' })"></span></span><span class="flex-1 min-w-0"><span class="block text-[16px] font-medium text-ink truncate" x-text="'Preguntar a Lilly 360: “' + hoja.texto.trim() + '”'"></span><span class="block mt-0.5 text-[13px] text-ink-2">Consulta sobre estudios aprobados</span></span><span class="glass inline-flex h-7 items-center rounded-full px-2.5 text-[12px] font-medium text-ink-2">Fase 2</span></button>
                   </div>
                 </div>
               </div>
@@ -1397,7 +1397,7 @@
         </section>
 
         <!-- Modo consulta (RAG, fase 2): overlay sobre la pantalla actual; en iPhone ocupa el lugar de la hoja en large, en iPad y escritorio es un panel centrado -->
-        <div x-show="rag.abierto" x-transition.opacity.duration.250ms class="absolute inset-0 z-[33]" :class="dispositivo === 'iphone' ? '' : 'flex items-center justify-center p-6'">
+        <div x-show="rag.abierto"  class="absolute inset-0 z-[33] fade-in" :class="dispositivo === 'iphone' ? '' : 'flex items-center justify-center p-6'">
           <div x-show="dispositivo !== 'iphone'" class="absolute inset-0" @click="ragCerrar()"></div>
           <div class="consulta-panel glass-strong siri-card relative flex flex-col overflow-hidden" :class="dispositivo === 'iphone' ? '!absolute inset-x-0 bottom-0 top-2 rounded-t-[28px]' : 'w-full max-w-[640px] h-full max-h-[820px] rounded-[28px]'">
 
@@ -1413,7 +1413,7 @@
               <div x-show="!rag.hilo.length" class="min-h-full flex flex-col items-center justify-center text-center py-6 stagger">
                   <div class="flex items-center gap-7">
                     <button class="glass-icon !h-12 !w-12 press" aria-label="Historial"><i data-lucide="clock" class="h-5 w-5 text-ink-2"></i></button>
-                    <span class="siri-orb-3d"></span>
+                    <span class="persona" style="width:128px;height:128px" x-init="montarPersona($el, 128, personaEstado, { rol: 'grande' })" aria-hidden="true"></span>
                     <button @click="ragDictar()" class="glass-icon !h-12 !w-12 press" aria-label="Preguntar por voz"><i data-lucide="mic" class="h-5 w-5 text-ink-2"></i></button>
                   </div>
                   <p class="mt-7 text-[17px] text-ink-2">Hola, Dr.&nbsp;Óscar</p>
@@ -1443,7 +1443,7 @@
                       </div>
                     </div>
                   </template>
-                  <div x-show="rag.estado === 'pensando'" class="flex items-center gap-2 px-1 text-[13px] text-ink-3"><span class="ios-orb is-active !h-4 !w-4"></span>Consultando estudios…</div>
+                  <div x-show="rag.estado === 'pensando'" class="flex items-center gap-2.5 px-1 text-[13px] text-ink-3"><span class="persona-disco h-9 w-9"><span class="persona" style="width:32px;height:32px" x-init="montarPersona($el, 32, 'thinking', { rol: 'hilo' })"></span></span>Consultando estudios…</div>
               </div>
             </div>
 
@@ -1505,9 +1505,9 @@
         </div>
 
         <!-- Botón de consulta (fase 2): abre el panel. Un solo campo de texto por pantalla: el buscador de la hoja. -->
-        <div x-show="pantalla === 'tema' && !rag.abierto" x-transition.opacity.duration.300ms class="absolute z-30" :class="dispositivo === 'iphone' ? 'inset-x-4 bottom-5' : 'left-1/2 -translate-x-1/2 w-full max-w-[640px] bottom-6'">
+        <div x-show="pantalla === 'tema' && !rag.abierto"  class="absolute z-30 fade-in" :class="dispositivo === 'iphone' ? 'inset-x-4 bottom-5' : 'left-1/2 -translate-x-1/2 w-full max-w-[640px] bottom-6'">
           <button @click="ragAbrir()" class="glass-strong ios-ask w-full text-left press" aria-label="Preguntar a Lilly 360, consulta en fase 2">
-            <span class="ios-orb"></span>
+            <span class="persona-disco h-10 w-10"><span class="persona" style="width:32px;height:32px" x-init="montarPersona($el, 32, rag.abierto ? 'listening' : 'idle', { rol: 'mini' })"></span></span>
             <span class="flex-1 min-w-0 truncate text-[16px] font-medium text-ink">Preguntar a Lilly 360</span>
             <span class="glass mr-1 inline-flex h-7 shrink-0 items-center rounded-full px-2.5 text-[12px] font-medium text-ink-2">Fase 2</span>
           </button>

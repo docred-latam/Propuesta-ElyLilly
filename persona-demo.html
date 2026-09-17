@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Persona halo · demo</title>
+<style>
+  :root { --fondo: #fff; --texto: #111; --borde: #e5e5e5; }
+  @media (prefers-color-scheme: dark) { :root { --fondo: #111; --texto: #eee; --borde: #2a2a2a; } }
+  body { margin: 0; background: var(--fondo); color: var(--texto); font: 14px/1.4 -apple-system, system-ui, sans-serif; padding: 24px; }
+  h1 { font-size: 16px; margin: 0 0 12px; }
+  .barra { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+  .fila { display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 28px; }
+  .tarjeta { border: 1px solid var(--borde); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 14px; min-width: 380px; }
+  .tarjeta small { opacity: .6 }
+  .botones { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+  button { font: inherit; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--borde); background: transparent; color: inherit; cursor: pointer; }
+  button[aria-pressed="true"] { background: var(--texto); color: var(--fondo); }
+  .peques { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--borde); border-radius: 999px; }
+  #estado-motor { opacity: .6; font-size: 12px; }
+</style>
+</head>
+<body>
+<h1>Persona · variante halo</h1>
+
+<div class="barra">
+  <span>Motor:</span>
+  <button id="motor-rive" aria-pressed="true">Rive real</button>
+  <button id="motor-svg" aria-pressed="false">SVG fallback</button>
+  <span style="margin-left:16px">Color:</span>
+  <button id="color-lilly" aria-pressed="true">Lilly</button>
+  <button id="color-mono" aria-pressed="false">Monocromo</button>
+  <span id="estado-motor"></span>
+</div>
+
+<div class="fila">
+  <div class="tarjeta">
+    <div id="grande" style="width:128px;height:128px"></div>
+    <small>128 px</small>
+    <div class="botones" id="botones"></div>
+  </div>
+  <div class="tarjeta">
+    <div class="peques">
+      <span class="chip"><span class="mini" data-estado="idle" data-tamano="16"></span> 16 · idle</span>
+      <span class="chip"><span class="mini" data-estado="listening" data-tamano="16"></span> 16 · listening</span>
+      <span class="chip"><span class="mini" data-estado="thinking" data-tamano="20"></span> 20 · thinking</span>
+      <span class="chip"><span class="mini" data-estado="speaking" data-tamano="24"></span> 24 · speaking</span>
+      <span class="chip"><span class="mini" data-estado="asleep" data-tamano="20"></span> 20 · asleep</span>
+    </div>
+    <small>Cinco orbes pequeños con el mismo motor y paleta</small>
+  </div>
+</div>
+
+<script src="src/persona.js"></script>
+<script>
+  var LILLY = ['#D52B1E', '#F0705E', '#F8C9CF', '#FFF4F1', '#CFE0FA', '#1F5FA8', '#6B4FBF'];
+  var q = new URLSearchParams(location.search);
+  var cfg = { motor: q.get('motor') || 'auto', color: q.get('color') || 'lilly', estado: q.get('estado') || 'idle' };
+  var instancias = [];
+
+  function montar() {
+    instancias.forEach(function (p) { p.destruir(); });
+    instancias = [];
+    var colores = cfg.color === 'mono' ? null : LILLY;
+    var grande = crearPersona(document.getElementById('grande'), { estado: cfg.estado, tamano: 128, colores: colores, motor: cfg.motor });
+    instancias.push(grande);
+    document.querySelectorAll('.mini').forEach(function (m) {
+      instancias.push(crearPersona(m, { estado: m.dataset.estado, tamano: +m.dataset.tamano, colores: colores, motor: cfg.motor }));
+    });
+    var b = document.getElementById('botones'); b.innerHTML = '';
+    crearPersona.ESTADOS.forEach(function (s) {
+      var x = document.createElement('button'); x.textContent = s; x.setAttribute('aria-pressed', String(s === cfg.estado));
+      x.onclick = function () { cfg.estado = s; grande.setEstado(s); b.querySelectorAll('button').forEach(function (y) { y.setAttribute('aria-pressed', 'false'); }); x.setAttribute('aria-pressed', 'true'); };
+      b.appendChild(x);
+    });
+    ['motor-rive', 'motor-svg', 'color-lilly', 'color-mono'].forEach(function (id) {
+      var on = id === 'motor-rive' ? cfg.motor !== 'svg' : id === 'motor-svg' ? cfg.motor === 'svg' : id === 'color-lilly' ? cfg.color !== 'mono' : cfg.color === 'mono';
+      document.getElementById(id).setAttribute('aria-pressed', String(on));
+    });
+    setTimeout(function () { document.getElementById('estado-motor').textContent = 'motor activo: ' + grande.motor; }, 1500);
+  }
+  document.getElementById('motor-rive').onclick = function () { cfg.motor = 'auto'; montar(); };
+  document.getElementById('motor-svg').onclick = function () { cfg.motor = 'svg'; montar(); };
+  document.getElementById('color-lilly').onclick = function () { cfg.color = 'lilly'; montar(); };
+  document.getElementById('color-mono').onclick = function () { cfg.color = 'mono'; montar(); };
+  montar();
+</script>
+</body>
+</html>

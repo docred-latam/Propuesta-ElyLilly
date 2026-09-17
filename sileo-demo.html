@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sileo · demo del port</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: flex; gap: 32px; align-items: flex-start; justify-content: center; padding: 32px; background: #E9E9EE; font-family: -apple-system, "SF Pro Display", "SF Pro Text", Inter, system-ui, sans-serif; color: #1A1A1A; }
+  a { color: inherit; }
+  .panel { width: 300px; display: flex; flex-direction: column; gap: 8px; }
+  .panel h1 { font-size: 17px; margin: 0 0 4px; }
+  .panel p { font-size: 13px; color: #5F6368; margin: 0 0 8px; line-height: 1.4; }
+  .panel button, .panel select { height: 40px; border: 0; border-radius: 9999px; padding: 0 16px; font: inherit; font-size: 14px; font-weight: 500; background: #fff; color: #1A1A1A; cursor: pointer; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .panel button:active { transform: scale(.98); }
+  .panel label { font-size: 12px; color: #5F6368; margin-top: 8px; }
+  .panel select { appearance: none; }
+  /* «Pantalla del teléfono»: 440×900, escalada con transform para probar que el toast no usa fixed. */
+  .frame { padding: 10px; border-radius: 72px; background: #1C1C1E; box-shadow: 0 40px 80px -20px rgba(0,0,0,.45); transform: scale(.9); transform-origin: top center; }
+  .screen { position: relative; width: 440px; height: 900px; border-radius: 62px; overflow: hidden; background: linear-gradient(180deg, #F7F7F8 0%, #F4F4F6 60%, #F2F2F4 100%); }
+  .screen::before { content: ''; position: absolute; width: 320px; height: 320px; top: -120px; right: -100px; border-radius: 9999px; background: rgba(213,43,30,.18); filter: blur(60px); }
+  .screen::after { content: ''; position: absolute; width: 280px; height: 280px; bottom: 40px; left: -120px; border-radius: 9999px; background: rgba(31,95,168,.14); filter: blur(60px); }
+  .island { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); width: 122px; height: 34px; border-radius: 9999px; background: #000; z-index: 2; }
+  .status { position: absolute; top: 18px; left: 40px; right: 40px; display: flex; justify-content: space-between; font-size: 15px; font-weight: 600; z-index: 2; }
+  .title { position: absolute; top: 110px; left: 24px; font-size: 34px; font-weight: 700; letter-spacing: -0.02em; z-index: 1; }
+  .card { position: absolute; left: 20px; right: 20px; top: 180px; height: 120px; border-radius: 24px; background: rgba(255,255,255,.65); border: 1px solid rgba(255,255,255,.6); box-shadow: 0 8px 32px rgba(0,0,0,.06); z-index: 1; }
+</style>
+</head>
+<body>
+  <div class="panel">
+    <h1>Sileo en JS puro</h1>
+    <p>Los toasts viven dentro de la pantalla (escalada al 90 %). Pasa el mouse para expandir y pausar; arrastra vertical para descartar. Sin <code>id</code>, el nuevo reemplaza al anterior con morph; con <code>id</code> distinto, se apilan.</p>
+    <button onclick="sileo.success('Guardado', { description: 'La pieza quedó en Guardados para verla sin conexión.' })">Éxito</button>
+    <button onclick="sileo.error('Sin conexión', { description: 'No pudimos cargar el video. Revisa tu red e inténtalo de nuevo.' })">Error</button>
+    <button onclick="sileo.warning('Caduca pronto', { description: 'Tu certificado de formación vence en 3 días.' })">Aviso</button>
+    <button onclick="sileo.info('En vivo hoy', { description: 'Sesión de diabetes tipo 2 a las 5:00 p. m.' })">Info</button>
+    <button onclick="sileo.loading('Consultando…')">Cargando (persistente)</button>
+    <button onclick="sileo.success('Quitado de Guardados', { description: 'Puedes volver a guardarlo cuando quieras.', action: { label: 'Deshacer', onClick: () => sileo.success('Restaurado') } })">Con acción</button>
+    <button onclick="sileo.promise(new Promise(r => setTimeout(r, 1800)), { loading: 'Consultando fuentes…', success: { title: 'Respuesta lista', description: 'Se citaron 3 fuentes aprobadas.' }, error: 'No hubo respuesta' })">Promesa</button>
+    <button onclick="sileo.promise(new Promise((_, x) => setTimeout(x, 1800)), { loading: 'Enviando…', success: 'Enviado', error: { title: 'Falló el envío', description: 'El servidor no respondió.' } })">Promesa que falla</button>
+    <button onclick="seguidos()">Tres seguidos (morph)</button>
+    <button onclick="apilados()">Tres apilados (ids)</button>
+    <button onclick="sileo.clear()">Limpiar</button>
+    <label>Posición</label>
+    <select onchange="montar({ position: this.value })"><option>top-center</option><option>top-left</option><option>top-right</option><option>bottom-center</option><option>bottom-left</option><option>bottom-right</option></select>
+    <label>Tema (fill)</label>
+    <select onchange="montar({ theme: this.value || undefined })"><option value="">Sin tema · blanco (Sileo por defecto)</option><option value="light">light · cápsula oscura</option><option value="dark">dark · cápsula clara</option><option value="system">system</option></select>
+    <label>Paleta</label>
+    <select onchange="montar({ palette: this.value || undefined })"><option value="lilly">lilly</option><option value="">sileo (oklch)</option></select>
+  </div>
+
+  <div class="frame">
+    <div class="screen" id="pantalla">
+      <div class="island"></div>
+      <div class="status"><span>9:41</span><span>●●●</span></div>
+      <div class="title">Formación</div>
+      <div class="card"></div>
+    </div>
+  </div>
+
+  <script src="src/sileo.js"></script>
+  <script>
+    // Se monta DENTRO de la pantalla, con offset para quedar bajo la Dynamic Island.
+    var cfg = { position: 'top-center', palette: 'lilly', offset: { top: 48, bottom: 24 } };
+    function montar(cambio) { Object.assign(cfg, cambio); sileo.mount(document.getElementById('pantalla'), cfg); }
+    montar({});
+
+    function seguidos() {
+      sileo.info('Guardando…');
+      setTimeout(function () { sileo.warning('Casi listo', { description: 'Sincronizando con tu cuenta.' }); }, 900);
+      setTimeout(function () { sileo.success('Guardado', { description: 'La pieza quedó en Guardados.' }); }, 1800);
+    }
+    function apilados() {
+      sileo.success('Guardado', { id: 'a', description: 'La pieza quedó en Guardados para verla sin conexión.' });
+      setTimeout(function () { sileo.info('En vivo hoy', { id: 'b', description: 'Sesión de diabetes tipo 2 a las 5:00 p. m.' }); }, 350);
+      setTimeout(function () { sileo.error('Sin conexión', { id: 'c', description: 'No pudimos cargar el video.', action: { label: 'Reintentar', onClick: function () { sileo.dismiss('c'); } } }); }, 700);
+    }
+    // Parámetros para capturas: ?auto=1|morph|promise · ?pos=… · ?theme=… · ?hover=<id> (simula el mouse a los 2,4 s).
+    var q = new URLSearchParams(location.search);
+    if (q.get('pos') || q.get('theme')) montar({ position: q.get('pos') || cfg.position, theme: q.get('theme') || undefined });
+    if (q.get('auto') === '1') apilados();
+    if (q.get('auto') === 'morph') seguidos();
+    if (q.get('auto') === 'promise') sileo.promise(new Promise(function (r) { setTimeout(r, 1200); }), { loading: 'Consultando fuentes…', success: { title: 'Respuesta lista', description: 'Se citaron 3 fuentes aprobadas.' }, error: 'No hubo respuesta' });
+    if (q.get('hover')) setTimeout(function () {
+      var t = document.querySelector('[data-sileo-viewport] [data-sileo-toast]:nth-child(' + q.get('hover') + ')');
+      if (t) t.dispatchEvent(new MouseEvent('mouseenter', { bubbles: false }));
+    }, 2400);
+  </script>
+</body>
+</html>

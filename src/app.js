@@ -1,3 +1,11 @@
+// Persona (AI Elements, variante halo) para todos los orbes de IA. Registro fuera del componente para que Alpine no envuelva
+// las instancias de Rive en proxies; se poda solo: las instancias cuyo elemento ya no está en el DOM se destruyen.
+const PERSONA_LILLY = ['#D52B1E', '#F0705E', '#F8C9CF', '#FFF4F1', '#CFE0FA', '#1F5FA8', '#6B4FBF'];
+// Los orbes pequeños (≤ 40 px) usan una paleta sin paradas claras: a ese tamaño el anillo fino se perdía sobre el disco blanco.
+const PERSONA_LILLY_MINI = ['#D52B1E', '#E24D3E', '#C8102E', '#6B4FBF', '#1F5FA8', '#3772B7', '#D52B1E'];
+const _personas = [];
+function podarPersonas() { for (let i = _personas.length - 1; i >= 0; i--) if (!_personas[i].el.isConnected) { try { _personas[i].p.destruir(); } catch (_) {} _personas.splice(i, 1); } }
+
 function app() {
   return {
     dispositivo: 'iphone', // 'iphone' | 'ipad' | 'desktop' — el marco del prototipo; el contenido se adapta con container queries (@3xl tablet, @6xl escritorio)
@@ -20,7 +28,7 @@ function app() {
       { titulo: 'Criterios para escalar a terapia sistémica', tipo: 'Algoritmo', enfermedad: 'derma', tab: 'tratamiento' },
     ],
     // Consulta al RAG (simulada, fase 2): foco del campo, texto escrito, estado idle | pensando | respuesta y la pregunta enviada.
-    rag: { foco: false, texto: '', estado: 'idle', pregunta: '', abierto: false, modo: 'texto', hilo: [], escuchando: false, dictado: [], fuentesAbierto: false, contexto: '',
+    rag: { foco: false, texto: '', estado: 'idle', pregunta: '', abierto: false, modo: 'texto', hilo: [], escuchando: false, dictado: [], fuentesAbierto: false, contexto: '', hablando: false,
       fuentes: [
         { n: 'Estudios clínicos aprobados por Lilly', on: true, fijo: true },
         { n: 'Guías de práctica clínica', on: true },
@@ -60,7 +68,7 @@ function app() {
     tabs: [ { id: 'diagnostico', nombre: 'Diagnóstico' }, { id: 'tratamiento', nombre: 'Tratamiento' }, { id: 'infografias', nombre: 'Infografías' } ],
     tabBar: [ { id: 'inicio', nombre: 'Inicio', icono: 'house' }, { id: 'guardados', nombre: 'Guardados', icono: 'bookmark' }, { id: 'perfil', nombre: 'Perfil', icono: 'user-round' } ],
     // Contrato compartido (revisión UX): guardados alimenta el bookmark de la nav bar y la pantalla Guardados; el HUD confirma acciones.
-    guardados: [], hudTexto: '', tabMin: false, cargando: false, inicioPrimeraVez: true,
+    guardados: [], tabMin: false, cargando: false, inicioPrimeraVez: true,
     // Contrato compartido: `modal` en true oculta la tab bar (lo pone el agente de Pieza al subir su hoja de pregunta).
     modal: false,
     perfil: { notificaciones: true, envivo: true, intereses: ['diabetes', 'mama'] },
@@ -207,6 +215,23 @@ function app() {
     get guiaActual() { return this.guias[this.pantalla]; },
     // Encuadre de las fotos verticales (1200×1800): la cara queda arriba, así que el recorte se ancla cerca del borde superior.
     posFoto(src) { return { 'img/oscar-tablet.jpg': 'center 10%', 'img/almuerzo-tablet.jpg': 'center 15%', 'img/webinar-oncologo.jpg': 'center 40%', 'img/estudio-pdf.jpg': 'center 25%' }[src] || 'center 50%'; },
+    // Estado del orbe grande de la consulta: cerrada → asleep; escuchando → listening; pensando → thinking; respuesta entrando (2,5 s) → speaking; si no, idle.
+    get personaEstado() {
+      if (!this.rag.abierto) return 'asleep';
+      if (this.rag.escuchando) return 'listening';
+      if (this.rag.estado === 'pensando') return 'thinking';
+      if (this.rag.hablando) return 'speaking';
+      return 'idle';
+    },
+    // Monta un Persona en `el` (tamaño en px, estado inicial) y lo registra con un rol para actualizar en bloque. `mono` → blanco (isla).
+    montarPersona(el, tamano, estado, o = {}) {
+      if (typeof crearPersona !== 'function' || !el) return null;
+      podarPersonas();
+      const p = crearPersona(el, { estado: estado || 'asleep', tamano, colores: o.mono ? ['#FFFFFF', '#FFFFFF'] : (tamano <= 40 ? PERSONA_LILLY_MINI : PERSONA_LILLY) });
+      _personas.push({ p, el, rol: o.rol || 'mini' });
+      return p;
+    },
+    personasSetEstado(estado, rol) { podarPersonas(); _personas.forEach(x => { if (!rol || x.rol === rol) x.p.setEstado(estado); }); },
     get saludo() { const h = new Date().getHours(); return h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches'; },
     get marco() { return this.marcos[this.dispositivo] || this.marcos.iphone; },
     // Escala para que el marco quepa: alto menos la barra del prototipo, ancho menos el panel de guía si está visible. Nunca más de 1.
@@ -271,7 +296,12 @@ function app() {
     ir(p, extra) {
       if (p !== this.pantalla) this.historial.push(this.pantalla);
       this.direccion = 'adelante'; this.transicion++;
-      if (p === 'formacion' && this.enVivoHoy(this.enfermedad)) this.isla('En vivo hoy');
+      if (p === 'formacion' && this.enVivoHoy(this.enfermedad)) {
+        // iPhone: Live Activity en la isla. iPad/escritorio: toast Sileo con acción para entrar a la pieza en vivo.
+        const live = this.formacion[this.enfermedad].find(c => c.formato === 'live' && c.fecha === 'Hoy');
+        if (this.dispositivo === 'iphone') this.isla('En vivo hoy');
+        else this.conSileo(() => sileo.info('En vivo hoy', { id: 'envivo', description: live.titulo.split(':')[0] + ' · ' + ((live.autor.match(/\d{1,2}:\d{2} [ap]m/) || ['6:00 pm'])[0]), action: { label: 'Entrar', onClick: () => this.abrirPieza(live) } }));
+      }
       if (p === 'detalle' && !this.detalle.titulo) this.detalle = this.contenido[this.enfermedad].tratamiento[0], this.tab = 'tratamiento';
       if (p === 'pieza' && !this.pieza.titulo) this.pieza = this.formacion[this.enfermedad][0];
       this.pantalla = p; this.refrescar();
@@ -294,7 +324,10 @@ function app() {
       if (document.activeElement) document.activeElement.blur();
       this.ragBajar();
       clearTimeout(this._rag);
-      if (esperar >= 0) this._rag = setTimeout(() => { this.rag.hilo.push({ rol: 'lilly', ...this.ragRespuestaDe(texto) }); this.rag.estado = 'respuesta'; this.ragBajar(); }, esperar);
+      // iPad/escritorio (sin isla): el estado «consultando» es un toast de promesa; en iPhone lo muestra la Dynamic Island.
+      let listo = null; const promesa = new Promise(r => { listo = r; });
+      if (this.dispositivo !== 'iphone') this.conSileo(() => sileo.promise(promesa, { loading: 'Consultando estudios…', success: 'Respuesta lista', error: 'Sin conexión' }));
+      if (esperar >= 0) this._rag = setTimeout(() => { this.rag.hilo.push({ rol: 'lilly', ...this.ragRespuestaDe(texto) }); this.rag.estado = 'respuesta'; this.rag.hablando = true; clearTimeout(this._habla); this._habla = setTimeout(() => { this.rag.hablando = false; }, 2500); this.ragBajar(); listo(); }, esperar);
     },
     // Si la pregunta no está en el banco, responde con un texto genérico coherente con la enfermedad (o con Lilly 360).
     // La respuesta trae la pieza aprobada que la sustenta (`pieza`, con su enfermedad y pestaña) para abrirla desde el hilo.
@@ -403,7 +436,27 @@ function app() {
       else { this.guardados.unshift({ ...c, enfermedad: this.enfermedad, tab: this.tab }); this.hud('Guardado'); }
     },
     esGuardado(c) { return !!c && this.guardados.some(g => g.titulo === c.titulo); },
-    hud(texto, ms = 1800) { clearTimeout(this._hud); this.hudTexto = texto; this.$nextTick(() => lucide.createIcons()); this._hud = setTimeout(() => { this.hudTexto = ''; }, ms); },
+    // Avisos con Sileo (src/sileo.js), montado dentro de .proto-main para que viaje con el marco escalado. Títulos sin Capitalize.
+    montarSileo() {
+      if (typeof sileo === 'undefined' || !this.$refs.main) return;
+      // Ojo con los nombres de Sileo: theme 'dark' es la cápsula clara (#f2f2f2, texto en tinta), la que va sobre nuestro fondo claro.
+      sileo.mount(this.$refs.main, { position: 'top-center', theme: 'dark', palette: 'lilly', offset: { top: this.dispositivo === 'iphone' ? 52 : 16 }, options: { styles: { title: 'sileo-normal' } } });
+      // Los avisos disparados antes del montaje (p. ej. desde ?p= en init) esperan aquí: si no, Sileo se montaría solo en el body.
+      this._sileoListo = true; (this._sileoCola || []).splice(0).forEach(fn => fn());
+    },
+    conSileo(fn) { if (typeof sileo === 'undefined') return; if (this._sileoListo) fn(); else (this._sileoCola = this._sileoCola || []).push(fn); },
+    hud(texto, ms) {
+      if (typeof sileo === 'undefined') return;
+      const extra = ms ? { duration: ms } : {};
+      const mapa = {
+        'Guardado': () => sileo.success('Guardado', { description: 'En Guardados', action: { label: 'Ver', onClick: () => this.irRaiz('guardados') }, ...extra }),
+        'Quitado de Guardados': () => sileo.info('Quitado de Guardados', extra),
+        'Enlace copiado': () => sileo.success('Enlace copiado', extra),
+        'Cuenta creada': () => sileo.success('Cuenta creada', { description: 'Bienvenido a Lilly 360', ...extra }),
+        'Sesión iniciada': () => sileo.success('Sesión iniciada', extra),
+      };
+      this.conSileo(mapa[texto] || (() => sileo.success(texto, extra)));
+    },
     irRaiz(p) { this.historial = []; this.direccion = 'atras'; this.transicion++; this.pantalla = p; this.tabMin = false; this.refrescar(); if (this.dispositivo === 'iphone' && p === 'inicio' && this.hoja.detent === 'large') this.hojaIr('medium'); },
     // Botón de búsqueda de la tab bar (UITab.search): desde cualquier pantalla a la hoja en large sin enfermedad y con foco.
     buscarGlobal() { this.irRaiz('inicio'); this.hoja.enfermedad = null; this.hoja.texto = ''; this.hojaIr('large'); this.$nextTick(() => { if (this.$refs.hojaInput) this.$refs.hojaInput.focus({ preventScroll: true }); }); },
@@ -418,6 +471,7 @@ function app() {
       if (this._iniciado) return; this._iniciado = true;
       // ?p=tema&e=mama&t=tratamiento abre una pantalla directa: sirve para pantallazos y para compartir un enlace.
       const q = new URLSearchParams(location.search);
+      if (q.get('captura') === '1') document.body.classList.add('sin-animacion');
       if (q.get('e') && this.enfermedades[q.get('e')]) this.enfermedad = q.get('e');
       if (q.get('t')) this.tab = q.get('t');
       if (q.get('d') && this.marcos[q.get('d')]) this.dispositivo = q.get('d');
@@ -429,14 +483,20 @@ function app() {
       this.$watch('respuesta', () => this.refrescar());
       this.$watch('guia', () => this.refrescar());
       this.$watch('island', () => this.refrescar());
-      ['rag.estado', 'rag.abierto', 'rag.modo', 'rag.fuentesAbierto', 'rag.escuchando', 'rag.hilo', 'hoja.detent', 'hoja.enfermedad', 'hoja.texto', 'guardados', 'hudTexto', 'tabMin', 'rag.contexto', 'pantalla'].forEach(k => this.$watch(k, () => this.$nextTick(() => lucide.createIcons())));
+      ['rag.estado', 'rag.abierto', 'rag.modo', 'rag.fuentesAbierto', 'rag.escuchando', 'rag.hilo', 'hoja.detent', 'hoja.enfermedad', 'hoja.texto', 'guardados', 'tabMin', 'rag.contexto', 'pantalla'].forEach(k => this.$watch(k, () => this.$nextTick(() => lucide.createIcons())));
       // El dispositivo se persiste en ?d= para poder compartir y capturar; la escala sigue el tamaño de la ventana.
       this.$watch('dispositivo', d => { const u = new URL(location.href); u.searchParams.set('d', d); history.replaceState(null, '', u); this.refrescar(); });
-      window.addEventListener('resize', () => { this.ventana = { w: window.innerWidth, h: window.innerHeight }; this.hojaMedir(); });
+      // Solo un cambio real de ventana (> 2 px) recalcula la escala: ni el canvas de Persona ni un ResizeObserver interno la tocan.
+      window.addEventListener('resize', () => { const w = window.innerWidth, h = window.innerHeight; if (Math.abs(w - this.ventana.w) < 2 && Math.abs(h - this.ventana.h) < 2) return; this.ventana = { w, h }; this.hojaMedir(); });
       // La hoja se mide con el DOM listo; ?hoja=small|medium|large fija el detent para capturas.
       // Con ?hoja= el detent se aplica sin animar (is-dragging quita la transición) para que la captura no salga a mitad del snap.
       this.$nextTick(() => { this.hojaMedir(); if (q.get('hoja')) { this.hoja.arrastrando = true; this.hojaIr(q.get('hoja')); this.$nextTick(() => { this.hoja.arrastrando = false; }); } });
-      this.$watch('dispositivo', () => setTimeout(() => this.hojaMedir(), 420));
+      this.$watch('dispositivo', () => setTimeout(() => { this.hojaMedir(); this.montarSileo(); }, 420));
+      this.$nextTick(() => this.montarSileo());
+      // Persona: el orbe grande sigue `personaEstado`; los pequeños duermen con la consulta cerrada y despiertan al abrirla.
+      this.$watch('personaEstado', e => this.personasSetEstado(e, 'grande'));
+      // Los pequeños van en idle en reposo (asleep es imperceptible a 32 px sobre vidrio) y en listening con la consulta abierta.
+      this.$watch('rag.abierto', a => this.personasSetEstado(a ? 'listening' : 'idle', 'mini'));
       // ?rag=1 abre el foco con sugerencias, ?rag=2 muestra la respuesta y ?rag=3 congela el estado «pensando»: solo para capturas.
       const rag = q.get('rag');
       if (rag === '1') this.rag.foco = true;
