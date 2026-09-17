@@ -172,7 +172,7 @@
   @keyframes siri-card-in { from { opacity: 0; transform: translateY(-16px) scale(.98); } to { opacity: 1; transform: none; } }
   .phone-screen { transition: filter 380ms cubic-bezier(.32,.72,0,1); }
   .phone-screen.is-velo-drag { transition: none; }
-  .phone-screen.is-dimmed { filter: blur(6px) opacity(.5); }
+  .phone-screen.is-dimmed { filter: blur(8px) opacity(.55); }
   @media (prefers-reduced-motion: reduce) { .siri-glow, .siri-glow::before, .siri-glow::after, .lilly-glow::before, .lilly-glow::after, .siri-card, .siri-pill { animation: none !important; } .siri-glow.is-on { --siri-w: 8px; } }
   /* ===== Marcos del prototipo: un solo marco que muta (iPhone 17 Pro Max · iPad 11" · ventana macOS) ===== */
   .proto-fit   { transition: width .38s cubic-bezier(.32,.72,0,1), height .38s cubic-bezier(.32,.72,0,1); }
@@ -228,7 +228,7 @@
   .ios-tabbar.is-oculta { transform: translate(-50%, 120px); opacity: 0; pointer-events: none; }
   /* ===== Modo consulta (RAG): panel, orbe 3D, onda de voz, barras, micrófono, interruptores ===== */
   .consulta-panel { box-shadow: 0 -12px 40px rgba(0,0,0,.12), 0 24px 60px rgba(0,0,0,.18); }
-  .ios-hoja.is-dimmed { filter: blur(6px) opacity(.6); }
+  .ios-hoja.is-dimmed { filter: blur(8px) opacity(.55); }
   @property --orb3d { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
   /* Esfera tipo canica: conic difuminado que gira detrás, brillo arriba-izquierda y sombra interior fijos encima. */
   .siri-orb-3d { position: relative; width: 132px; height: 132px; border-radius: 50%; }
@@ -364,6 +364,10 @@
   .arq-flecha::after { content:''; position:absolute; left:50%; bottom:0; width:9px; height:9px; border-right:1.5px solid #8A88A0; border-bottom:1.5px solid #8A88A0; transform:translateX(-50%) rotate(45deg); }
   .arq-leyenda { display:inline-flex; align-items:center; gap:7px; font-size:12.5px; color:#55545F; }
   .arq-punto { width:9px; height:9px; border-radius:999px; display:inline-block; }
+
+  /* Un solo velo para todo lo que se abre encima: aclara y difumina, nunca oscurece.
+     Mismos valores que el velo de la hoja inferior, que es la referencia. */
+  .velo { background: rgba(255,255,255,.3); -webkit-backdrop-filter: blur(9px) saturate(1.05); backdrop-filter: blur(9px) saturate(1.05); }
 </style>
 </head>
 <body class="font-sans bg-[#0B0B0D] text-white h-screen overflow-hidden antialiased" x-data="app()" x-init="init()" x-cloak>
@@ -896,7 +900,7 @@
             <div x-show="ficha" x-cloak class="absolute inset-0 z-40 flex flex-col justify-end @3xl:justify-start @3xl:items-center @3xl:pt-16"
                  x-transition:enter="transition-opacity duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                  x-transition:leave="transition-opacity duration-300 delay-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-              <div class="absolute inset-0 bg-ink/30 backdrop-blur-[4px]" aria-hidden="true" @click="ficha = false"></div>
+              <div class="absolute inset-0 velo" aria-hidden="true" @click="ficha = false"></div>
               <div x-show="ficha" role="dialog" aria-modal="true" :aria-label="'Información para prescribir de ' + enf.producto" @keydown.escape.window="ficha = false"
                    x-transition:enter="transition-transform duration-[420ms] ease-[cubic-bezier(.32,.72,0,1)]" x-transition:enter-start="translate-y-full @3xl:translate-y-4" x-transition:enter-end="translate-y-0"
                    x-transition:leave="transition-transform duration-300 ease-[cubic-bezier(.32,.72,0,1)]" x-transition:leave-start="translate-y-0" x-transition:leave-end="translate-y-full @3xl:translate-y-4"
@@ -1048,7 +1052,7 @@
             <div x-show="hoja" x-cloak class="absolute inset-0 z-30 flex flex-col justify-end @3xl:hidden"
                  x-transition:enter="transition-opacity duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                  x-transition:leave="transition-opacity duration-300 delay-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-              <div class="absolute inset-0 bg-ink/30 backdrop-blur-[4px]" aria-hidden="true"></div>
+              <div class="absolute inset-0 velo" aria-hidden="true"></div>
               <div x-show="hoja" role="dialog" aria-modal="true" aria-label="Pregunta al minuto 5"
                    x-transition:enter="transition-transform duration-[420ms] ease-[cubic-bezier(.32,.72,0,1)]" x-transition:enter-start="translate-y-full" x-transition:enter-end="translate-y-0"
                    x-transition:leave="transition-transform duration-300 ease-[cubic-bezier(.32,.72,0,1)]" x-transition:leave-start="translate-y-0" x-transition:leave-end="translate-y-full"
@@ -1080,7 +1084,7 @@
             <div x-show="ficha" x-cloak class="absolute inset-0 z-40 flex flex-col justify-end @3xl:justify-start @3xl:items-center @3xl:pt-16"
                  x-transition:enter="transition-opacity duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                  x-transition:leave="transition-opacity duration-300 delay-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-              <div class="absolute inset-0 bg-ink/30 backdrop-blur-[4px]" aria-hidden="true" @click="ficha = false"></div>
+              <div class="absolute inset-0 velo" aria-hidden="true" @click="ficha = false"></div>
               <div x-show="ficha" role="dialog" aria-modal="true" :aria-label="'Información para prescribir de ' + enf.producto" @keydown.escape.window="ficha = false"
                    x-transition:enter="transition-transform duration-[420ms] ease-[cubic-bezier(.32,.72,0,1)]" x-transition:enter-start="translate-y-full @3xl:translate-y-4" x-transition:enter-end="translate-y-0"
                    x-transition:leave="transition-transform duration-300 ease-[cubic-bezier(.32,.72,0,1)]" x-transition:leave-start="translate-y-0" x-transition:leave-end="translate-y-full @3xl:translate-y-4"
