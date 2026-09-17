@@ -378,7 +378,7 @@
     -webkit-mask: url(img/lilly-logo.png) no-repeat center/contain; mask: url(img/lilly-logo.png) no-repeat center/contain; }
 
   /* ===== La historia · lámina narrativa (negro + cortina de luz roja, como las láminas de Andrés) ===== */
-  .hist { position: relative; background: #050505; color: #fff; scroll-snap-type: y proximity; }
+  .hist { position: relative; background: #050505; color: #fff; }
   .hist-luz { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: .9;
     background:
       repeating-linear-gradient(90deg, rgba(213,43,30,0) 0 42px, rgba(213,43,30,.22) 42px 64px, rgba(213,43,30,0) 64px 106px),
@@ -386,6 +386,8 @@
     -webkit-mask-image: radial-gradient(75% 60% at 60% 80%, #000, transparent 75%);
     mask-image: radial-gradient(75% 60% at 60% 80%, #000, transparent 75%); filter: blur(1px); }
   .hist > section { position: relative; z-index: 1; }
+  .hist > .hist-sec, .hist > .hist-sec--final { padding-left: 0; padding-right: 0; }
+  .hist { padding: 0 clamp(20px, 5vw, 72px) clamp(40px, 8vh, 96px); }
   /* Entrada: el contenido sube y aparece cuando la sección entra en cuadro */
   .hist-anim { opacity: 0; transform: translateY(34px); transition: opacity .9s cubic-bezier(.32,.72,0,1), transform .9s cubic-bezier(.32,.72,0,1); }
   .is-dentro .hist-anim { opacity: 1; transform: none; }
@@ -393,23 +395,26 @@
   .is-dentro .hist-anim:nth-child(3) { transition-delay: .18s; }
   .hist-par { will-change: transform; }
   @media (prefers-reduced-motion: reduce) { .hist-anim { opacity: 1; transform: none; } .hist-par { transform: none !important; } }
-  .hist-sec { min-height: 100vh; scroll-snap-align: start; display: grid; align-items: center; gap: 56px;
-    grid-template-columns: 1fr; padding: 104px clamp(32px, 7vw, 132px); max-width: 1680px; margin: 0 auto; width: 100%; }
-  @media (min-width: 1100px) { .hist-sec { grid-template-columns: 1.05fr .95fr; gap: clamp(40px, 5vw, 88px); } }
-  .hist-col { max-width: 40rem; }
+  .hist-sec { display: grid; grid-template-columns: 1fr; align-items: stretch; width: min(100%, 1240px);
+    margin: 0 auto clamp(56px, 8vh, 104px); border: 1px solid rgba(255,255,255,.1); border-radius: 26px; overflow: hidden;
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.012)); scroll-margin-top: 76px; }
+  .hist > section:first-of-type + .hist-sec { margin-top: 0; }
+  @media (min-width: 900px) { .hist-sec { grid-template-columns: 1.02fr .98fr; } }
+  .hist-col { max-width: 40rem; padding: clamp(32px, 5vw, 56px); align-self: center; }
+  @media (min-width: 900px) { .hist-sec:nth-of-type(even) .hist-media { order: -1; } }
   .hist-kicker { font-size: 19px; color: rgba(255,255,255,.8); }
-  .hist-h1 { font-size: clamp(44px, 6vw, 76px); font-weight: 600; line-height: 1.02; letter-spacing: -.025em; }
-  .hist-h2 { font-size: clamp(34px, 4.4vw, 56px); font-weight: 600; line-height: 1.08; letter-spacing: -.02em; }
+  .hist-h1 { font-size: clamp(36px, 4.4vw, 58px); font-weight: 600; line-height: 1.04; letter-spacing: -.025em; }
+  .hist-h2 { font-size: clamp(28px, 3.1vw, 40px); font-weight: 600; line-height: 1.1; letter-spacing: -.02em; }
   .hist-rol { margin-top: 10px; font-size: 17px; color: rgba(255,255,255,.55); }
-  .hist-p { font-size: 17.5px; line-height: 1.65; color: rgba(255,255,255,.82); }
+  .hist-p { font-size: 16.5px; line-height: 1.62; color: rgba(255,255,255,.72); }
   .hist-pie { font-size: 16px; line-height: 1.6; color: rgba(255,255,255,.55); }
   .hist-dato { display: flex; align-items: center; gap: 18px; border: 1px solid rgba(213,43,30,.5); border-radius: 16px; padding: 16px 22px; max-width: 40rem; }
   .hist-dato-n { font-size: 40px; font-weight: 600; line-height: 1; }
   .hist-dato-u { font-size: 12px; color: rgba(255,255,255,.5); align-self: flex-end; padding-bottom: 4px; }
   .hist-dato-t { font-size: 15px; color: rgba(255,255,255,.75); border-left: 1px solid rgba(255,255,255,.14); padding-left: 18px; }
   /* Foto con la muesca de las láminas */
-  .hist-media { display: flex; justify-content: center; }
-  .hist-foto { position: relative; width: min(100%, 520px); aspect-ratio: 4/5; border-radius: 30px; overflow: hidden; margin: 0; }
+  .hist-media { display: flex; }
+  .hist-foto { position: relative; width: 100%; min-height: 340px; overflow: hidden; margin: 0; }
   .hist-foto img { width: 100%; height: 100%; object-fit: cover; }
   /* Carga en mosaico, como las imágenes de Sanity: las celdas se retiran en desorden y revelan la foto */
   .hist-px { position: absolute; inset: 0; display: grid; pointer-events: none; z-index: 2; }
@@ -418,24 +423,32 @@
   .hist-foto img { transition: transform .9s cubic-bezier(.32,.72,0,1), filter .9s; transform: scale(1.06); filter: saturate(.7); }
   .hist-foto.is-revelada img { transform: scale(1); filter: none; }
   /* Momentos «qué hizo» */
-  .hist-sec--proto { grid-template-columns: 1fr; justify-items: center; align-content: center; gap: 28px; }
-  @media (min-width: 1100px) { .hist-sec--proto { grid-template-columns: 1fr; } }
-  .hist-titulo-proto { font-size: clamp(19px, 2vw, 25px); text-align: center; color: rgba(255,255,255,.92); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
+  .hist-sec--proto { grid-template-columns: 1fr; padding: clamp(28px, 4vw, 44px); background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.01)); }
+  @media (min-width: 900px) { .hist-sec--proto { grid-template-columns: 1fr; } }
+  .hist-titulo-proto { font-size: clamp(18px, 1.7vw, 22px); color: rgba(255,255,255,.95); display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
   .hist-marca { display: inline-flex; align-items: center; gap: 7px; font-weight: 600; }
   .hist-marca--grande { gap: 10px; }
-  .hist-proto { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: center; width: 100%; max-width: 1320px; }
-  @media (min-width: 1100px) { .hist-proto { grid-template-columns: minmax(230px, 1fr) minmax(280px, 320px) minmax(230px, 1fr); gap: clamp(28px, 3.5vw, 64px); } }
-  .hist-pantalla { width: 100%; max-width: 320px; justify-self: center; }
-  .hist-notas { display: flex; flex-direction: column; gap: 56px; }
-  .hist-notas--der { text-align: left; }
-  @media (min-width: 1100px) { .hist-notas { text-align: right; } .hist-notas--der { text-align: left; } }
-  .hist-nota { position: relative; font-size: 15.5px; line-height: 1.62; color: rgba(255,255,255,.78); max-width: 32ch; }
-  .hist-notas .hist-nota { margin-left: auto; } .hist-notas--der .hist-nota { margin-left: 0; margin-right: auto; }
-  .hist-nota::before { content: ''; display: block; width: 46px; height: 1px; background: rgba(255,255,255,.35); margin: 0 0 14px auto; }
-  .hist-notas--der .hist-nota::before { margin: 0 auto 14px 0; }
-  @media (max-width: 1099px) { .hist-nota::before { margin: 0 0 12px 0; } }
+  .hist-proto { position: relative; margin-top: 22px; display: grid; grid-template-columns: 1fr; width: 100%;
+    border: 1px solid rgba(255,255,255,.1); border-radius: 20px; overflow: hidden; background: #070707; }
+  .hist-proto::before { content: ''; position: absolute; inset: 0 0 auto; height: 78%; pointer-events: none;
+    background: radial-gradient(52% 78% at 50% 100%, rgba(213,43,30,.34), transparent 72%); filter: blur(24px); }
+  
+  .hist-pantalla { position: relative; order: -1; width: 100%; max-width: 290px; justify-self: center; margin: clamp(26px, 4vw, 40px) 0 0;
+    mask-image: linear-gradient(180deg, #000 78%, transparent); -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent); }
+  .hist-notas { order: 1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(255,255,255,.1); position: relative; }
+  .hist-notas:first-of-type { border-top: 1px solid rgba(255,255,255,.1); margin-top: clamp(-34px, -2.6vw, -18px); }
+  .hist-notas + .hist-notas { border-top: 1px solid rgba(255,255,255,.1); }
+  @media (min-width: 900px) { .hist-notas { grid-template-columns: repeat(2, 1fr); } }
+  
+  
+  
+  .hist-nota { position: relative; font-size: 14.5px; line-height: 1.55; color: rgba(255,255,255,.62); background: #070707; padding: 20px clamp(18px, 2vw, 26px); margin: 0; }
+  
+  
+  
   /* Los cuatro momentos */
-  .hist-sec--cierre { align-items: center; }
+  .hist-sec--cierre, .hist-sec--parrilla { border: 0; background: none; padding: clamp(24px, 4vw, 40px) 0; }
+  .hist-sec--cierre .hist-col, .hist-sec--parrilla .hist-col { padding-left: 0; padding-right: clamp(24px, 4vw, 56px); }
   .hist-momentos { display: flex; flex-direction: column; gap: 34px; list-style: none; padding: 0; margin: 0; }
   .hist-momento { display: flex; gap: 20px; align-items: flex-start; }
   .hist-num { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px;
@@ -443,7 +456,7 @@
   .hist-momento-t { font-size: 19px; font-weight: 600; }
   .hist-momento-d { margin-top: 6px; font-size: 15.5px; line-height: 1.6; color: rgba(255,255,255,.6); max-width: 34rem; }
   /* Cierre */
-  .hist-sec--final { grid-template-columns: 1fr; justify-items: center; align-content: center; text-align: center; }
+  .hist-sec--final { grid-template-columns: 1fr; justify-items: center; align-content: center; text-align: center; border: 0; background: none; padding: clamp(60px, 12vh, 120px) 0; }
   .hist-btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; height: 52px; padding: 0 26px; border-radius: 9999px; background: #D52B1E; color: #fff; font-size: 16px; font-weight: 600; white-space: nowrap; transition: transform .15s, background .2s; }
   .hist-btn:hover { background: #bb2418; } .hist-btn:active { transform: scale(.97); }
   .hist-btn--ghost { background: rgba(255,255,255,.08); } .hist-btn--ghost:hover { background: rgba(255,255,255,.14); }
@@ -455,7 +468,7 @@
     color: rgba(255,255,255,.75); opacity: 0; transition: opacity .2s; pointer-events: none; }
   .hist-punto:hover span { opacity: 1; }
 
-  .hist-ver { grid-column: 1 / -1; justify-self: center; margin-top: 12px; display: inline-flex; align-items: center; gap: 9px;
+  .hist-ver { grid-column: 1 / -1; justify-self: end; margin-top: 20px; display: inline-flex; align-items: center; gap: 9px;
     height: 44px; padding: 0 20px; border-radius: 9999px; border: 1px solid rgba(255,255,255,.22); color: rgba(255,255,255,.85);
     font-size: 14.5px; transition: background .2s, border-color .2s, transform .15s; }
   .hist-ver:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.4); }
