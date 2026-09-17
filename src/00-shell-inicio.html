@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Lilly 360 · Prototipo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <script src="https://cdn.tailwindcss.com?plugins=container-queries"></script>
 <script>
@@ -339,6 +340,30 @@
   .ph-bar { width:3px; height:12px; border-radius:2px; background:#1d4aff; }
   .ph-acts { display:flex; align-items:center; gap:6px; font-size:11.5px; color:#6b6f63; }
   .ph-title { padding:4px 14px 0; font-size:15px; font-weight:600; letter-spacing:-0.005em; }
+
+  /* ===== Arquitectura tecnológica · valores del mockup de Leonardo ===== */
+  .arq { background:#FAF9F5; color:#16161D; font-family:"IBM Plex Sans", system-ui, sans-serif; }
+  .arq-h1 { font-family:"Space Grotesk", sans-serif; font-weight:500; font-size:30px; letter-spacing:-0.01em; margin:0; }
+  .arq-h2 { font-family:"Space Grotesk", sans-serif; font-weight:500; font-size:15px; color:#3B3B6E; margin:0; }
+  .arq-sub { font-size:14px; color:#5B5A68; margin:0; }
+  .arq-panel { background:#fff; border:1px solid #D7D5E2; border-radius:16px; padding:18px; display:flex; flex-direction:column; gap:12px; }
+  .arq-nucleo { background:#fff; border:1.5px solid #3B3B6E; border-radius:18px; padding:18px; display:flex; flex-direction:column; gap:14px; }
+  .arq-card { display:block; width:100%; text-align:left; border:1px solid #E3E1EA; border-radius:10px; padding:11px 13px; background:#FCFBF8; transition:box-shadow .2s, transform .2s, border-color .2s; }
+  .arq-card:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(22,22,29,.07); }
+  .arq-card.is-sel { box-shadow:0 0 0 2px #3B3B6E; }
+  .arq-name { font-family:"Space Grotesk", sans-serif; font-weight:500; font-size:15px; margin:0 0 3px; }
+  .arq-desc { font-size:12.5px; color:#55545F; margin:0; line-height:1.35; }
+  .arq-card.p { border-color:#CFCAEE; } .arq-card.p .arq-name { color:#443A9E; }
+  .arq-card.d { border-color:#BFE0D4; } .arq-card.d .arq-name { color:#0E6B54; }
+  .arq-card.x { border-color:#EED4C6; } .arq-card.x .arq-name { color:#914620; }
+  .arq-card.g { border-color:#DCDAD0; } .arq-card.g .arq-name { color:#46453F; }
+  .arq-group { border:1px dashed #B7B4CA; border-radius:12px; padding:13px; display:flex; flex-direction:column; gap:9px; }
+  .arq-glabel { font-family:"Space Grotesk", sans-serif; font-size:12.5px; font-weight:500; color:#56548A; margin:0; }
+  .arq-chip { border:1px solid #DCDAD0; border-radius:999px; padding:7px 14px; font-size:13px; color:#46453F; background:#FCFBF8; }
+  .arq-flecha { display:block; width:1.5px; height:26px; background:#8A88A0; position:relative; }
+  .arq-flecha::after { content:''; position:absolute; left:50%; bottom:0; width:9px; height:9px; border-right:1.5px solid #8A88A0; border-bottom:1.5px solid #8A88A0; transform:translateX(-50%) rotate(45deg); }
+  .arq-leyenda { display:inline-flex; align-items:center; gap:7px; font-size:12.5px; color:#55545F; }
+  .arq-punto { width:9px; height:9px; border-radius:999px; display:inline-block; }
 </style>
 </head>
 <body class="font-sans bg-[#0B0B0D] text-white h-screen overflow-hidden antialiased" x-data="app()" x-init="init()" x-cloak>
@@ -348,15 +373,15 @@
   <div class="flex shrink-0 items-center gap-2.5 whitespace-nowrap">
     <span class="h-2 w-2 rounded-full bg-lilly"></span>
     <span class="font-semibold text-[15px] tracking-tight">Lilly 360</span>
-    <span x-show="pantalla !== 'dashboard'" class="text-white/35 text-[13px]">prototipo navegable</span>
+    <span x-show="!sinMarco" class="text-white/35 text-[13px]">prototipo navegable</span>
   </div>
-  <template x-if="pantalla === 'dashboard'">
+  <template x-if="sinMarco">
     <div class="ml-3 flex shrink-0 items-center gap-2 whitespace-nowrap">
-      <span class="inline-flex h-7 items-center gap-1.5 rounded-full bg-white/8 px-3 text-[12px] text-white/70"><span class="h-1.5 w-1.5 rounded-full bg-lillyblue"></span>Fuera del app · herramienta de analítica</span>
+      <span class="inline-flex h-7 items-center gap-1.5 rounded-full bg-white/8 px-3 text-[12px] text-white/70"><span class="h-1.5 w-1.5 rounded-full bg-lillyblue"></span><span x-text="pantalla === 'dashboard' ? 'Fuera del app · herramienta de analítica' : 'Fuera del app · lámina de la propuesta'"></span></span>
       <button @click="irRaiz('inicio')" class="inline-flex h-7 shrink-0 items-center whitespace-nowrap rounded-full bg-white px-3 text-[12px] font-semibold text-black hover:bg-white/90 transition-colors">Volver al prototipo</button>
     </div>
   </template>
-  <div x-show="pantalla !== 'dashboard'" class="proto-seg ml-4 hidden sm:inline-flex">
+  <div x-show="!sinMarco" class="proto-seg ml-4 hidden sm:inline-flex">
     <template x-for="d in dispositivos" :key="d.id">
       <button @click="dispositivo = d.id" :aria-selected="dispositivo === d.id ? 'true' : 'false'" x-text="d.nombre"></button>
     </template>
@@ -405,7 +430,7 @@
   </aside>
 
   <!-- Marco: uno solo, muta entre iPhone, iPad y ventana de escritorio y se escala para caber en la vista -->
-  <section x-show="pantalla !== 'dashboard'"  class="flex-1 flex items-center justify-center p-8 overflow-hidden fade-in">
+  <section x-show="!sinMarco"  class="flex-1 flex items-center justify-center p-8 overflow-hidden fade-in">
     <div class="proto-fit" :style="`width:${marco.w * escala}px;height:${marco.h * escala}px`">
       <div class="proto-frame" :class="'is-' + dispositivo" :style="`width:${marco.w}px;height:${marco.h}px;transform:scale(${escala})`">
       <div class="bg-scene proto-screen text-ink" :data-tinte="pantalla === 'inicio' ? '' : enfermedad">
@@ -483,7 +508,7 @@
         <!-- Aurora solo en el Inicio, en los tres dispositivos: detrás del contenido, encima del .bg-scene, sin tocar el tinte de las otras pantallas -->
         <div x-show="pantalla === 'inicio' || pantalla === 'registro'"  class="aurora fade-in" aria-hidden="true"></div>
         <!-- Nav bar iOS 26: Atrás en círculo de vidrio, título compacto (el de la pieza en Detalle y Pieza), acciones orbe · bookmark · share -->
-        <div class="ios-navbar" :class="{ 'is-scrolled': scrolled }" x-show="!['inicio', 'guardados', 'perfil', 'registro', 'dashboard'].includes(pantalla) && !(dispositivo === 'iphone' && pantalla === 'tema')">
+        <div class="ios-navbar" :class="{ 'is-scrolled': scrolled }" x-show="!['inicio', 'guardados', 'perfil', 'registro', 'dashboard', 'arquitectura'].includes(pantalla) && !(dispositivo === 'iphone' && pantalla === 'tema')">
           <button @click="atras()" class="ios-back glass press" aria-label="Atrás"><i data-lucide="chevron-left" class="h-[22px] w-[22px]"></i></button>
           <span class="truncate text-[17px] font-semibold text-ink pointer-events-none transition-opacity duration-300"
                 :class="['detalle', 'pieza'].includes(pantalla) && dispositivo === 'iphone' ? ['relative flex-1 min-w-0 px-3 text-left', scrolled ? 'opacity-100' : 'opacity-0'] : 'absolute left-1/2 -translate-x-1/2 max-w-[50%]'"

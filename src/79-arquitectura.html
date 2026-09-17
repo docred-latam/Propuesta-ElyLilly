@@ -1,0 +1,195 @@
+          <!-- ============ ARQUITECTURA TECNOLÓGICA ============
+               La infraestructura que propone Leonardo, fuera del marco del teléfono (como el back office): es la lámina
+               que se presenta al cliente, no una pantalla del app. Replica los valores del mockup de referencia
+               (Downloads/Arquitectura tecnológica-html): fondo #FAF9F5, paneles blancos de borde #D7D5E2, tarjetas por
+               familia (morado = plataforma, verde = datos, naranja = servicios, gris = corporativo) y tipografías
+               Space Grotesk + IBM Plex Sans. Se le añadió el detalle lateral: al elegir una pieza se explica por qué está. -->
+<script>
+            function arqui() {
+              return {
+                sel: null,
+                // Cada pieza lleva el «por qué» que hay que poder responder en la reunión.
+                porque: {
+                  'Cloudflare Stream': 'Video en vivo y bajo demanda sin montar servidores de streaming. Las URLs firmadas evitan que un contenido médico circule fuera de la plataforma.',
+                  'Algolia': 'La búsqueda tiene que responder en menos de un segundo. Los índices separados por audiencia evitan que un médico vea contenido que no le corresponde.',
+                  'Cloudinary': 'Las guías, infografías y PDF se sirven optimizados por dispositivo, sin que el equipo de contenido tenga que exportar cada tamaño.',
+                  'Amazon SES': 'Los correos de la plataforma (acceso, recordatorio de webinar, resumen semanal) salen del mismo AWS, sin proveedor extra.',
+                  'Lilly Passport': 'Es el login corporativo de Lilly. El consentimiento del profesional queda registrado del lado del cliente, no del nuestro.',
+                  'Auth0': 'Se sienta delante de Passport para resolver passkeys, biometría y acceso con Google o LinkedIn sin tocar el sistema corporativo.',
+                  'Next.js + Payload': 'La misma app sirve el frontend y el panel de edición. El equipo de Lilly publica contenido sin pasar por desarrollo, que es requisito del brief.',
+                  'API NestJS': 'Resuelve los deeplinks de campaña, registra cada evento y habla con el CRM. Separada del frontend para poder escalarla aparte.',
+                  'PostgreSQL (RDS)': 'Contenido y eventos por profesional, en esquemas separados. Es la base de la trazabilidad que pide Lilly.',
+                  'PostHog': 'Mapas de calor, grabación de sesión y pruebas A/B. Es la herramienta del back office que ya viste.',
+                  'Cube.js': 'El modelo semántico que convierte los eventos crudos en el reporte mensual, sin que nadie escriba SQL a mano.',
+                  'OCE / CRM': 'Devuelve al representante qué consumió cada profesional, para decidir la siguiente mejor acción.',
+                  'Repositorio MLR': 'El contenido médico y promocional ya aprobado entra desde aquí: la plataforma no inventa material, lo distribuye.',
+                  'ECS Fargate': 'Contenedores sin administrar servidores, con los tres ambientes que pide Lilly: desarrollo, UAT y producción.',
+                  'Terraform': 'La infraestructura queda escrita en código: se puede auditar, versionar y levantar de nuevo si hay que recuperarla.',
+                  'CloudFront + WAF': 'CDN para que el contenido cargue rápido en toda Colombia, y cortafuegos perimetral delante de la aplicación.',
+                  'GitHub Actions': 'Cada cambio pasa por pruebas y se despliega solo. Es lo que sostiene el ritmo de entregas quincenales.',
+                  'Sentry': 'Si un médico encuentra un error, el equipo lo ve con el detalle técnico antes de que alguien lo reporte.',
+                  'CloudWatch': 'Métricas y alertas de disponibilidad: es como se demuestra el cumplimiento del acuerdo de servicio.',
+                  'BrowserStack': 'Pruebas en navegadores y dispositivos reales, porque el médico entra desde lo que tenga a mano.',
+                  'CodeQL + Dependabot': 'Escaneo de vulnerabilidades y de dependencias en cada cambio, requisito habitual del área de seguridad de una farmacéutica.',
+                },
+                elegir(n) { this.sel = this.sel === n ? null : n; this.$nextTick(() => lucide.createIcons()); },
+              };
+            }
+</script>
+
+          <div x-show="pantalla === 'arquitectura'" x-data="arqui()" class="screen-enter flex-1 min-w-0 h-[calc(100vh-56px)] overflow-y-auto scroll-hide arq">
+            <div class="mx-auto max-w-[1680px] px-10 py-9">
+
+              <!-- Cabecera -->
+              <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                <h1 class="arq-h1">Arquitectura tecnológica — Lilly 360</h1>
+                <p class="arq-sub">Plataforma digital para profesionales de la salud</p>
+                <span class="ml-auto arq-sub text-[12.5px]">Propuesta de Leonardo · sobre la nube de Lilly</span>
+              </div>
+
+              <!-- Diagrama: tres columnas, el núcleo al centro -->
+              <div class="mt-6 grid gap-8 items-start grid-cols-1 xl:grid-cols-[340px_1fr_340px]">
+
+                <!-- Izquierda -->
+                <div class="flex flex-col gap-5">
+                  <div class="arq-panel">
+                    <h2 class="arq-h2">Experiencia y contenido</h2>
+                    <div class="flex flex-col gap-2.5">
+                      <template x-for="c in [
+                        ['Cloudflare Stream', 'Video, audio y transmisión en vivo con URLs firmadas'],
+                        ['Algolia', 'Buscador con índices separados por audiencia'],
+                        ['Cloudinary', 'Imágenes y documentos descargables'],
+                        ['Amazon SES', 'Correos transaccionales de la plataforma']]" :key="c[0]">
+                        <button @click="elegir(c[0])" class="arq-card x" :class="sel === c[0] ? 'is-sel' : ''">
+                          <p class="arq-name" x-text="c[0]"></p><p class="arq-desc" x-text="c[1]"></p>
+                        </button>
+                      </template>
+                    </div>
+                  </div>
+                  <div class="arq-panel">
+                    <h2 class="arq-h2">Identidad y acceso</h2>
+                    <div class="flex flex-col gap-2.5">
+                      <button @click="elegir('Lilly Passport')" class="arq-card g" :class="sel === 'Lilly Passport' ? 'is-sel' : ''">
+                        <p class="arq-name">Lilly Passport</p><p class="arq-desc">Login corporativo y consentimientos del profesional</p>
+                      </button>
+                      <button @click="elegir('Auth0')" class="arq-card p" :class="sel === 'Auth0' ? 'is-sel' : ''">
+                        <p class="arq-name">Auth0</p><p class="arq-desc">Broker de identidad, passkeys y biometría</p>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Centro -->
+                <div class="flex flex-col gap-2.5">
+                  <div class="arq-panel">
+                    <h2 class="arq-h2">Puntos de entrada del profesional</h2>
+                    <div class="flex flex-wrap gap-2.5">
+                      <template x-for="e in ['Correo de campaña', 'WhatsApp', 'Visita médica', 'Acceso directo']" :key="e">
+                        <span class="arq-chip" x-text="e"></span>
+                      </template>
+                    </div>
+                    <p class="arq-desc">Deeplinks con taxonomía de campaña, producto y canal</p>
+                  </div>
+
+                  <div class="flex justify-center py-1"><span class="arq-flecha"></span></div>
+
+                  <div class="arq-nucleo">
+                    <div class="flex items-baseline justify-between gap-3">
+                      <h2 class="arq-h2">Núcleo de la plataforma</h2>
+                      <span class="text-[12px] text-[#914620]" style="font-family:'Space Grotesk',sans-serif">Amazon Web Services</span>
+                    </div>
+                    <div class="arq-group">
+                      <p class="arq-glabel">Aplicación</p>
+                      <div class="grid gap-2.5 sm:grid-cols-2">
+                        <button @click="elegir('Next.js + Payload')" class="arq-card p text-left" :class="sel === 'Next.js + Payload' ? 'is-sel' : ''">
+                          <p class="arq-name">Next.js + Payload</p><p class="arq-desc">Frontend, CMS y panel de edición en un despliegue</p>
+                        </button>
+                        <button @click="elegir('API NestJS')" class="arq-card p text-left" :class="sel === 'API NestJS' ? 'is-sel' : ''">
+                          <p class="arq-name">API NestJS</p><p class="arq-desc">Motor de deeplinks, eventos e integración con OCE</p>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="arq-group">
+                      <p class="arq-glabel">Datos y medición</p>
+                      <div class="grid gap-2.5 sm:grid-cols-3">
+                        <template x-for="c in [
+                          ['PostgreSQL (RDS)', 'Contenido y eventos por profesional, esquemas separados'],
+                          ['PostHog', 'Mapas de calor, grabación de sesión y pruebas A/B'],
+                          ['Cube.js', 'Modelo semántico para el reporte mensual']]" :key="c[0]">
+                          <button @click="elegir(c[0])" class="arq-card d text-left" :class="sel === c[0] ? 'is-sel' : ''">
+                            <p class="arq-name" x-text="c[0]"></p><p class="arq-desc" x-text="c[1]"></p>
+                          </button>
+                        </template>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flex justify-center py-1"><span class="arq-flecha"></span></div>
+
+                  <div class="arq-panel">
+                    <h2 class="arq-h2">Sistemas corporativos de Lilly</h2>
+                    <div class="grid gap-2.5 sm:grid-cols-2">
+                      <button @click="elegir('OCE / CRM')" class="arq-card g text-left" :class="sel === 'OCE / CRM' ? 'is-sel' : ''">
+                        <p class="arq-name">OCE / CRM</p><p class="arq-desc">Métricas por profesional para la siguiente mejor acción</p>
+                      </button>
+                      <button @click="elegir('Repositorio MLR')" class="arq-card g text-left" :class="sel === 'Repositorio MLR' ? 'is-sel' : ''">
+                        <p class="arq-name">Repositorio MLR</p><p class="arq-desc">Contenido médico y promocional ya aprobado</p>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Derecha -->
+                <div class="flex flex-col gap-5">
+                  <div class="arq-panel">
+                    <h2 class="arq-h2">Infraestructura y despliegue</h2>
+                    <div class="flex flex-col gap-2.5">
+                      <template x-for="c in [
+                        ['ECS Fargate', 'Contenedores en desarrollo, UAT y producción'],
+                        ['Terraform', 'Infraestructura como código y plan de recuperación'],
+                        ['CloudFront + WAF', 'CDN, caché y protección perimetral'],
+                        ['GitHub Actions', 'Integración y despliegue continuos']]" :key="c[0]">
+                        <button @click="elegir(c[0])" class="arq-card p" :class="sel === c[0] ? 'is-sel' : ''">
+                          <p class="arq-name" x-text="c[0]"></p><p class="arq-desc" x-text="c[1]"></p>
+                        </button>
+                      </template>
+                    </div>
+                  </div>
+                  <div class="arq-panel">
+                    <h2 class="arq-h2">Calidad y observabilidad</h2>
+                    <div class="flex flex-col gap-2.5">
+                      <template x-for="c in [
+                        ['Sentry', 'Monitoreo de errores en tiempo real'],
+                        ['CloudWatch', 'Métricas, alertas y disponibilidad del acuerdo de servicio'],
+                        ['BrowserStack', 'Pruebas en navegadores y dispositivos reales'],
+                        ['CodeQL + Dependabot', 'Escaneo de vulnerabilidades y dependencias']]" :key="c[0]">
+                        <button @click="elegir(c[0])" class="arq-card d" :class="sel === c[0] ? 'is-sel' : ''">
+                          <p class="arq-name" x-text="c[0]"></p><p class="arq-desc" x-text="c[1]"></p>
+                        </button>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Leyenda y el porqué de cada pieza -->
+              <div class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2">
+                <span class="arq-leyenda"><i class="arq-punto" style="background:#443A9E"></i>Plataforma y despliegue</span>
+                <span class="arq-leyenda"><i class="arq-punto" style="background:#0E6B54"></i>Datos, medición y calidad</span>
+                <span class="arq-leyenda"><i class="arq-punto" style="background:#914620"></i>Servicios de experiencia</span>
+                <span class="arq-leyenda"><i class="arq-punto" style="background:#46453F"></i>Sistemas de Lilly</span>
+                <span class="ml-auto arq-desc" x-show="!sel">Toca cualquier pieza para ver por qué está ahí</span>
+              </div>
+
+              <div x-show="sel" class="mt-3 rounded-2xl border border-[#D7D5E2] bg-white p-5 flex items-start gap-4 fade-in">
+                <span class="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#F3F1FB] text-[#443A9E]"><i data-lucide="info" class="h-4 w-4"></i></span>
+                <div class="min-w-0">
+                  <p class="arq-name text-[16px]" x-text="sel"></p>
+                  <p class="arq-desc mt-1 text-[13.5px] leading-relaxed" x-text="porque[sel]"></p>
+                </div>
+                <button @click="sel = null" class="ml-auto shrink-0 text-[#8A88A0] hover:text-[#16161D]"><i data-lucide="x" class="h-4 w-4"></i></button>
+              </div>
+
+              <p class="mt-6 text-[12px] text-[#8A88A0]">Todo corre sobre la cuenta de AWS de Lilly, con los tres ambientes que pide el brief. Las piezas de terceros se pagan por consumo y escalan con el número de profesionales.</p>
+            </div>
+          </div>
