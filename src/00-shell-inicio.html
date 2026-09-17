@@ -333,12 +333,18 @@
 
 <!-- Barra superior del prototipo (no es parte del app) -->
 <header class="proto-panel fixed inset-x-0 top-0 z-30 h-14 bg-[#0B0B0D]/85 backdrop-blur-xl flex items-center px-6 gap-4">
-  <div class="flex items-center gap-2.5">
+  <div class="flex shrink-0 items-center gap-2.5 whitespace-nowrap">
     <span class="h-2 w-2 rounded-full bg-lilly"></span>
     <span class="font-semibold text-[15px] tracking-tight">Lilly 360</span>
-    <span class="text-white/35 text-[13px]">prototipo navegable</span>
+    <span x-show="pantalla !== 'dashboard'" class="text-white/35 text-[13px]">prototipo navegable</span>
   </div>
-  <div class="proto-seg ml-4 hidden sm:inline-flex">
+  <template x-if="pantalla === 'dashboard'">
+    <div class="ml-3 flex shrink-0 items-center gap-2 whitespace-nowrap">
+      <span class="inline-flex h-7 items-center gap-1.5 rounded-full bg-white/8 px-3 text-[12px] text-white/70"><span class="h-1.5 w-1.5 rounded-full bg-lillyblue"></span>Fuera del app · herramienta de analítica</span>
+      <button @click="irRaiz('inicio')" class="inline-flex h-7 shrink-0 items-center whitespace-nowrap rounded-full bg-white px-3 text-[12px] font-semibold text-black hover:bg-white/90 transition-colors">Volver al prototipo</button>
+    </div>
+  </template>
+  <div x-show="pantalla !== 'dashboard'" class="proto-seg ml-4 hidden sm:inline-flex">
     <template x-for="d in dispositivos" :key="d.id">
       <button @click="dispositivo = d.id" :aria-selected="dispositivo === d.id ? 'true' : 'false'" x-text="d.nombre"></button>
     </template>
@@ -387,7 +393,7 @@
   </aside>
 
   <!-- Marco: uno solo, muta entre iPhone, iPad y ventana de escritorio y se escala para caber en la vista -->
-  <section class="flex-1 flex items-center justify-center p-8 overflow-hidden">
+  <section x-show="pantalla !== 'dashboard'" x-transition.opacity.duration.300ms class="flex-1 flex items-center justify-center p-8 overflow-hidden">
     <div class="proto-fit" :style="`width:${marco.w * escala}px;height:${marco.h * escala}px`">
       <div class="proto-frame" :class="'is-' + dispositivo" :style="`width:${marco.w}px;height:${marco.h}px;transform:scale(${escala})`">
       <div class="bg-scene proto-screen text-ink" :data-tinte="pantalla === 'inicio' ? '' : enfermedad">

@@ -333,12 +333,18 @@
 
 <!-- Barra superior del prototipo (no es parte del app) -->
 <header class="proto-panel fixed inset-x-0 top-0 z-30 h-14 bg-[#0B0B0D]/85 backdrop-blur-xl flex items-center px-6 gap-4">
-  <div class="flex items-center gap-2.5">
+  <div class="flex shrink-0 items-center gap-2.5 whitespace-nowrap">
     <span class="h-2 w-2 rounded-full bg-lilly"></span>
     <span class="font-semibold text-[15px] tracking-tight">Lilly 360</span>
-    <span class="text-white/35 text-[13px]">prototipo navegable</span>
+    <span x-show="pantalla !== 'dashboard'" class="text-white/35 text-[13px]">prototipo navegable</span>
   </div>
-  <div class="proto-seg ml-4 hidden sm:inline-flex">
+  <template x-if="pantalla === 'dashboard'">
+    <div class="ml-3 flex shrink-0 items-center gap-2 whitespace-nowrap">
+      <span class="inline-flex h-7 items-center gap-1.5 rounded-full bg-white/8 px-3 text-[12px] text-white/70"><span class="h-1.5 w-1.5 rounded-full bg-lillyblue"></span>Fuera del app · herramienta de analítica</span>
+      <button @click="irRaiz('inicio')" class="inline-flex h-7 shrink-0 items-center whitespace-nowrap rounded-full bg-white px-3 text-[12px] font-semibold text-black hover:bg-white/90 transition-colors">Volver al prototipo</button>
+    </div>
+  </template>
+  <div x-show="pantalla !== 'dashboard'" class="proto-seg ml-4 hidden sm:inline-flex">
     <template x-for="d in dispositivos" :key="d.id">
       <button @click="dispositivo = d.id" :aria-selected="dispositivo === d.id ? 'true' : 'false'" x-text="d.nombre"></button>
     </template>
@@ -387,7 +393,7 @@
   </aside>
 
   <!-- Marco: uno solo, muta entre iPhone, iPad y ventana de escritorio y se escala para caber en la vista -->
-  <section class="flex-1 flex items-center justify-center p-8 overflow-hidden">
+  <section x-show="pantalla !== 'dashboard'" x-transition.opacity.duration.300ms class="flex-1 flex items-center justify-center p-8 overflow-hidden">
     <div class="proto-fit" :style="`width:${marco.w * escala}px;height:${marco.h * escala}px`">
       <div class="proto-frame" :class="'is-' + dispositivo" :style="`width:${marco.w}px;height:${marco.h}px;transform:scale(${escala})`">
       <div class="bg-scene proto-screen text-ink" :data-tinte="pantalla === 'inicio' ? '' : enfermedad">
@@ -1246,315 +1252,6 @@
             </div>
           </div>
 
-          <!-- ============ DASHBOARD · back office de trazabilidad (vista del equipo de Lilly, no del médico) ============
-               Capa absoluta con scroll propio dentro de .proto-main, como Guardados. Todo el estado es local (`tablero()`):
-               tres juegos de datos por periodo y un factor por enfermedad; los gráficos son SVG/CSS inline, sin librerías.
-               Los datos son simulados; las métricas reales se definen con el equipo de Lilly. -->
-          <script>
-            function tablero() {
-              const azul = '#2a78d6';
-              // Ruido determinista: el tablero se ve igual en cada carga y en cada captura.
-              const ruido = (s) => { const x = Math.sin(s * 9973) * 10000; return x - Math.floor(x); };
-              const serie = (base, n, amp, semilla) => Array.from({ length: n }, (_, i) => Math.round(base * (1 + amp * (ruido(semilla + i) - 0.5) + 0.25 * amp * (i / n))));
-              return {
-                periodo: '30', enfermedad: 'todas',
-                periodos: [{ id: '7', nombre: '7 días' }, { id: '30', nombre: '30 días' }, { id: '90', nombre: '90 días' }],
-                enfs: [{ id: 'todas', nombre: 'Todas' }, { id: 'diabetes', nombre: 'Diabetes tipo 2' }, { id: 'mama', nombre: 'Cáncer de mama' }, { id: 'derma', nombre: 'Dermatitis atópica' }],
-                factor: { todas: 1, diabetes: 0.46, mama: 0.31, derma: 0.23 },
-                // Un juego por periodo: KPIs (valor, variación, 12 puntos de sparkline) y sesiones por día.
-                datos: {
-                  '7':  { activos: 6840,  sesion: '3:05', inicios: 18930,  dActivos: 2.1, dSesion: -1.4, dInicios: 3.6, sparkA: serie(950, 12, .5, 1), sparkS: serie(185, 12, .2, 7), sparkI: serie(2700, 12, .4, 13), dias: serie(2700, 7, .45, 21) },
-                  '30': { activos: 14210, sesion: '3:20', inicios: 61400,  dActivos: 4.2, dSesion: 2.8,  dInicios: 6.1, sparkA: serie(1180, 12, .4, 2), sparkS: serie(200, 12, .15, 8), sparkI: serie(2050, 12, .35, 14), dias: serie(2050, 30, .45, 22) },
-                  '90': { activos: 21530, sesion: '3:28', inicios: 172800, dActivos: 9.7, dSesion: 4.1,  dInicios: 12.4, sparkA: serie(1800, 12, .35, 3), sparkS: serie(208, 12, .12, 9), sparkI: serie(1920, 12, .3, 15), dias: serie(1920, 90, .45, 23) },
-                },
-                registrados: 36412, dRegistrados: 4.2, sparkR: serie(3000, 12, .3, 4),
-                // Top de piezas: títulos reales de app.js (contenido y formación) con su enfermedad, para que el filtro los recorte.
-                piezas: [
-                  { titulo: 'Tratamiento farmacológico de la diabetes tipo 2 según perfil del paciente', tipo: 'Algoritmo', min: 5, enf: 'diabetes', lecturas: 4820 },
-                  { titulo: 'Tratamiento del cáncer de mama HR+/HER2− temprano de alto riesgo', tipo: 'Algoritmo', min: 6, enf: 'mama', lecturas: 3910 },
-                  { titulo: 'Tirzepatida en la práctica: casos clínicos de la consulta real', tipo: 'Webinar', min: 60, enf: 'diabetes', lecturas: 3460 },
-                  { titulo: 'Metas glucémicas individualizadas y frecuencia de control', tipo: 'Tabla', min: 3, enf: 'diabetes', lecturas: 3120 },
-                  { titulo: 'Tratamiento escalonado de la dermatitis atópica moderada a severa', tipo: 'Algoritmo', min: 5, enf: 'derma', lecturas: 2780 },
-                  { titulo: 'SURPASS-2: tirzepatida frente a semaglutida en diabetes tipo 2', tipo: 'PDF', min: 18, enf: 'diabetes', lecturas: 2310 },
-                  { titulo: 'monarchE a 5 años: qué cambia en el adyuvante de alto riesgo', tipo: 'Video', min: 22, enf: 'mama', lecturas: 2050 },
-                  { titulo: 'Anti-IL-13 en dermatitis atópica: a quién y cuándo', tipo: 'Video', min: 18, enf: 'derma', lecturas: 1740 },
-                  { titulo: 'Clasificación BI-RADS y conducta según categoría', tipo: 'Tabla', min: 3, enf: 'mama', lecturas: 1620 },
-                  { titulo: 'Escalas de severidad: EASI, SCORAD e IGA', tipo: 'Tabla', min: 3, enf: 'derma', lecturas: 1380 },
-                  { titulo: 'Autoexamen de mama: paso a paso', tipo: 'Infografía', min: 2, enf: 'mama', lecturas: 1210 },
-                  { titulo: 'Rutina de cuidado de la piel en dermatitis atópica', tipo: 'Infografía', min: 2, enf: 'derma', lecturas: 980 },
-                ],
-                // Paleta categórica validada (adyacentes con ΔE CVD ≥ 8); los valores van siempre escritos al lado.
-                formatos: [
-                  { nombre: 'Algoritmo', pct: 34, color: '#2a78d6' }, { nombre: 'Tabla', pct: 18, color: '#eb6834' }, { nombre: 'Video', pct: 16, color: '#1baf7a' },
-                  { nombre: 'PDF', pct: 12, color: '#eda100' }, { nombre: 'Infografía', pct: 11, color: '#e87ba4' }, { nombre: 'Webinar', pct: 9, color: '#008300' },
-                ],
-                especialidades: [{ nombre: 'Endocrinología', n: 9840 }, { nombre: 'Medicina interna', n: 8120 }, { nombre: 'Medicina general', n: 7460 }, { nombre: 'Oncología', n: 4930 }, { nombre: 'Dermatología', n: 3710 }, { nombre: 'Ginecología', n: 2350 }],
-                ciudades: [{ nombre: 'Bogotá', n: 13260 }, { nombre: 'Medellín', n: 7890 }, { nombre: 'Cali', n: 5140 }, { nombre: 'Barranquilla', n: 3620 }, { nombre: 'Bucaramanga', n: 2480 }],
-                embudo: [{ nombre: 'Registrados', n: 36412 }, { nombre: 'Consumieron contenido', n: 21480 }, { nombre: 'Completaron microaprendizaje', n: 8930 }, { nombre: 'Asistieron a un webinar', n: 5120 }, { nombre: 'Consultaron al RAG', n: 2310 }],
-                actividad: [
-                  { quien: 'Endocrinólogo · Bogotá', que: 'abrió Tratamiento farmacológico de la diabetes tipo 2', hace: 'hace 2 min', icono: 'git-branch' },
-                  { quien: 'Oncóloga · Medellín', que: 'guardó Tratamiento del cáncer de mama HR+/HER2−', hace: 'hace 5 min', icono: 'bookmark' },
-                  { quien: 'Médica general · Cali', que: 'completó el microaprendizaje Metas glucémicas', hace: 'hace 9 min', icono: 'check-circle-2' },
-                  { quien: 'Dermatólogo · Bogotá', que: 'consultó al RAG: «criterios para escalar a sistémico»', hace: 'hace 14 min', icono: 'sparkles' },
-                  { quien: 'Internista · Barranquilla', que: 'inició sesión', hace: 'hace 16 min', icono: 'log-in' },
-                  { quien: 'Ginecóloga · Bucaramanga', que: 'descargó SURPASS-2 en PDF', hace: 'hace 21 min', icono: 'file-text' },
-                  { quien: 'Endocrinóloga · Medellín', que: 'se inscribió al webinar Tirzepatida en la práctica', hace: 'hace 27 min', icono: 'calendar' },
-                  { quien: 'Médico general · Bogotá', que: 'compartió Autoexamen de mama: paso a paso', hace: 'hace 33 min', icono: 'share' },
-                ],
-                dias: ['L', 'M', 'M', 'J', 'V', 'S', 'D'],
-                horas: Array.from({ length: 24 }, (_, h) => h),
-
-                get d() { return this.datos[this.periodo]; },
-                get f() { return this.factor[this.enfermedad]; },
-                get kpis() {
-                  const d = this.d, f = this.f;
-                  return [
-                    { nombre: 'Médicos registrados', valor: this.fmt(this.registrados * f), delta: this.dRegistrados, spark: this.sparkR },
-                    { nombre: 'Activos en el periodo', valor: this.fmt(d.activos * f), delta: d.dActivos, spark: d.sparkA },
-                    { nombre: 'Tiempo medio por sesión', valor: d.sesion, delta: d.dSesion, spark: d.sparkS, unidad: 'min' },
-                    { nombre: 'Inicios de sesión', valor: this.fmt(d.inicios * f), delta: d.dInicios, spark: d.sparkI },
-                  ];
-                },
-                get top() {
-                  const esc = { '7': 0.26, '30': 1, '90': 2.7 }[this.periodo];
-                  return this.piezas.filter(p => this.enfermedad === 'todas' || p.enf === this.enfermedad).slice(0, 8).map(p => ({ ...p, n: Math.round(p.lecturas * esc) }));
-                },
-                get maxTop() { return Math.max(...this.top.map(p => p.n)); },
-                get totalPiezas() { return this.fmt(this.top.reduce((a, p) => a + p.n, 0)); },
-                // Calor 7 × 24: picos a las 9–11 am y 8–10 pm (los momentos del médico), menos actividad el fin de semana.
-                calor(dia, hora) {
-                  const pico = (c, w) => Math.exp(-((hora - c) ** 2) / (2 * w * w));
-                  const base = 0.12 + 0.95 * pico(10, 1.4) + 0.75 * pico(21, 1.3) + 0.3 * pico(13, 1.5);
-                  const semana = dia >= 5 ? 0.45 : 1;
-                  return Math.min(1, base * semana * (0.85 + 0.3 * ruido(dia * 31 + hora)));
-                },
-                fmt(n) { return Math.round(n).toLocaleString('es-CO'); },
-                pct(n, total) { return Math.round(100 * n / total) + ' %'; },
-                barra(n, max) { return 'width:' + Math.max(2, Math.round(100 * n / max)) + '%'; },
-
-                // Gráficos como cadenas SVG (x-html): Alpine no itera con <template> dentro de un <svg>.
-                spark(arr) {
-                  const w = 120, h = 36, mn = Math.min(...arr), mx = Math.max(...arr) || 1;
-                  const pts = arr.map((v, i) => [(i / (arr.length - 1)) * w, h - 4 - ((v - mn) / (mx - mn || 1)) * (h - 8)]);
-                  const linea = pts.map(p => p.map(v => v.toFixed(1)).join(',')).join(' ');
-                  const ultimo = pts[pts.length - 1];
-                  return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-9" preserveAspectRatio="none" aria-hidden="true">
-                    <polygon points="0,${h} ${linea} ${w},${h}" fill="${azul}" opacity=".12"/>
-                    <polyline points="${linea}" fill="none" stroke="${azul}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
-                    <circle cx="${ultimo[0].toFixed(1)}" cy="${ultimo[1].toFixed(1)}" r="3.5" fill="${azul}" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/>
-                  </svg>`;
-                },
-                linea() {
-                  const arr = this.d.dias.map(v => Math.round(v * this.f)), w = 320, h = 120, ml = 34, mr = 12, mb = 18;
-                  const mx = Math.max(...arr) * 1.1, n = arr.length;
-                  const x = i => ml + (i / (n - 1)) * (w - ml - mr), y = v => 6 + (1 - v / mx) * (h - mb - 6);
-                  const pts = arr.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
-                  const grid = [0, .5, 1].map(t => `<line x1="${ml}" x2="${w - mr}" y1="${y(mx * t).toFixed(1)}" y2="${y(mx * t).toFixed(1)}" stroke="rgba(60,60,67,.12)"/>
-                    <text x="${ml - 6}" y="${(y(mx * t) + 3.5).toFixed(1)}" text-anchor="end" font-size="9" fill="#6E6E73">${t === 0 ? '0' : this.fmtCorto(mx * t)}</text>`).join('');
-                  const paso = n > 30 ? 15 : n > 7 ? 5 : 1;
-                  const ejes = arr.map((_, i) => (i % paso === 0 || i === n - 1) ? `<text x="${x(i).toFixed(1)}" y="${h - 4}" text-anchor="middle" font-size="9" fill="#6E6E73">${n === 7 ? this.dias[i] : 'd' + (i + 1)}</text>` : '').join('');
-                  // Zonas de hover más grandes que la marca: cada punto lleva su <title> como tooltip nativo.
-                  const hits = arr.map((v, i) => `<rect x="${(x(i) - (w - ml) / n / 2).toFixed(1)}" y="0" width="${((w - ml) / n).toFixed(1)}" height="${h - mb}" fill="transparent"><title>${n === 7 ? 'Día ' + this.dias[i] : 'Día ' + (i + 1)} · ${this.fmt(v)} sesiones</title></rect>`).join('');
-                  return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-auto" aria-label="Sesiones por día">${grid}
-                    <polygon points="${x(0).toFixed(1)},${y(0).toFixed(1)} ${pts} ${x(n - 1).toFixed(1)},${y(0).toFixed(1)}" fill="${azul}" opacity=".10"/>
-                    <polyline points="${pts}" fill="none" stroke="${azul}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-                    ${n <= 7 ? arr.map((v, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="4" fill="${azul}" stroke="#fff" stroke-width="2"/>`).join('') : ''}
-                    ${ejes}${hits}</svg>`;
-                },
-                donut() {
-                  const r = 44, c = 2 * Math.PI * r, gap = 2; let off = 0;
-                  const arcos = this.formatos.map(s => {
-                    const len = (s.pct / 100) * c;
-                    const seg = `<circle cx="60" cy="60" r="${r}" fill="none" stroke="${s.color}" stroke-width="14" stroke-dasharray="${(len - gap).toFixed(2)} ${(c - len + gap).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 60 60)"><title>${s.nombre} · ${s.pct} %</title></circle>`;
-                    off += len; return seg;
-                  }).join('');
-                  return `<svg viewBox="0 0 120 120" class="w-[132px] h-[132px] shrink-0" aria-label="Piezas vistas por formato">${arcos}
-                    <text x="60" y="57" text-anchor="middle" font-size="18" font-weight="700" fill="#1D1D1F">${this.totalPiezas}</text>
-                    <text x="60" y="72" text-anchor="middle" font-size="9" fill="#6E6E73">piezas vistas</text></svg>`;
-                },
-                fmtCorto(n) { return n >= 1000 ? (n / 1000).toFixed(1).replace('.0', '').replace('.', ',') + ' k' : Math.round(n); },
-              };
-            }
-          </script>
-
-          <div x-show="pantalla === 'dashboard'" x-data="tablero()" class="@container screen-enter absolute inset-0 overflow-y-auto scroll-hide px-5 pt-2 pb-16 @3xl:px-8 @3xl:pt-6 @6xl:px-10">
-
-            <!-- Cabecera con los dos filtros en una sola fila: periodo y enfermedad cambian todos los números -->
-            <div class="flex flex-col gap-4 @6xl:flex-row @6xl:items-end @6xl:justify-between">
-              <div>
-                <p class="text-[13px] font-medium text-ink-2">Back office</p>
-                <h1 class="ios-large-title mt-0.5 @6xl:whitespace-nowrap">Lilly 360 · Trazabilidad</h1>
-              </div>
-              <div class="flex flex-col gap-2 @3xl:flex-row @3xl:items-center @3xl:gap-3">
-                <div class="flex gap-2 overflow-x-auto scroll-hide -mx-5 px-5 @3xl:mx-0 @3xl:px-0" role="group" aria-label="Periodo">
-                  <template x-for="p in periodos" :key="p.id">
-                    <button @click="periodo = p.id" class="ios-chip glass press shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30" :aria-selected="periodo === p.id ? 'true' : 'false'" x-text="p.nombre"></button>
-                  </template>
-                </div>
-                <span class="hidden @3xl:block h-6 w-px bg-sep"></span>
-                <div class="flex gap-2 overflow-x-auto scroll-hide -mx-5 px-5 @3xl:mx-0 @3xl:px-0" role="group" aria-label="Enfermedad">
-                  <template x-for="e in enfs" :key="e.id">
-                    <button @click="enfermedad = e.id" class="ios-chip glass press shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30" :aria-selected="enfermedad === e.id ? 'true' : 'false'" x-text="e.nombre"></button>
-                  </template>
-                </div>
-              </div>
-            </div>
-
-            <!-- Grilla: una columna en iPhone, dos en iPad, doce en escritorio -->
-            <div class="mt-6 grid grid-cols-1 @3xl:grid-cols-2 @6xl:grid-cols-12 gap-4 stagger">
-
-              <!-- KPIs -->
-              <template x-for="k in kpis" :key="k.nombre">
-                <div class="glass rounded-3xl p-5 @6xl:col-span-3">
-                  <p class="text-[13px] font-medium text-ink-2" x-text="k.nombre"></p>
-                  <div class="mt-1 flex items-baseline gap-2">
-                    <span class="text-[30px] font-bold tracking-[-0.02em] text-ink leading-none" x-text="k.valor"></span>
-                    <span x-show="k.unidad" class="text-[13px] text-ink-2" x-text="k.unidad"></span>
-                    <span class="ml-auto text-[13px] font-medium" :class="k.delta >= 0 ? 'text-[#008300]' : 'text-ink-2'" x-text="(k.delta >= 0 ? '▲ +' : '▼ ') + String(k.delta).replace('.', ',') + ' %'"></span>
-                  </div>
-                  <div class="mt-3" x-html="spark(k.spark)"></div>
-                </div>
-              </template>
-
-              <!-- Qué leyeron: top de piezas -->
-              <section class="glass rounded-3xl p-5 @3xl:col-span-2 @6xl:col-span-8">
-                <div class="flex items-baseline justify-between">
-                  <h2 class="text-[17px] font-semibold text-ink">Qué leyeron</h2>
-                  <span class="text-[13px] text-ink-2">Top 8 · aperturas</span>
-                </div>
-                <ol class="mt-4 space-y-3">
-                  <template x-for="p in top" :key="p.titulo">
-                    <li :title="p.titulo + ' · ' + fmt(p.n) + ' aperturas'">
-                      <div class="flex items-baseline gap-3 text-[15px]">
-                        <span class="flex-1 min-w-0 truncate text-ink" x-text="p.titulo"></span>
-                        <span class="shrink-0 text-[13px] text-ink-2" x-text="p.tipo + ' · ' + p.min + ' min'"></span>
-                        <span class="shrink-0 w-14 text-right font-semibold tabular-nums text-ink" x-text="fmt(p.n)"></span>
-                      </div>
-                      <div class="mt-1.5 h-2 rounded-full bg-black/[.05]"><div class="h-2 rounded-full bg-[#2a78d6] transition-[width] duration-500 ease-[cubic-bezier(.2,.8,.2,1)]" :style="barra(p.n, maxTop)"></div></div>
-                    </li>
-                  </template>
-                </ol>
-              </section>
-
-              <!-- Por formato: donut con leyenda y valores al lado (las etiquetas son el relevo del color) -->
-              <section class="glass rounded-3xl p-5 @6xl:col-span-4">
-                <h2 class="text-[17px] font-semibold text-ink">Por formato</h2>
-                <div class="mt-4 flex items-center gap-5">
-                  <div x-html="donut()"></div>
-                  <ul class="flex-1 min-w-0 space-y-2">
-                    <template x-for="s in formatos" :key="s.nombre">
-                      <li class="flex items-center gap-2 text-[14px]">
-                        <span class="h-2.5 w-2.5 shrink-0 rounded-full" :style="'background:' + s.color"></span>
-                        <span class="flex-1 text-ink" x-text="s.nombre"></span>
-                        <span class="tabular-nums text-ink-2" x-text="s.pct + ' %'"></span>
-                      </li>
-                    </template>
-                  </ul>
-                </div>
-              </section>
-
-              <!-- Cuándo se conectan: mapa de calor 7 × 24 -->
-              <section class="glass rounded-3xl p-5 @6xl:col-span-7">
-                <div class="flex items-baseline justify-between">
-                  <h2 class="text-[17px] font-semibold text-ink">Cuándo se conectan</h2>
-                  <span class="text-[13px] text-ink-2">Sesiones por día y hora</span>
-                </div>
-                <div class="mt-4 flex gap-2">
-                  <div class="grid grid-rows-7 gap-[3px] text-[11px] text-ink-2 leading-none">
-                    <template x-for="(dia, i) in dias" :key="'d' + i"><span class="flex items-center h-[14px] @3xl:h-[18px]" x-text="dia"></span></template>
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <div class="grid grid-cols-[repeat(24,minmax(0,1fr))] gap-[3px]">
-                      <template x-for="(dia, i) in dias" :key="'f' + i">
-                        <template x-for="h in horas" :key="'c' + i + '-' + h">
-                          <div class="h-[14px] @3xl:h-[18px] rounded-[3px]" :style="'background: rgba(42,120,214,' + (0.06 + 0.94 * calor(i, h)).toFixed(2) + ')'" :title="dia + ' · ' + h + ':00 · ' + fmt(320 * calor(i, h) * f) + ' sesiones'"></div>
-                        </template>
-                      </template>
-                    </div>
-                    <div class="mt-1.5 grid grid-cols-4 text-[11px] text-ink-2"><span>0 h</span><span>6 h</span><span>12 h</span><span>18 h</span></div>
-                  </div>
-                </div>
-                <p class="mt-3 text-[13px] text-ink-2">Picos a las 9–11 am (consulta) y 8–10 pm (antes de dormir).</p>
-              </section>
-
-              <!-- Sesiones por día -->
-              <section class="glass rounded-3xl p-5 @6xl:col-span-5">
-                <div class="flex items-baseline justify-between">
-                  <h2 class="text-[17px] font-semibold text-ink">Sesiones por día</h2>
-                  <span class="text-[13px] text-ink-2" x-text="'Últimos ' + periodo + ' días'"></span>
-                </div>
-                <div class="mt-4" x-html="linea()"></div>
-              </section>
-
-              <!-- Quiénes: especialidad -->
-              <section class="glass rounded-3xl p-5 @6xl:col-span-4">
-                <h2 class="text-[17px] font-semibold text-ink">Por especialidad</h2>
-                <ul class="mt-4 space-y-3">
-                  <template x-for="e in especialidades" :key="e.nombre">
-                    <li :title="e.nombre + ' · ' + fmt(e.n * f)">
-                      <div class="flex items-baseline justify-between text-[14px]"><span class="text-ink" x-text="e.nombre"></span><span class="tabular-nums text-ink-2" x-text="fmt(e.n * f)"></span></div>
-                      <div class="mt-1.5 h-2 rounded-full bg-black/[.05]"><div class="h-2 rounded-full bg-[#2a78d6]" :style="barra(e.n, especialidades[0].n)"></div></div>
-                    </li>
-                  </template>
-                </ul>
-              </section>
-
-              <!-- Quiénes: ciudad -->
-              <section class="glass rounded-3xl p-5 @6xl:col-span-4">
-                <h2 class="text-[17px] font-semibold text-ink">Por ciudad</h2>
-                <ul class="mt-4 space-y-3">
-                  <template x-for="c in ciudades" :key="c.nombre">
-                    <li :title="c.nombre + ' · ' + fmt(c.n * f)">
-                      <div class="flex items-baseline justify-between text-[14px]"><span class="text-ink" x-text="c.nombre"></span><span class="tabular-nums text-ink-2" x-text="fmt(c.n * f)"></span></div>
-                      <div class="mt-1.5 h-2 rounded-full bg-black/[.05]"><div class="h-2 rounded-full bg-[#2a78d6]" :style="barra(c.n, ciudades[0].n)"></div></div>
-                    </li>
-                  </template>
-                </ul>
-              </section>
-
-              <!-- Embudo -->
-              <section class="glass rounded-3xl p-5 @6xl:col-span-4">
-                <h2 class="text-[17px] font-semibold text-ink">Embudo</h2>
-                <ol class="mt-4 space-y-3">
-                  <template x-for="(e, i) in embudo" :key="e.nombre">
-                    <li :title="e.nombre + ' · ' + fmt(e.n * f)">
-                      <div class="flex items-baseline justify-between text-[14px]">
-                        <span class="text-ink" x-text="e.nombre"></span>
-                        <span class="tabular-nums"><span class="font-semibold text-ink" x-text="pct(e.n, embudo[0].n)"></span> <span class="text-ink-2" x-text="'· ' + fmt(e.n * f)"></span></span>
-                      </div>
-                      <div class="mt-1.5 h-2 rounded-full bg-black/[.05]"><div class="h-2 rounded-full" :class="i === 0 ? 'bg-[#2a78d6]' : 'bg-[#2a78d6]/70'" :style="barra(e.n, embudo[0].n)"></div></div>
-                    </li>
-                  </template>
-                </ol>
-              </section>
-
-              <!-- Actividad reciente -->
-              <section class="glass rounded-3xl @3xl:col-span-2 @6xl:col-span-12">
-                <div class="px-5 pt-5 flex items-baseline justify-between">
-                  <h2 class="text-[17px] font-semibold text-ink">Actividad reciente</h2>
-                  <span class="text-[13px] text-ink-2">Anonimizada</span>
-                </div>
-                <ul class="mt-2 @6xl:grid @6xl:grid-cols-2">
-                  <template x-for="a in actividad" :key="a.quien + a.hace">
-                    <li class="ios-row py-3 border-t border-sep">
-                      <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/80 border border-white/90 shadow-sm text-ink-2"><i :data-lucide="a.icono" class="h-4 w-4"></i></span>
-                      <span class="flex-1 min-w-0">
-                        <span class="block text-[14px] text-ink truncate"><span class="font-semibold" x-text="a.quien"></span> · <span x-text="a.que"></span></span>
-                        <span class="block text-[12px] text-ink-2" x-text="a.hace"></span>
-                      </span>
-                    </li>
-                  </template>
-                </ul>
-              </section>
-            </div>
-
-            <!-- Pie -->
-            <div class="mt-6 flex flex-col gap-3 @3xl:flex-row @3xl:items-center @3xl:justify-between">
-              <p class="text-[13px] text-ink-2">Datos simulados. Las métricas reales se definen con el equipo de Lilly.</p>
-              <button class="glass ios-btn-glass press !h-11 text-[15px] self-start @3xl:self-auto"><i data-lucide="download" class="h-4 w-4"></i>Exportar CSV</button>
-            </div>
-          </div>
-
         <!-- Degradado para que el contenido se apague bajo la tab bar flotante (solo iPhone) -->
         <div x-show="dispositivo === 'iphone' && !sinCascaron.includes(pantalla) && !modal && !rag.abierto" class="tab-fade"></div>
 
@@ -1834,8 +1531,391 @@
       </div><!-- /proto-frame -->
     </div><!-- /proto-fit -->
   </section>
-</main>
+          <!-- ============ DASHBOARD · back office de trazabilidad, FUERA del teléfono ============
+               El back office no es parte del app: ocurre en otra plataforma (PostHog o la que defina Lilly). Por eso este
+               partial va después del cierre del marco del teléfono y es hijo directo de <main>: herramienta de analítica a
+               pantalla completa, tema claro, con sidebar fijo y área de trabajo con scroll propio. Aquí manda el viewport,
+               no el contenedor del teléfono (breakpoints lg:/xl:). El estado es local (`tablero()`): tres juegos de datos
+               por periodo y un factor por enfermedad; los gráficos son SVG/CSS inline, sin librerías. -->
+<script>
+            function tablero() {
+              const azul = '#2a78d6';
+              // Ruido determinista: el tablero se ve igual en cada carga y en cada captura.
+              const ruido = (s) => { const x = Math.sin(s * 9973) * 10000; return x - Math.floor(x); };
+              const serie = (base, n, amp, semilla) => Array.from({ length: n }, (_, i) => Math.round(base * (1 + amp * (ruido(semilla + i) - 0.5) + 0.25 * amp * (i / n))));
+              return {
+                periodo: '30', enfermedad: 'todas',
+                secciones: [
+                  { nombre: 'Dashboards', icono: 'layout-dashboard', activo: true }, { nombre: 'Product analytics', icono: 'bar-chart-3' }, { nombre: 'Session replay', icono: 'play-circle' },
+                  { nombre: 'Feature flags', icono: 'toggle-left' }, { nombre: 'Experiments', icono: 'flask-conical' }, { nombre: 'Surveys', icono: 'message-square' }, { nombre: 'Data management', icono: 'database' },
+                ],
+                periodos: [{ id: '7', nombre: '7 días' }, { id: '30', nombre: '30 días' }, { id: '90', nombre: '90 días' }],
+                enfs: [{ id: 'todas', nombre: 'Todas' }, { id: 'diabetes', nombre: 'Diabetes tipo 2' }, { id: 'mama', nombre: 'Cáncer de mama' }, { id: 'derma', nombre: 'Dermatitis atópica' }],
+                factor: { todas: 1, diabetes: 0.46, mama: 0.31, derma: 0.23 },
+                // Un juego por periodo: KPIs (valor, variación, 12 puntos de sparkline) y sesiones por día.
+                datos: {
+                  '7':  { activos: 6840,  sesion: '3:05', inicios: 18930,  dActivos: 2.1, dSesion: -1.4, dInicios: 3.6, sparkA: serie(950, 12, .5, 1), sparkS: serie(185, 12, .2, 7), sparkI: serie(2700, 12, .4, 13), dias: serie(2700, 7, .45, 21) },
+                  '30': { activos: 14210, sesion: '3:20', inicios: 61400,  dActivos: 4.2, dSesion: 2.8,  dInicios: 6.1, sparkA: serie(1180, 12, .4, 2), sparkS: serie(200, 12, .15, 8), sparkI: serie(2050, 12, .35, 14), dias: serie(2050, 30, .45, 22) },
+                  '90': { activos: 21530, sesion: '3:28', inicios: 172800, dActivos: 9.7, dSesion: 4.1,  dInicios: 12.4, sparkA: serie(1800, 12, .35, 3), sparkS: serie(208, 12, .12, 9), sparkI: serie(1920, 12, .3, 15), dias: serie(1920, 90, .45, 23) },
+                },
+                registrados: 36412, dRegistrados: 4.2, sparkR: serie(3000, 12, .3, 4),
+                // Top de piezas: títulos reales de app.js (contenido y formación) con su enfermedad, para que el filtro los recorte.
+                piezas: [
+                  { titulo: 'Tratamiento farmacológico de la diabetes tipo 2 según perfil del paciente', tipo: 'Algoritmo', min: 5, enf: 'diabetes', lecturas: 4820 },
+                  { titulo: 'Tratamiento del cáncer de mama HR+/HER2− temprano de alto riesgo', tipo: 'Algoritmo', min: 6, enf: 'mama', lecturas: 3910 },
+                  { titulo: 'Tirzepatida en la práctica: casos clínicos de la consulta real', tipo: 'Webinar', min: 60, enf: 'diabetes', lecturas: 3460 },
+                  { titulo: 'Metas glucémicas individualizadas y frecuencia de control', tipo: 'Tabla', min: 3, enf: 'diabetes', lecturas: 3120 },
+                  { titulo: 'Tratamiento escalonado de la dermatitis atópica moderada a severa', tipo: 'Algoritmo', min: 5, enf: 'derma', lecturas: 2780 },
+                  { titulo: 'SURPASS-2: tirzepatida frente a semaglutida en diabetes tipo 2', tipo: 'PDF', min: 18, enf: 'diabetes', lecturas: 2310 },
+                  { titulo: 'monarchE a 5 años: qué cambia en el adyuvante de alto riesgo', tipo: 'Video', min: 22, enf: 'mama', lecturas: 2050 },
+                  { titulo: 'Anti-IL-13 en dermatitis atópica: a quién y cuándo', tipo: 'Video', min: 18, enf: 'derma', lecturas: 1740 },
+                  { titulo: 'Clasificación BI-RADS y conducta según categoría', tipo: 'Tabla', min: 3, enf: 'mama', lecturas: 1620 },
+                  { titulo: 'Escalas de severidad: EASI, SCORAD e IGA', tipo: 'Tabla', min: 3, enf: 'derma', lecturas: 1380 },
+                  { titulo: 'Autoexamen de mama: paso a paso', tipo: 'Infografía', min: 2, enf: 'mama', lecturas: 1210 },
+                  { titulo: 'Rutina de cuidado de la piel en dermatitis atópica', tipo: 'Infografía', min: 2, enf: 'derma', lecturas: 980 },
+                ],
+                // Paleta categórica validada (adyacentes con ΔE CVD ≥ 8); los valores van siempre escritos al lado.
+                formatos: [
+                  { nombre: 'Algoritmo', pct: 34, color: '#2a78d6' }, { nombre: 'Tabla', pct: 18, color: '#eb6834' }, { nombre: 'Video', pct: 16, color: '#1baf7a' },
+                  { nombre: 'PDF', pct: 12, color: '#eda100' }, { nombre: 'Infografía', pct: 11, color: '#e87ba4' }, { nombre: 'Webinar', pct: 9, color: '#008300' },
+                ],
+                especialidades: [{ nombre: 'Endocrinología', n: 9840 }, { nombre: 'Medicina interna', n: 8120 }, { nombre: 'Medicina general', n: 7460 }, { nombre: 'Oncología', n: 4930 }, { nombre: 'Dermatología', n: 3710 }, { nombre: 'Ginecología', n: 2350 }],
+                ciudades: [{ nombre: 'Bogotá', n: 13260 }, { nombre: 'Medellín', n: 7890 }, { nombre: 'Cali', n: 5140 }, { nombre: 'Barranquilla', n: 3620 }, { nombre: 'Bucaramanga', n: 2480 }],
+                embudo: [{ nombre: 'Registrados', n: 36412 }, { nombre: 'Consumieron contenido', n: 21480 }, { nombre: 'Completaron microaprendizaje', n: 8930 }, { nombre: 'Asistieron a un webinar', n: 5120 }, { nombre: 'Consultaron al RAG', n: 2310 }],
+                actividad: [
+                  { quien: 'Endocrinólogo · Bogotá', que: 'abrió Tratamiento farmacológico de la diabetes tipo 2', hace: 'hace 2 min', icono: 'git-branch' },
+                  { quien: 'Oncóloga · Medellín', que: 'guardó Tratamiento del cáncer de mama HR+/HER2−', hace: 'hace 5 min', icono: 'bookmark' },
+                  { quien: 'Médica general · Cali', que: 'completó el microaprendizaje Metas glucémicas', hace: 'hace 9 min', icono: 'check-circle-2' },
+                  { quien: 'Dermatólogo · Bogotá', que: 'consultó al RAG: «criterios para escalar a sistémico»', hace: 'hace 14 min', icono: 'sparkles' },
+                  { quien: 'Internista · Barranquilla', que: 'inició sesión', hace: 'hace 16 min', icono: 'log-in' },
+                  { quien: 'Ginecóloga · Bucaramanga', que: 'descargó SURPASS-2 en PDF', hace: 'hace 21 min', icono: 'file-text' },
+                  { quien: 'Endocrinóloga · Medellín', que: 'se inscribió al webinar Tirzepatida en la práctica', hace: 'hace 27 min', icono: 'calendar' },
+                  { quien: 'Médico general · Bogotá', que: 'compartió Autoexamen de mama: paso a paso', hace: 'hace 33 min', icono: 'share' },
+                ],
+                // Eventos capturados (nombres como los ve PostHog): todo lo que Óscar hace en el app deja rastro aquí.
+                eventos: [
+                  { nombre: 'pieza_abierta', que: 'Abre un algoritmo, tabla, guía o infografía', n: 48210, ultimo: 'hace 2 min' },
+                  { nombre: 'busqueda_realizada', que: 'Busca por texto o por enfermedad', n: 19640, ultimo: 'hace 3 min' },
+                  { nombre: 'consulta_rag', que: 'Pregunta a Lilly 360 (fase 2)', n: 6120, ultimo: 'hace 14 min' },
+                  { nombre: 'webinar_asistido', que: 'Entra a una sesión en vivo', n: 5120, ultimo: 'hace 41 min' },
+                  { nombre: 'certificado_obtenido', que: 'Completa un microaprendizaje', n: 3380, ultimo: 'hace 1 h' },
+                  { nombre: 'ficha_prescripcion_abierta', que: 'Abre información para prescribir', n: 2740, ultimo: 'hace 2 h' },
+                ],
+                dias: ['L', 'M', 'M', 'J', 'V', 'S', 'D'],
+                horas: Array.from({ length: 24 }, (_, h) => h),
 
+                get d() { return this.datos[this.periodo]; },
+                get f() { return this.factor[this.enfermedad]; },
+                get kpis() {
+                  const d = this.d, f = this.f;
+                  return [
+                    { nombre: 'Médicos registrados', valor: this.fmt(this.registrados * f), delta: this.dRegistrados, spark: this.sparkR },
+                    { nombre: 'Activos en el periodo', valor: this.fmt(d.activos * f), delta: d.dActivos, spark: d.sparkA },
+                    { nombre: 'Tiempo medio por sesión', valor: d.sesion, delta: d.dSesion, spark: d.sparkS, unidad: 'min' },
+                    { nombre: 'Inicios de sesión', valor: this.fmt(d.inicios * f), delta: d.dInicios, spark: d.sparkI },
+                  ];
+                },
+                get top() {
+                  const esc = { '7': 0.26, '30': 1, '90': 2.7 }[this.periodo];
+                  return this.piezas.filter(p => this.enfermedad === 'todas' || p.enf === this.enfermedad).slice(0, 8).map(p => ({ ...p, n: Math.round(p.lecturas * esc) }));
+                },
+                get maxTop() { return Math.max(...this.top.map(p => p.n)); },
+                get totalPiezas() { return this.fmt(this.top.reduce((a, p) => a + p.n, 0)); },
+                // Calor 7 × 24: picos a las 9–11 am y 8–10 pm (los momentos del médico), menos actividad el fin de semana.
+                calor(dia, hora) {
+                  const pico = (c, w) => Math.exp(-((hora - c) ** 2) / (2 * w * w));
+                  const base = 0.12 + 0.95 * pico(10, 1.4) + 0.75 * pico(21, 1.3) + 0.3 * pico(13, 1.5);
+                  const semana = dia >= 5 ? 0.45 : 1;
+                  return Math.min(1, base * semana * (0.85 + 0.3 * ruido(dia * 31 + hora)));
+                },
+                fmt(n) { return Math.round(n).toLocaleString('es-CO'); },
+                pct(n, total) { return Math.round(100 * n / total) + ' %'; },
+                barra(n, max) { return 'width:' + Math.max(2, Math.round(100 * n / max)) + '%'; },
+
+                // Gráficos como cadenas SVG (x-html): Alpine no itera con <template> dentro de un <svg>.
+                spark(arr) {
+                  const w = 120, h = 36, mn = Math.min(...arr), mx = Math.max(...arr) || 1;
+                  const pts = arr.map((v, i) => [(i / (arr.length - 1)) * w, h - 4 - ((v - mn) / (mx - mn || 1)) * (h - 8)]);
+                  const linea = pts.map(p => p.map(v => v.toFixed(1)).join(',')).join(' ');
+                  const ultimo = pts[pts.length - 1];
+                  return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-9" preserveAspectRatio="none" aria-hidden="true">
+                    <polygon points="0,${h} ${linea} ${w},${h}" fill="${azul}" opacity=".12"/>
+                    <polyline points="${linea}" fill="none" stroke="${azul}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+                    <circle cx="${ultimo[0].toFixed(1)}" cy="${ultimo[1].toFixed(1)}" r="3.5" fill="${azul}" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/>
+                  </svg>`;
+                },
+                linea() {
+                  const arr = this.d.dias.map(v => Math.round(v * this.f)), w = 320, h = 120, ml = 34, mr = 12, mb = 18;
+                  const mx = Math.max(...arr) * 1.1, n = arr.length;
+                  const x = i => ml + (i / (n - 1)) * (w - ml - mr), y = v => 6 + (1 - v / mx) * (h - mb - 6);
+                  const pts = arr.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+                  const grid = [0, .5, 1].map(t => `<line x1="${ml}" x2="${w - mr}" y1="${y(mx * t).toFixed(1)}" y2="${y(mx * t).toFixed(1)}" stroke="rgba(60,60,67,.12)"/>
+                    <text x="${ml - 6}" y="${(y(mx * t) + 3.5).toFixed(1)}" text-anchor="end" font-size="9" fill="#6E6E73">${t === 0 ? '0' : this.fmtCorto(mx * t)}</text>`).join('');
+                  const paso = n > 30 ? 15 : n > 7 ? 5 : 1;
+                  const ejes = arr.map((_, i) => (i % paso === 0 || i === n - 1) ? `<text x="${x(i).toFixed(1)}" y="${h - 4}" text-anchor="middle" font-size="9" fill="#6E6E73">${n === 7 ? this.dias[i] : 'd' + (i + 1)}</text>` : '').join('');
+                  // Zonas de hover más grandes que la marca: cada punto lleva su <title> como tooltip nativo.
+                  const hits = arr.map((v, i) => `<rect x="${(x(i) - (w - ml) / n / 2).toFixed(1)}" y="0" width="${((w - ml) / n).toFixed(1)}" height="${h - mb}" fill="transparent"><title>${n === 7 ? 'Día ' + this.dias[i] : 'Día ' + (i + 1)} · ${this.fmt(v)} sesiones</title></rect>`).join('');
+                  return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-auto" aria-label="Sesiones por día">${grid}
+                    <polygon points="${x(0).toFixed(1)},${y(0).toFixed(1)} ${pts} ${x(n - 1).toFixed(1)},${y(0).toFixed(1)}" fill="${azul}" opacity=".10"/>
+                    <polyline points="${pts}" fill="none" stroke="${azul}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+                    ${n <= 7 ? arr.map((v, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="4" fill="${azul}" stroke="#fff" stroke-width="2"/>`).join('') : ''}
+                    ${ejes}${hits}</svg>`;
+                },
+                donut() {
+                  const r = 44, c = 2 * Math.PI * r, gap = 2; let off = 0;
+                  const arcos = this.formatos.map(s => {
+                    const len = (s.pct / 100) * c;
+                    const seg = `<circle cx="60" cy="60" r="${r}" fill="none" stroke="${s.color}" stroke-width="14" stroke-dasharray="${(len - gap).toFixed(2)} ${(c - len + gap).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 60 60)"><title>${s.nombre} · ${s.pct} %</title></circle>`;
+                    off += len; return seg;
+                  }).join('');
+                  return `<svg viewBox="0 0 120 120" class="w-[116px] h-[116px] shrink-0" aria-label="Piezas vistas por formato">${arcos}
+                    <text x="60" y="57" text-anchor="middle" font-size="18" font-weight="700" fill="#1D1D1F">${this.totalPiezas}</text>
+                    <text x="60" y="72" text-anchor="middle" font-size="9" fill="#6E6E73">piezas vistas</text></svg>`;
+                },
+                fmtCorto(n) { return n >= 1000 ? (n / 1000).toFixed(1).replace('.0', '').replace('.', ',') + ' k' : Math.round(n); },
+              };
+            }
+          </script>
+
+          <div x-show="pantalla === 'dashboard'" x-data="tablero()" class="screen-enter flex-1 min-w-0 h-[calc(100vh-56px)] overflow-hidden flex bg-[#F5F5F7] text-ink">
+
+            <!-- Sidebar fijo estilo PostHog: proyecto arriba, navegación, cuenta abajo -->
+            <aside class="w-[232px] shrink-0 flex flex-col border-r border-sep bg-white/60 backdrop-blur-xl">
+              <button class="m-3 flex items-center gap-2.5 rounded-2xl px-3 py-2.5 text-left glass press">
+                <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-lilly text-white text-[13px] font-extrabold">L</span>
+                <span class="flex-1 min-w-0">
+                  <span class="block text-[14px] font-semibold text-ink leading-tight truncate">Lilly 360</span>
+                  <span class="block text-[12px] text-ink-2 leading-tight">Producción</span>
+                </span>
+                <i data-lucide="chevrons-up-down" class="h-4 w-4 shrink-0 text-ink-3"></i>
+              </button>
+              <nav class="px-3 space-y-0.5" aria-label="Secciones del back office">
+                <template x-for="s in secciones" :key="s.nombre">
+                  <button class="w-full flex items-center gap-2.5 rounded-xl px-3 h-10 text-[14px] text-left transition-colors" :class="s.activo ? 'bg-white shadow-pill font-semibold text-ink' : 'text-ink-2 hover:bg-white/70 hover:text-ink'" :aria-current="s.activo ? 'page' : null">
+                    <i :data-lucide="s.icono" class="h-[18px] w-[18px] shrink-0" :class="s.activo ? 'text-lilly' : ''"></i><span x-text="s.nombre"></span>
+                  </button>
+                </template>
+              </nav>
+              <div class="mt-auto m-3 flex items-center gap-2.5 rounded-2xl px-3 py-2.5 glass">
+                <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink text-white text-[12px] font-semibold">O</span>
+                <span class="flex-1 min-w-0">
+                  <span class="block text-[14px] font-semibold text-ink leading-tight">Ohana · Lilly</span>
+                  <span class="block text-[12px] text-ink-2 leading-tight truncate">Trazabilidad</span>
+                </span>
+                <i data-lucide="settings" class="h-4 w-4 shrink-0 text-ink-3"></i>
+              </div>
+            </aside>
+
+            <!-- Área de trabajo con scroll propio -->
+            <div class="flex-1 min-w-0 overflow-y-auto scroll-hide">
+
+              <!-- Barra superior pegajosa: breadcrumb, filtros y acciones -->
+              <div class="sticky top-0 z-10 glass-strong border-b border-sep px-6 py-3 flex flex-wrap items-center gap-3">
+                <nav class="flex items-center gap-1.5 text-[14px]" aria-label="Ruta">
+                  <span class="text-ink-2">Dashboards</span><i data-lucide="chevron-right" class="h-4 w-4 text-ink-3"></i><span class="font-semibold text-ink">Trazabilidad médicos</span>
+                </nav>
+                <div class="flex items-center gap-2 lg:ml-6" role="group" aria-label="Periodo">
+                  <template x-for="p in periodos" :key="p.id">
+                    <button @click="periodo = p.id" class="ios-chip glass press !h-8 !text-[13px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30" :aria-selected="periodo === p.id ? 'true' : 'false'" x-text="p.nombre"></button>
+                  </template>
+                </div>
+                <span class="hidden lg:block h-6 w-px bg-sep"></span>
+                <div class="flex items-center gap-2 overflow-x-auto scroll-hide" role="group" aria-label="Enfermedad">
+                  <template x-for="e in enfs" :key="e.id">
+                    <button @click="enfermedad = e.id" class="ios-chip glass press !h-8 !text-[13px] shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30" :aria-selected="enfermedad === e.id ? 'true' : 'false'" x-text="e.nombre"></button>
+                  </template>
+                </div>
+                <div class="ml-auto flex items-center gap-2">
+                  <button class="glass ios-btn-glass press !h-9 !px-4 text-[14px]"><i data-lucide="share" class="h-4 w-4"></i>Compartir</button>
+                  <button class="ios-btn press !h-9 !px-4 text-[14px]"><i data-lucide="download" class="h-4 w-4"></i>Exportar CSV</button>
+                </div>
+              </div>
+
+              <div class="px-6 py-6">
+                <div class="flex items-end justify-between gap-4">
+                  <div>
+                    <h1 class="text-[28px] font-bold tracking-[-0.02em] leading-tight text-ink">Trazabilidad médicos</h1>
+                    <p class="mt-1 text-[14px] text-ink-2">Lo que los médicos hacen en Lilly 360, por enfermedad, formato y momento del día.</p>
+                  </div>
+                  <p class="hidden lg:block text-[13px] text-ink-2">Actualizado hace 2 min</p>
+                </div>
+
+                <!-- Grilla: una columna, dos en lg, doce en xl (ancho real de la ventana) -->
+                <div class="mt-5 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-12 gap-4 stagger">
+              <!-- KPIs -->
+              <template x-for="k in kpis" :key="k.nombre">
+                <div class="glass rounded-3xl p-5 xl:col-span-3">
+                  <p class="text-[13px] font-medium text-ink-2" x-text="k.nombre"></p>
+                  <div class="mt-1 flex items-baseline gap-2">
+                    <span class="text-[30px] font-bold tracking-[-0.02em] text-ink leading-none" x-text="k.valor"></span>
+                    <span x-show="k.unidad" class="text-[13px] text-ink-2" x-text="k.unidad"></span>
+                    <span class="ml-auto text-[13px] font-medium" :class="k.delta >= 0 ? 'text-[#008300]' : 'text-ink-2'" x-text="(k.delta >= 0 ? '▲ +' : '▼ ') + String(k.delta).replace('.', ',') + ' %'"></span>
+                  </div>
+                  <div class="mt-3" x-html="spark(k.spark)"></div>
+                </div>
+              </template>
+
+              <!-- Qué leyeron: top de piezas -->
+              <section class="glass rounded-3xl p-5 lg:col-span-2 xl:col-span-8">
+                <div class="flex items-baseline justify-between">
+                  <h2 class="text-[17px] font-semibold text-ink">Qué leyeron</h2>
+                  <span class="text-[13px] text-ink-2">Top 8 · aperturas</span>
+                </div>
+                <ol class="mt-4 space-y-3">
+                  <template x-for="p in top" :key="p.titulo">
+                    <li :title="p.titulo + ' · ' + fmt(p.n) + ' aperturas'">
+                      <div class="flex items-baseline gap-3 text-[15px]">
+                        <span class="flex-1 min-w-0 truncate text-ink" x-text="p.titulo"></span>
+                        <span class="shrink-0 text-[13px] text-ink-2" x-text="p.tipo + ' · ' + p.min + ' min'"></span>
+                        <span class="shrink-0 w-14 text-right font-semibold tabular-nums text-ink" x-text="fmt(p.n)"></span>
+                      </div>
+                      <div class="mt-1.5 h-2 rounded-full bg-black/[.05]"><div class="h-2 rounded-full bg-[#2a78d6] transition-[width] duration-500 ease-[cubic-bezier(.2,.8,.2,1)]" :style="barra(p.n, maxTop)"></div></div>
+                    </li>
+                  </template>
+                </ol>
+              </section>
+
+              <!-- Por formato: donut con leyenda y valores al lado (las etiquetas son el relevo del color) -->
+              <section class="glass rounded-3xl p-5 xl:col-span-4">
+                <h2 class="text-[17px] font-semibold text-ink">Por formato</h2>
+                <div class="mt-4 flex items-center gap-4">
+                  <div x-html="donut()"></div>
+                  <ul class="flex-1 min-w-0 space-y-2">
+                    <template x-for="s in formatos" :key="s.nombre">
+                      <li class="flex items-center gap-2 text-[14px]">
+                        <span class="h-2.5 w-2.5 shrink-0 rounded-full" :style="'background:' + s.color"></span>
+                        <span class="flex-1 min-w-0 text-ink" x-text="s.nombre"></span>
+                        <span class="shrink-0 whitespace-nowrap tabular-nums text-ink-2" x-text="s.pct + ' %'"></span>
+                      </li>
+                    </template>
+                  </ul>
+                </div>
+              </section>
+
+              <!-- Cuándo se conectan: mapa de calor 7 × 24 -->
+              <section class="glass rounded-3xl p-5 xl:col-span-7">
+                <div class="flex items-baseline justify-between">
+                  <h2 class="text-[17px] font-semibold text-ink">Cuándo se conectan</h2>
+                  <span class="text-[13px] text-ink-2">Sesiones por día y hora</span>
+                </div>
+                <div class="mt-4 flex gap-2">
+                  <div class="grid grid-rows-7 gap-[3px] text-[11px] text-ink-2 leading-none">
+                    <template x-for="(dia, i) in dias" :key="'d' + i"><span class="flex items-center h-[14px] lg:h-[18px]" x-text="dia"></span></template>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="grid grid-cols-[repeat(24,minmax(0,1fr))] gap-[3px]">
+                      <template x-for="(dia, i) in dias" :key="'f' + i">
+                        <template x-for="h in horas" :key="'c' + i + '-' + h">
+                          <div class="h-[14px] lg:h-[18px] rounded-[3px]" :style="'background: rgba(42,120,214,' + (0.06 + 0.94 * calor(i, h)).toFixed(2) + ')'" :title="dia + ' · ' + h + ':00 · ' + fmt(320 * calor(i, h) * f) + ' sesiones'"></div>
+                        </template>
+                      </template>
+                    </div>
+                    <div class="mt-1.5 grid grid-cols-4 text-[11px] text-ink-2"><span>0 h</span><span>6 h</span><span>12 h</span><span>18 h</span></div>
+                  </div>
+                </div>
+                <p class="mt-3 text-[13px] text-ink-2">Picos a las 9–11 am (consulta) y 8–10 pm (antes de dormir).</p>
+              </section>
+
+              <!-- Sesiones por día -->
+              <section class="glass rounded-3xl p-5 xl:col-span-5">
+                <div class="flex items-baseline justify-between">
+                  <h2 class="text-[17px] font-semibold text-ink">Sesiones por día</h2>
+                  <span class="text-[13px] text-ink-2" x-text="'Últimos ' + periodo + ' días'"></span>
+                </div>
+                <div class="mt-4" x-html="linea()"></div>
+              </section>
+
+              <!-- Quiénes: especialidad -->
+              <section class="glass rounded-3xl p-5 xl:col-span-4">
+                <h2 class="text-[17px] font-semibold text-ink">Por especialidad</h2>
+                <ul class="mt-4 space-y-3">
+                  <template x-for="e in especialidades" :key="e.nombre">
+                    <li :title="e.nombre + ' · ' + fmt(e.n * f)">
+                      <div class="flex items-baseline justify-between text-[14px]"><span class="text-ink" x-text="e.nombre"></span><span class="tabular-nums text-ink-2" x-text="fmt(e.n * f)"></span></div>
+                      <div class="mt-1.5 h-2 rounded-full bg-black/[.05]"><div class="h-2 rounded-full bg-[#2a78d6]" :style="barra(e.n, especialidades[0].n)"></div></div>
+                    </li>
+                  </template>
+                </ul>
+              </section>
+
+              <!-- Quiénes: ciudad -->
+              <section class="glass rounded-3xl p-5 xl:col-span-4">
+                <h2 class="text-[17px] font-semibold text-ink">Por ciudad</h2>
+                <ul class="mt-4 space-y-3">
+                  <template x-for="c in ciudades" :key="c.nombre">
+                    <li :title="c.nombre + ' · ' + fmt(c.n * f)">
+                      <div class="flex items-baseline justify-between text-[14px]"><span class="text-ink" x-text="c.nombre"></span><span class="tabular-nums text-ink-2" x-text="fmt(c.n * f)"></span></div>
+                      <div class="mt-1.5 h-2 rounded-full bg-black/[.05]"><div class="h-2 rounded-full bg-[#2a78d6]" :style="barra(c.n, ciudades[0].n)"></div></div>
+                    </li>
+                  </template>
+                </ul>
+              </section>
+
+              <!-- Embudo -->
+              <section class="glass rounded-3xl p-5 xl:col-span-4">
+                <h2 class="text-[17px] font-semibold text-ink">Embudo</h2>
+                <ol class="mt-4 space-y-3">
+                  <template x-for="(e, i) in embudo" :key="e.nombre">
+                    <li :title="e.nombre + ' · ' + fmt(e.n * f)">
+                      <div class="flex items-baseline justify-between text-[14px]">
+                        <span class="text-ink" x-text="e.nombre"></span>
+                        <span class="tabular-nums"><span class="font-semibold text-ink" x-text="pct(e.n, embudo[0].n)"></span> <span class="text-ink-2" x-text="'· ' + fmt(e.n * f)"></span></span>
+                      </div>
+                      <div class="mt-1.5 h-2 rounded-full bg-black/[.05]"><div class="h-2 rounded-full" :class="i === 0 ? 'bg-[#2a78d6]' : 'bg-[#2a78d6]/70'" :style="barra(e.n, embudo[0].n)"></div></div>
+                    </li>
+                  </template>
+                </ol>
+              </section>
+
+              <!-- Actividad reciente -->
+              <section class="glass rounded-3xl lg:col-span-2 xl:col-span-12">
+                <div class="px-5 pt-5 flex items-baseline justify-between">
+                  <h2 class="text-[17px] font-semibold text-ink">Actividad reciente</h2>
+                  <span class="text-[13px] text-ink-2">Anonimizada</span>
+                </div>
+                <ul class="mt-2 xl:grid xl:grid-cols-2">
+                  <template x-for="a in actividad" :key="a.quien + a.hace">
+                    <li class="ios-row py-3 border-t border-sep">
+                      <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/80 border border-white/90 shadow-sm text-ink-2"><i :data-lucide="a.icono" class="h-4 w-4"></i></span>
+                      <span class="flex-1 min-w-0">
+                        <span class="block text-[14px] text-ink truncate"><span class="font-semibold" x-text="a.quien"></span> · <span x-text="a.que"></span></span>
+                        <span class="block text-[12px] text-ink-2" x-text="a.hace"></span>
+                      </span>
+                    </li>
+                  </template>
+                </ul>
+              </section>
+
+
+                  <!-- Eventos capturados: el vocabulario de PostHog para lo que hace Óscar en el app -->
+                  <section class="glass rounded-3xl lg:col-span-2 xl:col-span-12">
+                    <div class="px-5 pt-5 flex items-baseline justify-between">
+                      <h2 class="text-[17px] font-semibold text-ink">Eventos capturados</h2>
+                      <span class="text-[13px] text-ink-2" x-text="'Volumen en ' + periodo + ' días'"></span>
+                    </div>
+                    <div class="mt-3 hidden lg:grid grid-cols-[minmax(0,260px)_1fr_120px_120px] gap-4 px-5 pb-2 text-[12px] font-medium text-ink-2 border-b border-sep">
+                      <span>Evento</span><span>Qué registra</span><span class="text-right">Volumen</span><span class="text-right">Último visto</span>
+                    </div>
+                    <ul>
+                      <template x-for="ev in eventos" :key="ev.nombre">
+                        <li class="grid grid-cols-1 lg:grid-cols-[minmax(0,260px)_1fr_120px_120px] gap-1 lg:gap-4 items-center px-5 py-3 border-t border-sep first:border-t-0 lg:first:border-t-0">
+                          <span><code class="inline-flex items-center rounded-lg bg-black/[.05] px-2 py-1 font-mono text-[13px] text-ink" x-text="ev.nombre"></code></span>
+                          <span class="text-[14px] text-ink-2" x-text="ev.que"></span>
+                          <span class="text-[14px] font-semibold tabular-nums text-ink lg:text-right" x-text="fmt(ev.n * f * ({ '7': 0.26, '30': 1, '90': 2.7 }[periodo]))"></span>
+                          <span class="text-[13px] text-ink-2 lg:text-right" x-text="ev.ultimo"></span>
+                        </li>
+                      </template>
+                    </ul>
+                  </section>
+                </div>
+
+                <!-- Pie -->
+                <p class="mt-6 text-[13px] text-ink-2">Datos simulados · Tablero construido sobre PostHog (o la herramienta que defina Lilly).</p>
+              </div>
+            </div>
+          </div>
+
+</main>
 
 <script src="src/app.js"></script>
 </body>
