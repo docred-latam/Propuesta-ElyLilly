@@ -53,13 +53,13 @@ function app() {
       ],
     },
 
+    // El separador marca dónde se sale del app: lo de la derecha ocurre en otra plataforma.
     atajos: [
       { id: 'registro', nombre: 'Registro' },
-      { id: 'inicio', nombre: 'Inicio' },
+      { id: 'inicio', nombre: 'Home' },
       { id: 'tema', nombre: 'Búsqueda rápida' },
-      { id: 'detalle', nombre: 'Algoritmo' },
       { id: 'formacion', nombre: 'Formación ágil' },
-      { id: 'pieza', nombre: 'Webinar' },
+      { sep: true },
       { id: 'dashboard', nombre: 'Back office' },
       { id: 'arquitectura', nombre: 'Arquitectura' },
     ],
@@ -239,7 +239,7 @@ function app() {
     // Escala para que el marco quepa: alto menos la barra del prototipo, ancho menos el panel de guía si está visible. Nunca más de 1.
     get escala() {
       const guiaW = (this.guia && this.ventana.w >= 1024) ? 380 : 0;
-      const aw = this.ventana.w - guiaW - 64, ah = this.ventana.h - 56 - 64;
+      const aw = this.ventana.w - guiaW - 64, ah = this.ventana.h - 56 - 64 - 50; // 50 = selector de dispositivo bajo el marco
       return Math.max(.2, Math.min(1, aw / this.marco.w, ah / this.marco.h));
     },
     // Ámbito de la consulta: en iPhone con la hoja sin enfermedad elegida, la consulta es sobre todo Lilly 360.

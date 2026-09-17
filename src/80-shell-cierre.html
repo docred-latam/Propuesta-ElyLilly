@@ -273,4 +273,10 @@
       </div><!-- /proto-screen -->
       </div><!-- /proto-frame -->
     </div><!-- /proto-fit -->
+    <!-- El selector de dispositivo vive debajo del prototipo, no en la barra: pertenece al marco, no a la navegación -->
+    <div class="proto-seg shrink-0">
+      <template x-for="d in dispositivos" :key="d.id">
+        <button @click="dispositivo = d.id" :aria-selected="dispositivo === d.id ? 'true' : 'false'" x-text="d.nombre"></button>
+      </template>
+    </div>
   </section>

@@ -381,26 +381,33 @@
       <button @click="irRaiz('inicio')" class="inline-flex h-7 shrink-0 items-center whitespace-nowrap rounded-full bg-white px-3 text-[12px] font-semibold text-black hover:bg-white/90 transition-colors">Volver al prototipo</button>
     </div>
   </template>
-  <div x-show="!sinMarco" class="proto-seg ml-4 hidden sm:inline-flex">
-    <template x-for="d in dispositivos" :key="d.id">
-      <button @click="dispositivo = d.id" :aria-selected="dispositivo === d.id ? 'true' : 'false'" x-text="d.nombre"></button>
-    </template>
-  </div>
   <nav class="ml-auto hidden md:flex items-center gap-1 text-[13px]">
-    <template x-for="s in atajos" :key="s.id">
-      <button @click="ir(s.id, s.extra)" class="px-3.5 py-1.5 rounded-full transition-colors duration-200"
-              :class="pantalla === s.id ? 'bg-white/12 text-white' : 'text-white/50 hover:text-white/80 hover:bg-white/5'" x-text="s.nombre"></button>
+    <template x-for="s in atajos" :key="s.id || s.sep">
+      <span>
+        <span x-show="s.sep" class="mx-2 inline-block h-4 w-px align-middle bg-white/15"></span>
+        <button x-show="!s.sep" @click="ir(s.id, s.extra)" class="px-3.5 py-1.5 rounded-full transition-colors duration-200"
+                :class="pantalla === s.id ? 'bg-white/12 text-white' : 'text-white/50 hover:text-white/80 hover:bg-white/5'" x-text="s.nombre"></button>
+      </span>
     </template>
   </nav>
-  <button @click="guia = !guia" class="ml-2 inline-flex items-center gap-2 rounded-full bg-white/8 px-3.5 py-1.5 text-[13px] text-white/70 hover:bg-white/12 hover:text-white transition-colors duration-200">
-    <i data-lucide="book-open" class="h-4 w-4"></i><span x-text="guia ? 'Ocultar guía' : 'Mostrar guía'"></span>
-  </button>
 </header>
 
 <main class="pt-14 h-screen flex items-stretch overflow-hidden">
 
   <!-- Panel de guía (la narrativa de Óscar; es del prototipo, no del app) -->
+  <!-- Con el panel plegado queda su manija, para poder volver a abrirlo -->
+  <button x-show="!guia" @click="guia = true" title="Mostrar guía" aria-label="Mostrar guía"
+          class="fade-in hidden lg:flex fixed left-4 top-[72px] z-20 h-9 w-9 items-center justify-center rounded-full bg-white/8 text-white/60 hover:bg-white/12 hover:text-white transition-colors">
+    <i data-lucide="panel-left-open" class="h-4 w-4"></i>
+  </button>
   <aside x-show="guia"  class="proto-panel fade-in hidden lg:flex w-[380px] shrink-0 flex-col p-7 gap-5 overflow-y-auto">
+    <div class="flex items-center justify-between -mb-1">
+      <span class="text-[11px] uppercase tracking-[.16em] text-white/30 font-semibold">La historia</span>
+      <button @click="guia = false" title="Ocultar guía" aria-label="Ocultar guía"
+              class="h-8 w-8 flex items-center justify-center rounded-full text-white/45 hover:bg-white/8 hover:text-white transition-colors">
+        <i data-lucide="panel-left-close" class="h-4 w-4"></i>
+      </button>
+    </div>
     <!-- Foto del momento: cambia con fundido al cambiar de pantalla -->
     <div class="guia-foto">
       <img :src="guiaActual.foto" :alt="guiaActual.titulo" loading="lazy" decoding="async" :style="'object-position:' + posFoto(guiaActual.foto)"
@@ -430,7 +437,7 @@
   </aside>
 
   <!-- Marco: uno solo, muta entre iPhone, iPad y ventana de escritorio y se escala para caber en la vista -->
-  <section x-show="!sinMarco"  class="flex-1 flex items-center justify-center p-8 overflow-hidden fade-in">
+  <section x-show="!sinMarco"  class="flex-1 flex flex-col items-center justify-center gap-4 p-8 overflow-hidden fade-in">
     <div class="proto-fit" :style="`width:${marco.w * escala}px;height:${marco.h * escala}px`">
       <div class="proto-frame" :class="'is-' + dispositivo" :style="`width:${marco.w}px;height:${marco.h}px;transform:scale(${escala})`">
       <div class="bg-scene proto-screen text-ink" :data-tinte="pantalla === 'inicio' ? '' : enfermedad">
