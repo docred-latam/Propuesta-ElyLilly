@@ -499,6 +499,8 @@ function app() {
       // ?p=tema&e=mama&t=tratamiento abre una pantalla directa: sirve para pantallazos y para compartir un enlace.
       const q = new URLSearchParams(location.search);
       if (q.get('captura') === '1') document.body.classList.add('sin-animacion');
+      // ?pieza=<n> elige qué contenido de Formación se abre: sirve para las capturas de la historia.
+      if (q.get('pieza')) { const n = +q.get('pieza'); const lista = this.formacion[this.enfermedad]; if (lista && lista[n]) this.pieza = lista[n]; }
       if (q.get('solo') === '1') { this.solo = true; this.guia = false; }
       if (q.get('guia') === '0') this.guia = false;
       if (q.get('e') && this.enfermedades[q.get('e')]) this.enfermedad = q.get('e');
