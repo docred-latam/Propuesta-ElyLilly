@@ -24,3 +24,10 @@ Descargadas el 17 de septiembre de 2026 a 1200 px de ancho, JPEG, menos de 200 K
 - Se descartaron todos los resultados de Unsplash marcados «Getty Images» o «Curated Lifestyle»: son Unsplash+ (licencia paga).
 - `oscar-tablet`, `almuerzo-tablet`, `estudio-pdf` y `webinar-oncologo` son verticales (1200 × 1800); el resto son horizontales (1200 × 800).
 - `maria-paciente` no es un primer plano estricto: es la mejor foto libre encontrada de una paciente de ~50 años en consulta. Si hace falta un retrato más cerrado, recortar la mitad derecha.
+
+## Logo de Lilly
+`lilly-logo.png` (lockup completo) y `lilly-firma.png` (solo la firma) se recortaron del archivo que
+compartió Andrés el 17 de septiembre de 2026. Son **marca registrada de Eli Lilly and Company**: se
+usan aquí en una propuesta dirigida a la propia Lilly, en un prototipo rotulado como aproximación de
+mockups. No deben reutilizarse fuera de este contexto. Ambos son blancos sobre transparente y se
+aplican como máscara CSS (`.lilly-firma`, `.lilly-lockup`), así que toman el color del contexto.
