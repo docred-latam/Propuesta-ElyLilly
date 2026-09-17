@@ -555,6 +555,17 @@
   .hist-tel3d { height: min(66vh, 620px); width: auto; max-width: 100%; transform-origin: 50% 70%; transform: rotateX(42deg) translateY(26px) scale(.86);
     filter: drop-shadow(0 30px 60px rgba(0,0,0,.65)); will-change: transform; }
   @media (max-width: 999px) { .hist-tel3d { height: min(46vh, 420px); } }
+
+  /* Puente hero → Óscar: la frase se descifra letra a letra (referencia: encrypted-text). */
+  .hist-dia { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; gap: clamp(20px, 3vh, 34px);
+    padding: clamp(80px, 12vh, 140px) 0; }
+  .hist-cifrado { max-width: 24ch; font-size: clamp(30px, 4.4vw, 58px); font-weight: 600; line-height: 1.12; letter-spacing: -.02em;
+    color: rgba(255,255,255,.28); text-wrap: balance; }
+  .hist-cifrado .cifra { transition: color .2s; }
+  .hist-cifrado .cifra.es-clara { color: #fff; }
+  .hist-dia-pie { max-width: 34rem; font-size: 17px; line-height: 1.6; color: rgba(255,255,255,.55); }
+  @media (prefers-reduced-motion: reduce) { .hist-cifrado { color: #fff; } }
+  .sin-animacion .hist-cifrado { color: #fff; }
 </style>
 </head>
 <body :class="solo ? '!bg-transparent' : ''" class="font-sans bg-[#0B0B0D] text-white h-screen overflow-hidden antialiased" x-data="app()" x-init="init()" x-cloak>
@@ -1780,7 +1791,7 @@
             function narrativa() {
               return {
                 capitulos: [
-                  { id: 'cap-hero', n: 'Portada' }, { id: 'cap-oscar', n: 'Óscar' }, { id: 'cap-manana', n: 'La mañana' },
+                  { id: 'cap-hero', n: 'Portada' }, { id: 'cap-dia', n: 'El día a día' }, { id: 'cap-oscar', n: 'Óscar' }, { id: 'cap-manana', n: 'La mañana' },
                   { id: 'cap-busqueda', n: 'Búsqueda' }, { id: 'cap-mediodia', n: 'Mediodía' }, { id: 'cap-valor', n: 'Valor rápido' },
                   { id: 'cap-aprender', n: 'Aprender' }, { id: 'cap-micro', n: 'Microaprendizaje' }, { id: 'cap-colegas', n: 'Colegas' },
                   { id: 'cap-eventos', n: 'Eventos' }, { id: 'cap-momentos', n: 'Los 4 momentos' }, { id: 'cap-todo', n: 'Todo el producto' },
@@ -1796,6 +1807,33 @@
                   { t: 'Back office', d: 'La trazabilidad, en PostHog', i: 'chart-column', p: 'dashboard', e: null },
                   { t: 'Arquitectura', d: 'Sobre qué se construye', i: 'layers', p: 'arquitectura', e: null },
                 ],
+                // Texto que se descifra: cada carácter muestra símbolos al azar hasta que le llega su turno.
+                descifrar(el, retraso) {
+                  if (!el || el.dataset.cifrado) return;
+                  el.dataset.cifrado = '1';
+                  const alfabeto = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789#%&@$/*+=?';
+                  const original = el.textContent;
+                  const celdas = [];
+                  el.textContent = '';
+                  original.split('').forEach((ch) => {
+                    if (ch === ' ') { el.appendChild(document.createTextNode(' ')); return; }
+                    const sp = document.createElement('span');
+                    sp.className = 'cifra';
+                    sp.textContent = alfabeto[Math.floor(Math.random() * alfabeto.length)];
+                    el.appendChild(sp);
+                    celdas.push({ sp, ch });
+                  });
+                  let i = 0;
+                  const baile = setInterval(() => {
+                    celdas.forEach((c, k) => { if (k >= i) c.sp.textContent = alfabeto[Math.floor(Math.random() * alfabeto.length)]; });
+                  }, 55);
+                  const revelar = setInterval(() => {
+                    if (i >= celdas.length) { clearInterval(revelar); clearInterval(baile); return; }
+                    celdas[i].sp.textContent = celdas[i].ch;
+                    celdas[i].sp.classList.add('es-clara');
+                    i++;
+                  }, retraso);
+                },
                 // Las palabras aparecen una a una, con desenfoque que se despeja (efecto «text generate»).
                 generar(el, paso, retraso) {
                   if (!el || el.dataset.generado) return;
@@ -1841,6 +1879,7 @@
                     es.forEach((e) => {
                       if (!e.isIntersecting) return;
                       e.target.classList.add('is-dentro');
+                      if (e.target.id === 'cap-dia' && suave) this.descifrar(e.target.querySelector('[data-cifrar]'), 26);
                       if (e.target.classList.contains('hist-hero') && suave) {
                         this.generar(e.target.querySelector('.hist-hero-h1'), 105, 120);
                         this.generar(e.target.querySelector('.hist-hero-p'), 22, 900);
@@ -1849,7 +1888,7 @@
                       io.unobserve(e.target);
                     });
                   }, { root: raiz, threshold: 0.2 });
-                  raiz.querySelectorAll('.hist-sec, .hist-hero').forEach((sec) => {
+                  raiz.querySelectorAll('.hist-sec, .hist-hero, .hist-dia').forEach((sec) => {
                     if (!suave) { sec.classList.add('is-dentro'); sec.querySelectorAll('.hist-foto').forEach((f) => f.classList.add('is-revelada')); }
                     else io.observe(sec);
                   });
@@ -1931,6 +1970,14 @@
                 </div>
               </div>
               </div>
+            </section>
+
+
+            <!-- Puente entre el hero y Óscar: la frase se descifra al entrar, como el efecto encrypted-text. -->
+            <section id="cap-dia" class="hist-dia">
+              <p class="hist-kicker hist-anim">Lo que entendimos</p>
+              <p class="hist-cifrado hist-anim" data-cifrar>El día de un médico no espera. Entre un paciente y el siguiente hay veinte minutos, y en esos veinte minutos cabe una decisión.</p>
+              <p class="hist-dia-pie hist-anim">Así que no empezamos por la plataforma. Empezamos por su día.</p>
             </section>
 
             <!-- 1 · Óscar -->

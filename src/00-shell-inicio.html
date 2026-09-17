@@ -555,6 +555,17 @@
   .hist-tel3d { height: min(66vh, 620px); width: auto; max-width: 100%; transform-origin: 50% 70%; transform: rotateX(42deg) translateY(26px) scale(.86);
     filter: drop-shadow(0 30px 60px rgba(0,0,0,.65)); will-change: transform; }
   @media (max-width: 999px) { .hist-tel3d { height: min(46vh, 420px); } }
+
+  /* Puente hero → Óscar: la frase se descifra letra a letra (referencia: encrypted-text). */
+  .hist-dia { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; gap: clamp(20px, 3vh, 34px);
+    padding: clamp(80px, 12vh, 140px) 0; }
+  .hist-cifrado { max-width: 24ch; font-size: clamp(30px, 4.4vw, 58px); font-weight: 600; line-height: 1.12; letter-spacing: -.02em;
+    color: rgba(255,255,255,.28); text-wrap: balance; }
+  .hist-cifrado .cifra { transition: color .2s; }
+  .hist-cifrado .cifra.es-clara { color: #fff; }
+  .hist-dia-pie { max-width: 34rem; font-size: 17px; line-height: 1.6; color: rgba(255,255,255,.55); }
+  @media (prefers-reduced-motion: reduce) { .hist-cifrado { color: #fff; } }
+  .sin-animacion .hist-cifrado { color: #fff; }
 </style>
 </head>
 <body :class="solo ? '!bg-transparent' : ''" class="font-sans bg-[#0B0B0D] text-white h-screen overflow-hidden antialiased" x-data="app()" x-init="init()" x-cloak>
