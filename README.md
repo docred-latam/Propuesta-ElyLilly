@@ -1,4 +1,4 @@
-# Lilly 360 · Prototipo navegable
+# Propuesta Eli Lilly · Lilly 360 · Prototipo navegable
 
 Prototipo de interfaz para una plataforma de contenido médico. Aproximación de mockups con
 imágenes de referencia; no es una propuesta definitiva ni un producto real.
