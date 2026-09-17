@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Lilly 360 · Prototipo</title>
+<link rel="preload" as="image" href="img/lilly-firma.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -375,18 +376,84 @@
     -webkit-mask: url(img/lilly-firma.png) no-repeat center/contain; mask: url(img/lilly-firma.png) no-repeat center/contain; }
   .lilly-lockup { display:block; background-color: currentColor;
     -webkit-mask: url(img/lilly-logo.png) no-repeat center/contain; mask: url(img/lilly-logo.png) no-repeat center/contain; }
+
+  /* ===== La historia · lámina narrativa (negro + cortina de luz roja, como las láminas de Andrés) ===== */
+  .hist { position: relative; background: #050505; color: #fff; scroll-snap-type: y proximity; }
+  .hist-luz { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: .9;
+    background:
+      repeating-linear-gradient(90deg, rgba(213,43,30,0) 0 42px, rgba(213,43,30,.22) 42px 64px, rgba(213,43,30,0) 64px 106px),
+      radial-gradient(60% 55% at 62% 78%, rgba(213,43,30,.5), transparent 70%);
+    -webkit-mask-image: radial-gradient(75% 60% at 60% 80%, #000, transparent 75%);
+    mask-image: radial-gradient(75% 60% at 60% 80%, #000, transparent 75%); filter: blur(1px); }
+  .hist > section { position: relative; z-index: 1; }
+  .hist-sec { min-height: 100vh; scroll-snap-align: start; display: grid; align-items: center; gap: 56px;
+    grid-template-columns: 1fr; padding: 96px 40px; }
+  @media (min-width: 1100px) { .hist-sec { grid-template-columns: 1.05fr .95fr; padding: 96px 72px; } }
+  .hist-col { max-width: 40rem; }
+  .hist-kicker { font-size: 19px; color: rgba(255,255,255,.8); }
+  .hist-h1 { font-size: clamp(44px, 6vw, 76px); font-weight: 600; line-height: 1.02; letter-spacing: -.025em; }
+  .hist-h2 { font-size: clamp(34px, 4.4vw, 56px); font-weight: 600; line-height: 1.08; letter-spacing: -.02em; }
+  .hist-rol { margin-top: 10px; font-size: 17px; color: rgba(255,255,255,.55); }
+  .hist-p { font-size: 17.5px; line-height: 1.65; color: rgba(255,255,255,.82); }
+  .hist-pie { font-size: 16px; line-height: 1.6; color: rgba(255,255,255,.55); }
+  .hist-dato { display: flex; align-items: center; gap: 18px; border: 1px solid rgba(213,43,30,.5); border-radius: 16px; padding: 16px 22px; max-width: 40rem; }
+  .hist-dato-n { font-size: 40px; font-weight: 600; line-height: 1; }
+  .hist-dato-u { font-size: 12px; color: rgba(255,255,255,.5); align-self: flex-end; padding-bottom: 4px; }
+  .hist-dato-t { font-size: 15px; color: rgba(255,255,255,.75); border-left: 1px solid rgba(255,255,255,.14); padding-left: 18px; }
+  /* Foto con la muesca de las láminas */
+  .hist-media { display: flex; justify-content: center; }
+  .hist-foto { position: relative; width: min(100%, 520px); aspect-ratio: 4/5; border-radius: 30px; overflow: hidden; margin: 0; }
+  .hist-foto img { width: 100%; height: 100%; object-fit: cover; }
+  .hist-foto::before { content: ''; position: absolute; top: -1px; left: -1px; width: 27%; height: 13%;
+    background: #050505; border-bottom-right-radius: 26px; }
+  /* Momentos «qué hizo» */
+  .hist-sec--proto { grid-template-columns: 1fr; justify-items: center; align-content: center; gap: 28px; }
+  @media (min-width: 1100px) { .hist-sec--proto { grid-template-columns: 1fr; padding: 72px; } }
+  .hist-titulo-proto { font-size: clamp(19px, 2vw, 25px); text-align: center; color: rgba(255,255,255,.92); }
+  .hist-marca { display: inline-flex; align-items: baseline; gap: 6px; font-weight: 600; }
+  .hist-marca--grande { gap: 10px; }
+  .hist-proto { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: center; width: 100%; max-width: 1280px; }
+  @media (min-width: 1100px) { .hist-proto { grid-template-columns: 1fr auto 1fr; gap: 40px; } }
+  .hist-pantalla { width: min(100%, 330px); justify-self: center; }
+  .hist-notas { display: flex; flex-direction: column; gap: 56px; }
+  .hist-notas--der { text-align: left; }
+  @media (min-width: 1100px) { .hist-notas { text-align: right; } .hist-notas--der { text-align: left; } }
+  .hist-nota { position: relative; font-size: 15.5px; line-height: 1.6; color: rgba(255,255,255,.78); }
+  .hist-nota::before { content: ''; display: block; width: 46px; height: 1px; background: rgba(255,255,255,.35); margin: 0 0 14px auto; }
+  .hist-notas--der .hist-nota::before { margin: 0 auto 14px 0; }
+  @media (max-width: 1099px) { .hist-nota::before { margin: 0 0 12px 0; } }
+  /* Los cuatro momentos */
+  .hist-sec--cierre { align-items: center; }
+  .hist-momentos { display: flex; flex-direction: column; gap: 34px; list-style: none; padding: 0; margin: 0; }
+  .hist-momento { display: flex; gap: 20px; align-items: flex-start; }
+  .hist-num { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px;
+    border: 1px solid rgba(213,43,30,.55); border-radius: 14px; font-size: 15px; color: rgba(255,255,255,.9); }
+  .hist-momento-t { font-size: 19px; font-weight: 600; }
+  .hist-momento-d { margin-top: 6px; font-size: 15.5px; line-height: 1.6; color: rgba(255,255,255,.6); max-width: 34rem; }
+  /* Cierre */
+  .hist-sec--final { grid-template-columns: 1fr; justify-items: center; align-content: center; text-align: center; }
+  .hist-btn { height: 52px; padding: 0 28px; border-radius: 9999px; background: #D52B1E; color: #fff; font-size: 16px; font-weight: 600; transition: transform .15s, background .2s; }
+  .hist-btn:hover { background: #bb2418; } .hist-btn:active { transform: scale(.97); }
+  .hist-btn--ghost { background: rgba(255,255,255,.08); } .hist-btn--ghost:hover { background: rgba(255,255,255,.14); }
+  /* Índice */
+  .hist-indice { position: fixed; right: 26px; top: 50%; transform: translateY(-50%); z-index: 20; flex-direction: column; gap: 12px; }
+  .hist-punto { width: 7px; height: 7px; border-radius: 9999px; background: rgba(255,255,255,.25); transition: all .2s; position: relative; }
+  .hist-punto:hover { background: #D52B1E; transform: scale(1.4); }
+  .hist-punto span { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-size: 12px;
+    color: rgba(255,255,255,.75); opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .hist-punto:hover span { opacity: 1; }
 </style>
 </head>
-<body class="font-sans bg-[#0B0B0D] text-white h-screen overflow-hidden antialiased" x-data="app()" x-init="init()" x-cloak>
+<body :class="solo ? '!bg-transparent' : ''" class="font-sans bg-[#0B0B0D] text-white h-screen overflow-hidden antialiased" x-data="app()" x-init="init()" x-cloak>
 
 <!-- Barra superior del prototipo (no es parte del app) -->
-<header class="proto-panel fixed inset-x-0 top-0 z-30 h-14 bg-[#0B0B0D]/85 backdrop-blur-xl flex items-center px-6 gap-4">
+<header x-show="!solo" class="proto-panel fixed inset-x-0 top-0 z-30 h-14 bg-[#0B0B0D]/85 backdrop-blur-xl flex items-center px-6 gap-4">
   <div class="flex shrink-0 items-center gap-2.5 whitespace-nowrap">
     <span class="h-2 w-2 rounded-full bg-lilly"></span>
     <span class="flex items-baseline gap-1.5 font-semibold text-[15px] tracking-tight"><span class="lilly-firma h-[17px] w-[45px]" role="img" aria-label="Lilly"></span>360</span>
     <span x-show="!sinMarco" class="text-white/35 text-[13px]">prototipo navegable</span>
   </div>
-  <template x-if="sinMarco">
+  <template x-if="sinMarco && pantalla !== 'historia'">
     <div class="ml-3 flex shrink-0 items-center gap-2 whitespace-nowrap">
       <span class="inline-flex h-7 items-center gap-1.5 rounded-full bg-white/8 px-3 text-[12px] text-white/70"><span class="h-1.5 w-1.5 rounded-full bg-lillyblue"></span><span x-text="pantalla === 'dashboard' ? 'Fuera del app · herramienta de analítica' : 'Fuera del app · lámina de la propuesta'"></span></span>
       <button @click="irRaiz('inicio')" class="inline-flex h-7 shrink-0 items-center whitespace-nowrap rounded-full bg-white px-3 text-[12px] font-semibold text-black hover:bg-white/90 transition-colors">Volver al prototipo</button>
@@ -407,11 +474,11 @@
 
   <!-- Panel de guía (la narrativa de Óscar; es del prototipo, no del app) -->
   <!-- Con el panel plegado queda su manija, para poder volver a abrirlo -->
-  <button x-show="!guia" @click="guia = true" title="Mostrar guía" aria-label="Mostrar guía"
+  <button x-show="!guia && pantalla !== 'historia'" @click="guia = true" title="Mostrar guía" aria-label="Mostrar guía"
           class="fade-in hidden lg:flex fixed left-4 top-[72px] z-20 h-9 w-9 items-center justify-center rounded-full bg-white/8 text-white/60 hover:bg-white/12 hover:text-white transition-colors">
     <i data-lucide="panel-left-open" class="h-4 w-4"></i>
   </button>
-  <aside x-show="guia"  class="proto-panel fade-in hidden lg:flex w-[380px] shrink-0 flex-col p-7 gap-5 overflow-y-auto">
+  <aside x-show="guia && pantalla !== 'historia'"  class="proto-panel fade-in hidden lg:flex w-[380px] shrink-0 flex-col p-7 gap-5 overflow-y-auto">
     <div class="flex items-center justify-between -mb-1">
       <span class="text-[11px] uppercase tracking-[.16em] text-white/30 font-semibold">La historia</span>
       <button @click="guia = false" title="Ocultar guía" aria-label="Ocultar guía"
@@ -1582,12 +1649,193 @@
       </div><!-- /proto-frame -->
     </div><!-- /proto-fit -->
     <!-- El selector de dispositivo vive debajo del prototipo, no en la barra: pertenece al marco, no a la navegación -->
-    <div class="proto-seg shrink-0">
+    <div x-show="!solo" class="proto-seg shrink-0">
       <template x-for="d in dispositivos" :key="d.id">
         <button @click="dispositivo = d.id" :aria-selected="dispositivo === d.id ? 'true' : 'false'" x-text="d.nombre"></button>
       </template>
     </div>
   </section>
+          <!-- ============ LA HISTORIA ============
+               La presentación arranca aquí: primero lo que entendimos del médico, después el producto.
+               Fondo negro con la cortina de luz roja de las láminas de Andrés, fotos con muesca y, en los
+               momentos «qué hizo Lilly 360», capturas del propio prototipo (img/proto-*.png, generadas con
+               ?solo=1) rodeadas de las decisiones de diseño que las explican. Cierra entrando al prototipo. -->
+          <div x-show="pantalla === 'historia'" class="hist flex-1 min-w-0 h-screen overflow-y-auto scroll-hide">
+            <div class="hist-luz" aria-hidden="true"></div>
+
+            <!-- Índice lateral -->
+            <nav class="hist-indice hidden xl:flex" aria-label="Capítulos">
+              <template x-for="(c, i) in ['Óscar', 'La mañana', 'Búsqueda', 'Mediodía', 'Valor rápido', 'Aprender', 'Microaprendizaje', 'Colegas', 'Eventos', 'Los 4 momentos', 'El prototipo']" :key="c">
+                <a :href="'#cap-' + i" class="hist-punto" :title="c"><span x-text="c"></span></a>
+              </template>
+            </nav>
+
+            <!-- 1 · Óscar -->
+            <section id="cap-0" class="hist-sec">
+              <div class="hist-col">
+                <p class="hist-kicker">Queremos presentarles a</p>
+                <h1 class="hist-h1 mt-3">Óscar Vargas</h1>
+                <p class="hist-rol">Médico general · Bogotá</p>
+                <p class="hist-p mt-10 max-w-[30rem]">Les vamos a contar qué espera el Dr. Óscar de esta plataforma, cómo la va a usar y por qué resuelve lo que hoy le falta.</p>
+              </div>
+              <div class="hist-media">
+                <figure class="hist-foto"><img src="img/oscar-consulta.jpg" alt="Óscar en consulta con una paciente" loading="eager" decoding="async" /></figure>
+              </div>
+            </section>
+
+            <!-- 2 · La mañana -->
+            <section id="cap-1" class="hist-sec">
+              <div class="hist-col">
+                <h2 class="hist-h2">Un día en la vida<br>del médico</h2>
+                <p class="hist-p mt-6 max-w-[34rem]">La mañana empieza agitada: un paciente cada veinte minutos y cada uno con un diagnóstico distinto. A las nueve llega María, 54 años, con una hemoglobina glucosilada de 9,2 %. Óscar tiene que decidir el tratamiento ahí mismo, con ella al frente.</p>
+                <div class="hist-dato mt-9">
+                  <span class="hist-dato-n">20</span>
+                  <span class="hist-dato-u">minutos</span>
+                  <span class="hist-dato-t">es todo lo que Óscar tiene para resolver lo que María necesita</span>
+                </div>
+                <p class="hist-pie mt-10 max-w-[32rem]">Óscar no lo pensó dos veces: abrió la aplicación y encontró el algoritmo de tratamiento que necesitaba.</p>
+              </div>
+              <div class="hist-media">
+                <figure class="hist-foto"><img src="img/oscar-tablet.jpg" alt="Óscar consultando el celular en la consulta" loading="lazy" decoding="async" style="object-position:center 10%" /></figure>
+              </div>
+            </section>
+
+            <!-- 3 · Qué hizo · búsqueda -->
+            <section id="cap-2" class="hist-sec hist-sec--proto">
+              <p class="hist-titulo-proto">Qué hizo <span class="hist-marca"><span class="lilly-firma h-[19px] w-[51px]" role="img" aria-label="Lilly"></span>360</span> para que la búsqueda fuera tan rápida</p>
+              <div class="hist-proto">
+                <div class="hist-notas">
+                  <p class="hist-nota">Reconocer antes que recordar: Óscar no tiene que acordarse del título exacto, entra por la enfermedad que ya conoce.</p>
+                  <p class="hist-nota">Cinco a siete elementos por nivel. Menos carga mental, lectura más rápida.</p>
+                </div>
+                <img src="img/proto-busqueda.png" alt="Búsqueda rápida en el prototipo" class="hist-pantalla" loading="lazy" decoding="async" />
+                <div class="hist-notas hist-notas--der">
+                  <p class="hist-nota">Búsqueda sobre el contenido aprobado por Lilly, indexado y siempre vigente.</p>
+                  <p class="hist-nota">Navegación temática por subniveles: diagnóstico, tratamiento e infografías para el paciente.</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- 4 · Mediodía -->
+            <section id="cap-3" class="hist-sec">
+              <div class="hist-col">
+                <h2 class="hist-h2">Mediodía, Óscar<br>terminó las consultas</h2>
+                <p class="hist-p mt-6 max-w-[34rem]">Ya no hay urgencia. Quiere aprovechar el break para ponerse al día, pero no le alcanza para leer un estudio completo. Busca algo que le aporte en pocos minutos.</p>
+                <p class="hist-pie mt-10 max-w-[34rem]">Abrió la aplicación, buscó algo nuevo sobre diabetes y en menos de quince minutos reforzó su conocimiento. Se fue a almorzar tranquilo, sabiendo algo que antes no sabía.</p>
+              </div>
+              <div class="hist-media">
+                <figure class="hist-foto"><img src="img/almuerzo-tablet.jpg" alt="Óscar en su pausa con una tablet" loading="lazy" decoding="async" style="object-position:center 15%" /></figure>
+              </div>
+            </section>
+
+            <!-- 5 · Qué hizo · valor rápido -->
+            <section id="cap-4" class="hist-sec hist-sec--proto">
+              <p class="hist-titulo-proto">Qué hizo <span class="hist-marca"><span class="lilly-firma h-[19px] w-[51px]" role="img" aria-label="Lilly"></span>360</span> para entregarle valor rápido</p>
+              <div class="hist-proto">
+                <div class="hist-notas">
+                  <p class="hist-nota">Guarda y destaca contenido en su biblioteca: acceso rápido y prioritario.</p>
+                  <p class="hist-nota">Multiformato: video, audio, estudio o infografía, según el momento del día.</p>
+                </div>
+                <img src="img/proto-formacion.png" alt="Formación ágil en el prototipo" class="hist-pantalla" loading="lazy" decoding="async" />
+                <div class="hist-notas hist-notas--der">
+                  <p class="hist-nota">El algoritmo de recomendación destaca lo nuevo y lo pertinente para él.</p>
+                  <p class="hist-nota">Lo comercial va separado de lo médico: la información para prescribir tiene su propio lugar.</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- 6 · Quiere saber más -->
+            <section id="cap-5" class="hist-sec">
+              <div class="hist-col">
+                <h2 class="hist-h2">Óscar siempre<br>quiere saber más</h2>
+                <p class="hist-p mt-6 max-w-[34rem]">Un médico necesita retos nuevos de conocimiento y mantenerse al día. Óscar sabe que la plataforma le ofrece cursos cortos por ejes temáticos, con certificado y una ruta de aprendizaje propia.</p>
+                <p class="hist-p mt-4 max-w-[34rem]">Quiere especializarse cada vez más, y cada momento libre lo aprovecha para aprender.</p>
+                <p class="hist-pie mt-10 max-w-[34rem]">Solo necesita sacar el celular o la tablet: microaprendizajes con video, audio, podcast, microartículos y retos cada día.</p>
+              </div>
+              <div class="hist-media">
+                <figure class="hist-foto"><img src="img/noche-lectura.jpg" alt="Óscar estudiando de noche" loading="lazy" decoding="async" /></figure>
+              </div>
+            </section>
+
+            <!-- 7 · Qué hizo · microaprendizajes -->
+            <section id="cap-6" class="hist-sec hist-sec--proto">
+              <p class="hist-titulo-proto">Qué hizo <span class="hist-marca"><span class="lilly-firma h-[19px] w-[51px]" role="img" aria-label="Lilly"></span>360</span> para ofrecerle los microaprendizajes</p>
+              <div class="hist-proto">
+                <div class="hist-notas">
+                  <p class="hist-nota">Rutas por área de conocimiento y por eje temático.</p>
+                  <p class="hist-nota">Las rutas se completan y el avance queda registrado: certificado al final.</p>
+                </div>
+                <img src="img/proto-pieza.png" alt="Microaprendizaje con pregunta en el prototipo" class="hist-pantalla" loading="lazy" decoding="async" />
+                <div class="hist-notas hist-notas--der">
+                  <p class="hist-nota">El contenido pregunta de vuelta: el video se detiene y evalúa lo aprendido.</p>
+                  <p class="hist-nota">Un formato para cada momento y cada necesidad.</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- 8 · Colegas -->
+            <section id="cap-7" class="hist-sec">
+              <div class="hist-col">
+                <h2 class="hist-h2">A Óscar le gusta<br>saber de sus colegas</h2>
+                <p class="hist-p mt-6 max-w-[34rem]">Conocer el trabajo de otros le importa. Quiere participar en espacios académicos y científicos, conocer colegas nuevos, aprender y también aportar lo que sabe.</p>
+                <p class="hist-pie mt-10 max-w-[34rem]">La plataforma le facilita esa búsqueda y lo conecta con colegas en webinars interactivos. La última vez que se enteró de un evento, invitó a dos colegas más.</p>
+              </div>
+              <div class="hist-media">
+                <figure class="hist-foto"><img src="img/junta-medica.jpg" alt="Óscar con colegas" loading="lazy" decoding="async" /></figure>
+              </div>
+            </section>
+
+            <!-- 9 · Qué hizo · eventos -->
+            <section id="cap-8" class="hist-sec hist-sec--proto">
+              <p class="hist-titulo-proto">Qué hizo <span class="hist-marca"><span class="lilly-firma h-[19px] w-[51px]" role="img" aria-label="Lilly"></span>360</span> para ofrecerle espacios digitales</p>
+              <div class="hist-proto">
+                <div class="hist-notas">
+                  <p class="hist-nota">Información de primera mano: puede preguntar y conectarse con expertos.</p>
+                  <p class="hist-nota">Sesiones en vivo y grabadas, con descarga, traducción y apoyo documental.</p>
+                </div>
+                <img src="img/proto-consulta.png" alt="Consulta y eventos en el prototipo" class="hist-pantalla" loading="lazy" decoding="async" />
+                <div class="hist-notas hist-notas--der">
+                  <p class="hist-nota">Contenido organizado por ejes temáticos: se entera de lo que le resulta relevante.</p>
+                  <p class="hist-nota">Agenda y recordatorios personalizados para cada evento.</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- 10 · Los cuatro momentos -->
+            <section id="cap-9" class="hist-sec hist-sec--cierre">
+              <div class="hist-col">
+                <h2 class="hist-h2">Para Óscar,<br><span class="hist-marca hist-marca--grande"><span class="lilly-firma h-[34px] w-[91px]" role="img" aria-label="Lilly"></span>360</span><br>es el aliado ideal<br>en su día a día</h2>
+                <p class="hist-p mt-7 max-w-[30rem] font-medium">Durante cuatro momentos clave estuvo cuando el médico la necesitó: le acercó y simplificó el acceso a la información que de verdad necesita.</p>
+              </div>
+              <ol class="hist-momentos">
+                <template x-for="(m, i) in [
+                  ['Búsquedas rápidas y pertinentes', 'Necesitó información exacta en medio de una consulta, la encontró, y prescribió con tranquilidad.'],
+                  ['Biblioteca de acceso rápido', 'Tiene guardados los ejes temáticos que le interesan y se mantiene al día en cuestión de minutos.'],
+                  ['Microaprendizajes', 'Sigue avanzando en su profesión, se certifica y hace seguimiento de su propio progreso.'],
+                  ['Eventos digitales', 'Conoce profesionales nuevos y conecta con colegas que llevan su práctica al siguiente nivel.']]" :key="m[0]">
+                  <li class="hist-momento">
+                    <span class="hist-num" x-text="'0' + (i + 1)"></span>
+                    <div>
+                      <p class="hist-momento-t" x-text="m[0]"></p>
+                      <p class="hist-momento-d" x-text="m[1]"></p>
+                    </div>
+                  </li>
+                </template>
+              </ol>
+            </section>
+
+            <!-- 11 · Entrar al prototipo -->
+            <section id="cap-10" class="hist-sec hist-sec--final">
+              <p class="hist-kicker">Y esto es lo que construimos</p>
+              <h2 class="hist-h1 mt-3 text-center">Navéguenlo ustedes</h2>
+              <p class="hist-p mt-5 max-w-[34rem] text-center">El prototipo está completo y funciona en celular, tablet y computador: el registro, los cuatro momentos, el back office y la arquitectura que lo sostiene.</p>
+              <div class="mt-10 flex flex-wrap items-center justify-center gap-3">
+                <button @click="irRaiz('inicio')" class="hist-btn">Entrar al prototipo</button>
+                <button @click="ir('registro')" class="hist-btn hist-btn--ghost">Empezar por el registro</button>
+              </div>
+              <p class="mt-12 text-[12px] text-white/25 text-center max-w-[36rem]">Aproximación de mockups. Imágenes de referencia hasta tener aprobaciones. No es una propuesta definitiva.</p>
+            </section>
+          </div>
           <!-- ============ BACK OFFICE · PostHog ============
                No es parte del app: ocurre en otra plataforma. Por eso este partial va después del cierre del marco del
                teléfono y es hijo directo de <main>, dentro de una ventana de navegador apuntando a us.posthog.com.

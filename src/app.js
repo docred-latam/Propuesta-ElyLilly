@@ -8,8 +8,9 @@ function podarPersonas() { for (let i = _personas.length - 1; i >= 0; i--) if (!
 
 function app() {
   return {
+    solo: false, // con ?solo=1 queda solo el teléfono sobre negro
     dispositivo: 'iphone', // 'iphone' | 'ipad' | 'desktop' — el marco del prototipo; el contenido se adapta con container queries (@3xl tablet, @6xl escritorio)
-    pantalla: 'inicio', enfermedad: 'diabetes', tab: 'diagnostico', formato: 'todos',
+    pantalla: 'historia', // la presentación arranca por la historia; ?p=inicio entra directo al app enfermedad: 'diabetes', tab: 'diagnostico', formato: 'todos',
     detalle: {}, pieza: {}, respuesta: null, historial: [], guia: true,
     // Cascarón iOS: dirección de la transición, contador que la re-dispara, texto de la Dynamic Island y si el contenido está desplazado.
     direccion: 'adelante', transicion: 0, island: '', scrolled: false,
@@ -55,6 +56,7 @@ function app() {
 
     // El separador marca dónde se sale del app: lo de la derecha ocurre en otra plataforma.
     atajos: [
+      { id: 'historia', nombre: 'La historia' },
       { id: 'registro', nombre: 'Registro' },
       { id: 'inicio', nombre: 'Home' },
       { id: 'tema', nombre: 'Búsqueda rápida' },
@@ -202,6 +204,7 @@ function app() {
       detalle: { foto: 'img/oscar-tablet.jpg', momento: 'Momento 1 · Pieza gráfica', titulo: 'El algoritmo de decisión en una pantalla', hora: '9:00 – 11:00 am · en consulta', historia: 'Óscar recorre las ramas de arriba abajo: estilo de vida, farmacológico inicial, comorbilidad, intensificación. María tiene obesidad y riesgo cardiovascular, así que abre la tercera rama y ahí está la respuesta. Lo guarda con un toque para la próxima consulta.', puntos: ['Contenido médico: habla de la enfermedad y del principio activo, no de la marca', 'Referencia bibliográfica y notas al pie en cada pieza', 'Cada rama se abre y se cierra como una lista nativa: nada de diagramas que hay que arrastrar'] },
       formacion: { foto: 'img/almuerzo-tablet.jpg', momento: 'Momento 2 y 3 · Formación ágil', titulo: 'Óscar almuerza y tiene 30 minutos', hora: '12:00 – 12:30 pm · antes de dormir', historia: 'Ya no hay urgencia. Óscar quiere ver el webinar de la Dra. Rojas, leer el resumen de un estudio o terminar el microaprendizaje que dejó al 35 %. Todo está en el canal de la enfermedad, en el formato que le sirva en ese momento.', puntos: ['Multiformato: video on demand, en vivo, estudio PDF, infografía y encuesta', 'Información para prescribir en una sección aparte: es contenido comercial', 'Cada consumo deja rastro para el dashboard de trazabilidad'] },
       registro: { foto: 'img/oscar-consulta.jpg', momento: 'Momento 0 · Registro', titulo: 'Cómo llega Óscar a Lilly 360', hora: 'Una sola vez, desde el correo de invitación', historia: 'Óscar recibe la invitación y se registra en cinco pantallas: correo, país y perfil profesional, consentimientos y listo. Los mismos datos que hoy pide Lilly Conexiones, pero una tarea por pantalla y sin cajas con borde negro.', puntos: ['Correo, Google o LinkedIn para entrar', 'Consentimientos con interruptores: solo el de privacidad es obligatorio', 'Termina con la cuenta verificada como profesional de la salud'] },
+      historia: { foto: 'img/oscar-consulta.jpg', momento: 'La historia · Lo que entendimos', titulo: 'Un día con el Dr. Óscar', hora: 'Antes del producto, el problema', historia: 'La presentación arranca por el médico, no por la plataforma: qué le pasa a Óscar en un día, y qué hicimos en cada uno de sus cuatro momentos. Al final se entra al prototipo.', puntos: ['Dos necesidades: resolver ya, y mantenerse al día', 'Cuatro momentos, cuatro respuestas del producto', 'Las capturas salen del prototipo real, no de un mockup aparte'] },
       arquitectura: { foto: 'img/estudio-pdf.jpg', momento: 'Infraestructura · La propuesta técnica', titulo: 'Sobre qué se construye', hora: 'Equipo de Leonardo · fuera del app', historia: 'Esta es la lámina que se presenta al cliente, no una pantalla del app: la arquitectura que propone Leonardo. Todo corre sobre la nube de Lilly, con los tres ambientes que pide el brief, y cada pieza de terceros se paga por consumo.', puntos: ['El núcleo en AWS: aplicación, datos y medición', 'Passport y Auth0 para entrar; OCE y MLR para conectar con Lilly', 'Toca una pieza y explica por qué está ahí'] },
       dashboard: { foto: 'img/junta-medica.jpg', momento: 'Back office · Otra plataforma', titulo: 'Lo que Lilly ve', hora: 'Equipo de Lilly, fuera del app', historia: 'Esto no es el app del médico: es la herramienta de analítica (PostHog o la que defina Lilly) donde cae todo lo que Óscar hace. Cada toque, cada video visto y cada pregunta al RAG llega como evento, y el equipo de Lilly lo filtra por enfermedad y periodo para decidir el próximo contenido.', puntos: ['Fuera del app: otra herramienta, otro rol', 'Eventos, no pantallas: cada toque es un evento', 'Filtros por enfermedad y periodo para decidir contenido'] },
       guardados: { foto: 'img/estudio-pdf.jpg', momento: 'Biblioteca personal', titulo: 'Lo que Óscar marcó para volver', hora: 'Cualquier momento', historia: 'Cada bookmark de un algoritmo, una tabla o un video cae aquí. Es la lista corta que Óscar abre antes de la consulta o al final del día.', puntos: ['Se alimenta del bookmark de la nav bar', 'Abre la pieza en su pantalla: detalle o formación', 'Vacío honesto: dice qué hacer para llenarla'] },
@@ -281,7 +284,7 @@ function app() {
     },
     get ragSugerencias() { return this.ragBanco[this.enfermedad].map(r => r.p); },
     get ragRespuesta() { const b = this.ragBanco[this.enfermedad]; return b.find(r => r.p === this.rag.pregunta) || b[0]; },
-    get sinMarco() { return ['dashboard', 'arquitectura'].includes(this.pantalla); },
+    get sinMarco() { return ['dashboard', 'arquitectura', 'historia'].includes(this.pantalla); },
     get tituloNativo() { return { tema: 'Búsqueda rápida', detalle: this.detalle.titulo || 'Algoritmo', formacion: 'Formación ágil', pieza: this.pieza.titulo || this.nombreFormato(this.pieza.formato), guardados: 'Guardados', perfil: 'Perfil', registro: 'Registro', dashboard: 'Back office' }[this.pantalla] || ''; },
     get piezaActual() { return this.pantalla === 'pieza' ? this.pieza : this.detalle; },
     get tabActivo() { return ['guardados', 'perfil'].includes(this.pantalla) ? this.pantalla : 'inicio'; },
@@ -475,6 +478,8 @@ function app() {
       // ?p=tema&e=mama&t=tratamiento abre una pantalla directa: sirve para pantallazos y para compartir un enlace.
       const q = new URLSearchParams(location.search);
       if (q.get('captura') === '1') document.body.classList.add('sin-animacion');
+      if (q.get('solo') === '1') { this.solo = true; this.guia = false; }
+      if (q.get('guia') === '0') this.guia = false;
       if (q.get('e') && this.enfermedades[q.get('e')]) this.enfermedad = q.get('e');
       if (q.get('t')) this.tab = q.get('t');
       if (q.get('d') && this.marcos[q.get('d')]) this.dispositivo = q.get('d');
