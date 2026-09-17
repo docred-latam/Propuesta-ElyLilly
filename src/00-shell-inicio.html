@@ -369,7 +369,11 @@
 
   /* Un solo velo para todo lo que se abre encima: aclara y difumina, nunca oscurece.
      Mismos valores que el velo de la hoja inferior, que es la referencia. */
-  .velo { background: rgba(255,255,255,.3); -webkit-backdrop-filter: blur(9px) saturate(1.05); backdrop-filter: blur(9px) saturate(1.05); }
+  /* El contenido de atrás se difumina con un filtro sobre su subárbol: `backdrop-filter` dejaba nítido
+     todo lo que tuviera contexto de apilamiento propio (títulos con menú, elementos con z-index). */
+  .velable { transition: filter .35s cubic-bezier(.32,.72,0,1); }
+  .velable.is-velado { filter: blur(8px) opacity(.55); pointer-events: none; }
+  .velo { background: rgba(255,255,255,.18); }
 
   /* Firma de Lilly como máscara: hereda el color del contexto (roja sobre claro, blanca sobre oscuro).
      Es la marca del cliente, usada en una propuesta dirigida a él; el prototipo va siempre rotulado como mockup. */
@@ -498,8 +502,10 @@
   .ios-navbar { transition: filter .35s cubic-bezier(.32,.72,0,1); }
 
   /* ===== Hero y parrilla · lenguaje de Framer con la voz de Lilly ===== */
-  .hist-hero { height: 100vh; display: flex; flex-direction: column; justify-content: flex-start; gap: clamp(24px, 4vh, 44px);
-    padding: clamp(76px, 11vh, 124px) 0 0; overflow: hidden; }
+  /* El hero dura dos pantallas de scroll: el contenido queda fijo mientras el teléfono se endereza. */
+  .hist-hero { height: 200vh; position: relative; }
+  .hist-hero-fijo { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; justify-content: flex-start;
+    gap: clamp(24px, 4vh, 44px); padding: clamp(76px, 11vh, 124px) 0 0; overflow: hidden; }
   .hist-hero-col { max-width: 62rem; }
   /* La píldora se parte en dos líneas antes que desbordar: a 420px no cabía y arrastraba toda la historia */
   .hist-pill { display: inline-flex; align-items: center; gap: 9px; min-height: 34px; padding: 6px 15px; border-radius: 9999px;
@@ -510,13 +516,10 @@
   .hist-hero-p { margin-top: clamp(14px, 2.2vh, 22px); max-width: 40rem; font-size: 17px; line-height: 1.6; color: rgba(255,255,255,.74); text-wrap: pretty; }
   .hist-hero-btns { margin-top: clamp(18px, 3vh, 30px); display: flex; flex-wrap: wrap; gap: 12px; }
   /* La ventana del producto: borde fino, radio grande y una luz roja detrás */
-  .hist-ventana { position: relative; flex: 1 1 auto; min-height: 150px; border: 1px solid rgba(255,255,255,.1); border-top-left-radius: 26px; border-top-right-radius: 26px; border-bottom: 0; overflow: hidden;
-    background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.01)); padding: clamp(16px, 3vh, 30px) clamp(16px, 3vw, 30px) 0;
-    display: flex; justify-content: center; align-items: flex-start; }
-  .hist-ventana-luz { position: absolute; inset: auto 0 -40% 0; height: 90%; pointer-events: none;
-    background: radial-gradient(60% 100% at 50% 100%, rgba(213,43,30,.4), transparent 70%); filter: blur(30px); }
-  .hist-ventana-desk { position: relative; width: min(100%, 1020px); height: auto; border-radius: 12px; align-self: flex-start; }
-  .hist-ventana-tel { position: absolute; right: clamp(12px, 5%, 100px); bottom: -8%; width: min(26%, 230px); filter: drop-shadow(0 24px 60px rgba(0,0,0,.6)); }
+  
+  
+  
+  
   /* Cifras: una rejilla, no un flex que deja 2 arriba y 1 huérfana abajo */
   .hist-cifras { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: clamp(20px, 2.6vw, 32px);
     margin-top: clamp(26px, 3.4vw, 36px); padding-top: 26px; border-top: 1px solid rgba(255,255,255,.1); }
@@ -541,6 +544,15 @@
   @keyframes gen-palabra { to { opacity: 1; filter: blur(0); } }
   .sin-animacion .gen-palabra, .hist-hero-h1 .gen-palabra:only-child { opacity: 1; filter: none; animation: none; }
   @media (prefers-reduced-motion: reduce) { .gen-palabra { opacity: 1; filter: none; animation: none; } }
+
+  /* Escena del hero: el teléfono acostado que se endereza con el scroll (referencia: macbook-scroll). */
+  .hist-escena { position: relative; flex: 1 1 auto; min-height: 220px; display: flex; align-items: flex-end; justify-content: center;
+    perspective: 1400px; perspective-origin: 50% 20%; overflow: hidden; }
+  .hist-escena-luz { position: absolute; inset: auto 0 -30% 0; height: 85%; pointer-events: none;
+    background: radial-gradient(52% 100% at 50% 100%, rgba(213,43,30,.46), transparent 72%); filter: blur(34px); }
+  .hist-tel3d-caja { position: relative; transform-style: preserve-3d; display: flex; justify-content: center; align-items: flex-end; height: 100%; }
+  .hist-tel3d { width: min(46vh, 350px); transform-origin: 50% 100%; transform: rotateX(42deg) translateY(26px) scale(.86);
+    filter: drop-shadow(0 30px 60px rgba(0,0,0,.65)); will-change: transform; }
 </style>
 </head>
 <body :class="solo ? '!bg-transparent' : ''" class="font-sans bg-[#0B0B0D] text-white h-screen overflow-hidden antialiased" x-data="app()" x-init="init()" x-cloak>

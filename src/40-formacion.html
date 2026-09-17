@@ -23,6 +23,7 @@
             moverItem(e, d) { const items = [...this.$refs.menu.querySelectorAll('[role=menuitemradio]')]; this.enfocarItem(items.indexOf(e.target) + d); },
             moverChip(d) { const i = formatos.findIndex(f => f.id === formato); formato = formatos[(i + d + formatos.length) % formatos.length].id; this.$nextTick(() => { const el = this.$refs.chips.querySelector('[aria-selected=true]'); if (el) { el.focus(); el.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } }); },
           }">
+              <div class="velable" :class="ficha ? 'is-velado' : ''">
             <div class="mx-auto max-w-[960px] @6xl:max-w-[1200px] px-5 @3xl:px-8 @3xl:pt-4">
               <!-- Título grande = selector de enfermedad -->
               <div class="pt-2 relative">
@@ -136,7 +137,8 @@
               </div>
             </div>
 
-            <!-- Ficha de prescripción (contenido comercial): hoja de vidrio en iPhone, diálogo centrado en tablet y escritorio. Comparte el estado global `modal` para ocultar la tab bar. -->
+            </div><!-- /velable -->
+              <!-- Ficha de prescripción (contenido comercial): hoja de vidrio en iPhone, diálogo centrado en tablet y escritorio. Comparte el estado global `modal` para ocultar la tab bar. -->
             <div x-show="ficha" x-cloak class="absolute inset-0 z-40 flex flex-col justify-end @3xl:justify-start @3xl:items-center @3xl:pt-16"
                  x-transition:enter="transition-opacity duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                  x-transition:leave="transition-opacity duration-300 delay-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">

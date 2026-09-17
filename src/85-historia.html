@@ -87,6 +87,16 @@
                       const centro = r.top + r.height / 2 - alto / 2;
                       el.style.transform = `translate3d(0, ${(centro * -0.055).toFixed(1)}px, 0)`;
                     });
+                    // Hero: el teléfono empieza acostado hacia atrás y se endereza al bajar, como el portátil
+                    // que se abre de Aceternity, pero con el dispositivo que cuenta esta historia.
+                    const escena = raiz.querySelector('.hist-escena');
+                    if (escena) {
+                      const hero = escena.closest('.hist-hero');
+                      const r = hero.getBoundingClientRect();
+                      const p = Math.min(1, Math.max(0, -r.top / Math.max(1, r.height - alto)));
+                      const tel = escena.querySelector('.hist-tel3d');
+                      if (tel) tel.style.transform = `rotateX(${(1 - p) * 42}deg) translateY(${(1 - p) * 26}px) scale(${0.86 + p * 0.3})`;
+                    }
                     // Capturas del prototipo: la imagen recorre el visor entera, de su primera fila a la última,
                     // mientras la sección atraviesa la pantalla. Así se ve todo el contenido sin recortarlo.
                     raiz.querySelectorAll('.hist-visor').forEach((visor) => {
@@ -126,6 +136,7 @@
 
             <!-- Hero: lo primero que ve Lilly. Titular a la izquierda y el producto dentro de una ventana, como Framer. -->
             <section id="cap-hero" class="hist-hero">
+              <div class="hist-hero-fijo">
               <div class="hist-hero-col hist-anim">
                 <span class="hist-pill"><span class="hist-pill-punto"></span>Propuesta para Eli&nbsp;Lilly Colombia · Septiembre 2026</span>
                 <h1 class="hist-hero-h1">La información que el médico<br class="hidden md:block" /> necesita, en el minuto<br class="hidden md:block" /> en que la necesita</h1>
@@ -135,10 +146,12 @@
                   <button @click="irRaiz('inicio')" class="hist-btn hist-btn--ghost">Entrar al prototipo <i data-lucide="arrow-right" class="h-4 w-4"></i></button>
                 </div>
               </div>
-              <div class="hist-ventana hist-anim">
-                <div class="hist-ventana-luz" aria-hidden="true"></div>
-                <img src="img/proto-escritorio.png" alt="Lilly 360 en el escritorio" class="hist-ventana-desk" loading="eager" decoding="async" />
-                <img src="img/proto-busqueda.png" alt="Lilly 360 en el celular" class="hist-ventana-tel" loading="eager" decoding="async" />
+              <div class="hist-escena hist-anim">
+                <div class="hist-escena-luz" aria-hidden="true"></div>
+                <div class="hist-tel3d-caja">
+                  <img src="img/proto-hero.png" alt="Lilly 360 en el celular, con la búsqueda desplegada" class="hist-tel3d" loading="eager" decoding="async" />
+                </div>
+              </div>
               </div>
             </section>
 
