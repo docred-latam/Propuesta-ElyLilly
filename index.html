@@ -325,7 +325,7 @@
   .reg-seg.is-done { background: #1A1A1A; }
   .reg-campo { flex: 1; min-width: 0; background: transparent; outline: none; font-size: 16px; color: #1A1A1A; }
   .reg-campo::placeholder { color: #9AA0A6; }
-  .reg-menu { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 5; border-radius: 18px; overflow: hidden; animation: siri-card-in 250ms cubic-bezier(.32,.72,0,1) both; }
+  .reg-menu { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 50; border-radius: 18px; overflow: hidden; background: rgba(255,255,255,.96); box-shadow: 0 12px 40px rgba(0,0,0,.14); animation: siri-card-in 250ms cubic-bezier(.32,.72,0,1) both; }
   @media (prefers-reduced-motion: reduce) { .reg-in, .reg-back, .reg-menu { animation: none !important; } }
 </style>
 </head>
@@ -1131,7 +1131,7 @@
                          login() { this.modo = 'login'; this.ir(2); },
                          seguirCorreo() { if (this.modo === 'login') this.entrar('Sesión iniciada'); else this.ir(3); },
                          entrar(msg) { irRaiz('inicio'); hojaIr('small'); hud(msg || 'Cuenta creada'); } }"
-               x-init="const q = new URLSearchParams(location.search); const n = +q.get('paso'); if (n >= 1 && n <= 5) { paso = n; if (n === 4) priv = false; } $nextTick(() => lucide.createIcons())">
+               x-init="const q = new URLSearchParams(location.search); const n = +q.get('paso'); if (n >= 1 && n <= 5) { paso = n; if (n === 4) priv = false; } const m = q.get('menu'); if (m === 'pais') menuPais = true; if (m === 'esp') menuEsp = true; $nextTick(() => lucide.createIcons())">
 
             <div class="min-h-full flex flex-col px-5 pb-8 pt-2 @3xl:items-center @3xl:justify-center @3xl:px-10 @3xl:py-10">
               <div class="flex flex-col w-full flex-1 @3xl:flex-none @3xl:max-w-[520px] @3xl:glass @3xl:rounded-[28px] @3xl:p-8 @3xl:min-h-[640px]">
@@ -1178,18 +1178,18 @@
                   <div class="flex-1 flex flex-col pt-2" :class="dir > 0 ? 'reg-in' : 'reg-back'">
                     <h1 class="ios-large-title">Perfil profesional</h1>
                     <p class="mt-2 text-[15px] text-ink-2">Los mismos datos que verifica Lilly para darte acceso.</p>
-                    <div class="glass ios-list mt-6 !overflow-visible relative">
+                    <div class="glass ios-list mt-6 !overflow-visible relative" :class="menuPais ? 'z-30' : ''">
                       <button @click="menuPais = !menuPais; menuEsp = false" class="ios-row press"><span class="w-[112px] text-[15px] text-ink-2">País</span><span class="flex-1 text-left text-[16px] text-ink" x-text="pais"></span><i data-lucide="chevron-down" class="h-4 w-4 text-ink-3"></i></button>
                       <div x-show="menuPais" class="glass-strong reg-menu">
                         <template x-for="o in ['Colombia', 'México']" :key="o"><button @click="pais = o; menuPais = false" class="ios-row press !min-h-[48px]"><span class="flex-1 text-left text-[16px] text-ink" x-text="o"></span><i x-show="pais === o" data-lucide="check" class="h-4 w-4 text-lilly"></i></button></template>
                       </div>
                     </div>
-                    <div class="glass ios-list mt-4 !overflow-visible relative">
+                    <div class="glass ios-list mt-4 !overflow-visible relative" :class="menuEsp ? 'z-30' : ''">
                       <div class="ios-row"><span class="w-[112px] text-[15px] text-ink-2">Nombre</span><input x-model="nombre" placeholder="Óscar" class="reg-campo" /><span class="mx-3 h-6 w-px bg-sep"></span><input x-model="apellidos" placeholder="Apellidos" class="reg-campo" /></div>
-                      <button @click="menuEsp = !menuEsp; menuPais = false" class="ios-row press"><span class="w-[112px] text-[15px] text-ink-2">Especialidad</span><span class="flex-1 text-left text-[16px] text-ink" x-text="esp"></span><i data-lucide="chevron-down" class="h-4 w-4 text-ink-3"></i></button>
+                      <div class="relative"><button @click="menuEsp = !menuEsp; menuPais = false" class="ios-row press"><span class="w-[112px] text-[15px] text-ink-2">Especialidad</span><span class="flex-1 text-left text-[16px] text-ink" x-text="esp"></span><i data-lucide="chevron-down" class="h-4 w-4 text-ink-3"></i></button>
                       <div x-show="menuEsp" class="glass-strong reg-menu">
                         <template x-for="o in especialidades" :key="o"><button @click="esp = o; menuEsp = false" class="ios-row press !min-h-[48px]"><span class="flex-1 text-left text-[16px] text-ink" x-text="o"></span><i x-show="esp === o" data-lucide="check" class="h-4 w-4 text-lilly"></i></button></template>
-                      </div>
+                      </div></div>
                       <label class="ios-row"><span class="w-[112px] text-[15px] text-ink-2">Código postal</span><input x-model="cp" inputmode="numeric" placeholder="110111" class="reg-campo" /></label>
                       <label class="ios-row"><span class="w-[112px] text-[15px] text-ink-2">Teléfono</span><span class="mr-2 text-[16px] text-ink-2" x-text="pais === 'México' ? '+52' : '+57'"></span><input x-model="tel" inputmode="tel" placeholder="300 123 4567" class="reg-campo" /></label>
                     </div>
