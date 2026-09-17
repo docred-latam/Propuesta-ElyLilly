@@ -388,9 +388,9 @@
   .hist > section { position: relative; z-index: 1; }
   /* Entrada: el contenido sube y aparece cuando la sección entra en cuadro */
   .hist-anim { opacity: 0; transform: translateY(34px); transition: opacity .9s cubic-bezier(.32,.72,0,1), transform .9s cubic-bezier(.32,.72,0,1); }
-  .hist-sec.is-dentro .hist-anim { opacity: 1; transform: none; }
-  .hist-sec.is-dentro .hist-anim:nth-child(2) { transition-delay: .09s; }
-  .hist-sec.is-dentro .hist-anim:nth-child(3) { transition-delay: .18s; }
+  .is-dentro .hist-anim { opacity: 1; transform: none; }
+  .is-dentro .hist-anim:nth-child(2) { transition-delay: .09s; }
+  .is-dentro .hist-anim:nth-child(3) { transition-delay: .18s; }
   .hist-par { will-change: transform; }
   @media (prefers-reduced-motion: reduce) { .hist-anim { opacity: 1; transform: none; } .hist-par { transform: none !important; } }
   .hist-sec { min-height: 100vh; scroll-snap-align: start; display: grid; align-items: center; gap: 56px;
@@ -444,7 +444,7 @@
   .hist-momento-d { margin-top: 6px; font-size: 15.5px; line-height: 1.6; color: rgba(255,255,255,.6); max-width: 34rem; }
   /* Cierre */
   .hist-sec--final { grid-template-columns: 1fr; justify-items: center; align-content: center; text-align: center; }
-  .hist-btn { height: 52px; padding: 0 28px; border-radius: 9999px; background: #D52B1E; color: #fff; font-size: 16px; font-weight: 600; transition: transform .15s, background .2s; }
+  .hist-btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; height: 52px; padding: 0 26px; border-radius: 9999px; background: #D52B1E; color: #fff; font-size: 16px; font-weight: 600; white-space: nowrap; transition: transform .15s, background .2s; }
   .hist-btn:hover { background: #bb2418; } .hist-btn:active { transform: scale(.97); }
   .hist-btn--ghost { background: rgba(255,255,255,.08); } .hist-btn--ghost:hover { background: rgba(255,255,255,.14); }
   /* Índice */
@@ -468,6 +468,41 @@
   /* Cuando algo se abre encima, la barra de navegación se vela igual que el contenido: es parte del fondo. */
   .ios-navbar.is-velada { filter: blur(8px) opacity(.55); pointer-events: none; }
   .ios-navbar { transition: filter .35s cubic-bezier(.32,.72,0,1); }
+
+  /* ===== Hero y parrilla · lenguaje de Framer con la voz de Lilly ===== */
+  .hist-hero { height: 100vh; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: flex-start; gap: clamp(24px, 4vh, 44px);
+    padding: clamp(84px, 12vh, 132px) clamp(32px, 7vw, 132px) 0; max-width: 1680px; margin: 0 auto; width: 100%; overflow: hidden; }
+  .hist-hero-col { max-width: 62rem; }
+  .hist-pill { display: inline-flex; align-items: center; gap: 9px; height: 34px; padding: 0 16px; border-radius: 9999px;
+    border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.04); font-size: 13px; color: rgba(255,255,255,.72); }
+  .hist-pill-punto { width: 7px; height: 7px; border-radius: 9999px; background: #D52B1E; box-shadow: 0 0 0 4px rgba(213,43,30,.22); }
+  .hist-hero-h1 { margin-top: clamp(16px, 2.6vh, 26px); font-size: clamp(32px, 4.6vw, 62px); font-weight: 600; line-height: 1.05; letter-spacing: -.03em; }
+  .hist-hero-p { margin-top: clamp(14px, 2.2vh, 22px); max-width: 40rem; font-size: 17px; line-height: 1.6; color: rgba(255,255,255,.62); }
+  .hist-hero-btns { margin-top: clamp(18px, 3vh, 30px); display: flex; flex-wrap: wrap; gap: 12px; }
+  /* La ventana del producto: borde fino, radio grande y una luz roja detrás */
+  .hist-ventana { position: relative; flex: 1 1 auto; min-height: 180px; border: 1px solid rgba(255,255,255,.1); border-top-left-radius: 26px; border-top-right-radius: 26px; border-bottom: 0; overflow: hidden;
+    background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.01)); padding: clamp(16px, 3vh, 30px) clamp(16px, 3vw, 30px) 0;
+    display: flex; justify-content: center; align-items: flex-start; }
+  .hist-ventana-luz { position: absolute; inset: auto 0 -40% 0; height: 90%; pointer-events: none;
+    background: radial-gradient(60% 100% at 50% 100%, rgba(213,43,30,.4), transparent 70%); filter: blur(30px); }
+  .hist-ventana-desk { position: relative; width: min(100%, 1020px); height: auto; border-radius: 12px; align-self: flex-start; }
+  .hist-ventana-tel { position: absolute; right: clamp(12px, 5%, 100px); bottom: -8%; width: min(26%, 230px); filter: drop-shadow(0 24px 60px rgba(0,0,0,.6)); }
+  .hist-cifras { display: flex; flex-wrap: wrap; gap: clamp(28px, 5vw, 72px); margin-top: 34px; padding-top: 26px; border-top: 1px solid rgba(255,255,255,.1); }
+  .hist-cifra { display: flex; align-items: baseline; gap: 12px; }
+  .hist-cifra span { font-size: 38px; font-weight: 600; letter-spacing: -.02em; }
+  .hist-cifra p { font-size: 14px; color: rgba(255,255,255,.5); max-width: 13rem; line-height: 1.4; }
+  /* Parrilla de capacidades, con las líneas finas de Framer */
+  .hist-sec--parrilla { align-items: center; }
+  .hist-parrilla { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.1); border-radius: 22px; overflow: hidden; }
+  @media (min-width: 700px) { .hist-parrilla { grid-template-columns: repeat(2, 1fr); } }
+  .hist-celda { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 7px;
+    background: #070707; padding: 22px 20px 24px; text-align: left; color: rgba(255,255,255,.55); transition: background .25s; }
+  .hist-celda:hover { background: #0e0e0e; }
+  .hist-celda-t { font-size: 16px; font-weight: 600; color: #fff; }
+  .hist-celda-d { font-size: 13.5px; line-height: 1.45; }
+  .hist-celda-f { position: absolute; top: 22px; right: 18px; opacity: 0; transform: translateX(-4px); transition: all .25s; color: #D52B1E; }
+  .hist-celda:hover .hist-celda-f { opacity: 1; transform: none; }
 </style>
 </head>
 <body :class="solo ? '!bg-transparent' : ''" class="font-sans bg-[#0B0B0D] text-white h-screen overflow-hidden antialiased" x-data="app()" x-init="init()" x-cloak>
@@ -1688,6 +1723,23 @@
 <script>
             function narrativa() {
               return {
+                capitulos: [
+                  { id: 'cap-hero', n: 'Portada' }, { id: 'cap-oscar', n: 'Óscar' }, { id: 'cap-manana', n: 'La mañana' },
+                  { id: 'cap-busqueda', n: 'Búsqueda' }, { id: 'cap-mediodia', n: 'Mediodía' }, { id: 'cap-valor', n: 'Valor rápido' },
+                  { id: 'cap-aprender', n: 'Aprender' }, { id: 'cap-micro', n: 'Microaprendizaje' }, { id: 'cap-colegas', n: 'Colegas' },
+                  { id: 'cap-eventos', n: 'Eventos' }, { id: 'cap-momentos', n: 'Los 4 momentos' }, { id: 'cap-todo', n: 'Todo el producto' },
+                  { id: 'cap-final', n: 'El prototipo' },
+                ],
+                parrilla: [
+                  { t: 'Registro', d: 'Cinco pasos y la cuenta verificada', i: 'user-round-plus', p: 'registro', e: null },
+                  { t: 'Búsqueda rápida', d: 'Diagnóstico, tratamiento e infografías', i: 'zap', p: 'tema', e: 'diabetes' },
+                  { t: 'Algoritmo de decisión', d: 'La pieza que se lee en consulta', i: 'git-branch', p: 'detalle', e: 'diabetes' },
+                  { t: 'Formación ágil', d: 'El canal de cada enfermedad', i: 'refresh-cw', p: 'formacion', e: 'mama' },
+                  { t: 'Microaprendizaje', d: 'El video que pregunta de vuelta', i: 'circle-play', p: 'pieza', e: 'diabetes' },
+                  { t: 'Consulta a Lilly 360', d: 'Solo con estudios aprobados · fase 2', i: 'sparkles', p: 'consulta', e: 'diabetes' },
+                  { t: 'Back office', d: 'La trazabilidad, en PostHog', i: 'chart-column', p: 'dashboard', e: null },
+                  { t: 'Arquitectura', d: 'Sobre qué se construye', i: 'layers', p: 'arquitectura', e: null },
+                ],
                 montar() {
                   const raiz = this.$refs.scroll;
                   const suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches && !document.body.classList.contains('sin-animacion');
@@ -1717,7 +1769,7 @@
                       io.unobserve(e.target);
                     });
                   }, { root: raiz, threshold: 0.2 });
-                  raiz.querySelectorAll('.hist-sec').forEach((sec) => {
+                  raiz.querySelectorAll('.hist-sec, .hist-hero').forEach((sec) => {
                     if (!suave) { sec.classList.add('is-dentro'); sec.querySelectorAll('.hist-foto').forEach((f) => f.classList.add('is-revelada')); }
                     else io.observe(sec);
                   });
@@ -1752,13 +1804,33 @@
 
             <!-- Índice lateral -->
             <nav class="hist-indice hidden xl:flex" aria-label="Capítulos">
-              <template x-for="(c, i) in ['Óscar', 'La mañana', 'Búsqueda', 'Mediodía', 'Valor rápido', 'Aprender', 'Microaprendizaje', 'Colegas', 'Eventos', 'Los 4 momentos', 'El prototipo']" :key="c">
-                <a :href="'#cap-' + i" class="hist-punto" :title="c"><span x-text="c"></span></a>
+              <template x-for="c in capitulos" :key="c.id">
+                <a :href="'#' + c.id" class="hist-punto" :title="c.n"><span x-text="c.n"></span></a>
               </template>
             </nav>
 
+
+            <!-- Hero: lo primero que ve Lilly. Titular a la izquierda y el producto dentro de una ventana, como Framer. -->
+            <section id="cap-hero" class="hist-hero">
+              <div class="hist-hero-col hist-anim">
+                <span class="hist-pill"><span class="hist-pill-punto"></span>Propuesta para Eli&nbsp;Lilly Colombia · Septiembre 2026</span>
+                <h1 class="hist-hero-h1">La información que el médico<br class="hidden md:block" /> necesita, en el minuto<br class="hidden md:block" /> en que la necesita</h1>
+                <p class="hist-hero-p">Una plataforma para los cuatro momentos del día de un médico: resolver la duda con el paciente al frente, ponerse al día en el break, seguir formándose y encontrarse con sus colegas.</p>
+                <div class="hist-hero-btns">
+                  <button @click="$el.closest('.hist').querySelector('#cap-oscar').scrollIntoView({ behavior: 'smooth' })" class="hist-btn">Conocer a Óscar</button>
+                  <button @click="irRaiz('inicio')" class="hist-btn hist-btn--ghost">Entrar al prototipo <i data-lucide="arrow-right" class="h-4 w-4"></i></button>
+                </div>
+              </div>
+              <div class="hist-ventana hist-anim">
+                <div class="hist-ventana-luz" aria-hidden="true"></div>
+                <img src="img/proto-escritorio.png" alt="Lilly 360 en el escritorio" class="hist-ventana-desk" loading="eager" decoding="async" />
+                <img src="img/proto-busqueda.png" alt="Lilly 360 en el celular" class="hist-ventana-tel" loading="eager" decoding="async" />
+              </div>
+              
+            </section>
+
             <!-- 1 · Óscar -->
-            <section id="cap-0" class="hist-sec">
+            <section id="cap-oscar" class="hist-sec">
               <div class="hist-col hist-anim">
                 <p class="hist-kicker">Queremos presentarles a</p>
                 <h1 class="hist-h1 mt-3">Óscar Vargas</h1>
@@ -1771,7 +1843,7 @@
             </section>
 
             <!-- 2 · La mañana -->
-            <section id="cap-1" class="hist-sec">
+            <section id="cap-manana" class="hist-sec">
               <div class="hist-col hist-anim">
                 <h2 class="hist-h2">Un día en la vida<br>del médico</h2>
                 <p class="hist-p mt-6 max-w-[34rem]">La mañana empieza agitada: un paciente cada veinte minutos y cada uno con un diagnóstico distinto. A las nueve llega María, 54 años, con una hemoglobina glucosilada de 9,2 %. Óscar tiene que decidir el tratamiento ahí mismo, con ella al frente.</p>
@@ -1788,7 +1860,7 @@
             </section>
 
             <!-- 3 · Qué hizo · búsqueda -->
-            <section id="cap-2" class="hist-sec hist-sec--proto">
+            <section id="cap-busqueda" class="hist-sec hist-sec--proto">
               <p class="hist-titulo-proto hist-anim">Qué hizo <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[19px] w-[51px] shrink-0 object-contain" loading="eager" decoding="async" />360</span> para que la búsqueda fuera tan rápida</p>
               <div class="hist-proto hist-anim">
                 <div class="hist-notas">
@@ -1801,11 +1873,11 @@
                   <p class="hist-nota">Navegación temática por subniveles: diagnóstico, tratamiento e infografías para el paciente.</p>
                 </div>
               </div>
-              <button @click="verEnProto('tema', 'diabetes', 'cap-2')" class="hist-ver"><span>Ver la búsqueda rápida en el prototipo</span><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
+              <button @click="verEnProto('tema', 'diabetes', 'cap-busqueda')" class="hist-ver"><span>Ver la búsqueda rápida en el prototipo</span><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
             </section>
 
             <!-- 4 · Mediodía -->
-            <section id="cap-3" class="hist-sec">
+            <section id="cap-mediodia" class="hist-sec">
               <div class="hist-col hist-anim">
                 <h2 class="hist-h2">Mediodía, Óscar<br>terminó las consultas</h2>
                 <p class="hist-p mt-6 max-w-[34rem]">Ya no hay urgencia. Quiere aprovechar el break para ponerse al día, pero no le alcanza para leer un estudio completo. Busca algo que le aporte en pocos minutos.</p>
@@ -1817,7 +1889,7 @@
             </section>
 
             <!-- 5 · Qué hizo · valor rápido -->
-            <section id="cap-4" class="hist-sec hist-sec--proto">
+            <section id="cap-valor" class="hist-sec hist-sec--proto">
               <p class="hist-titulo-proto hist-anim">Qué hizo <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[19px] w-[51px] shrink-0 object-contain" loading="eager" decoding="async" />360</span> para entregarle valor rápido</p>
               <div class="hist-proto hist-anim">
                 <div class="hist-notas">
@@ -1830,11 +1902,11 @@
                   <p class="hist-nota">Lo comercial va separado de lo médico: la información para prescribir tiene su propio lugar.</p>
                 </div>
               </div>
-              <button @click="verEnProto('formacion', 'diabetes', 'cap-4')" class="hist-ver"><span>Ver el canal de la enfermedad</span><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
+              <button @click="verEnProto('formacion', 'diabetes', 'cap-valor')" class="hist-ver"><span>Ver el canal de la enfermedad</span><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
             </section>
 
             <!-- 6 · Quiere saber más -->
-            <section id="cap-5" class="hist-sec">
+            <section id="cap-aprender" class="hist-sec">
               <div class="hist-col hist-anim">
                 <h2 class="hist-h2">Óscar siempre<br>quiere saber más</h2>
                 <p class="hist-p mt-6 max-w-[34rem]">Un médico necesita retos nuevos de conocimiento y mantenerse al día. Óscar sabe que la plataforma le ofrece cursos cortos por ejes temáticos, con certificado y una ruta de aprendizaje propia.</p>
@@ -1847,7 +1919,7 @@
             </section>
 
             <!-- 7 · Qué hizo · microaprendizajes -->
-            <section id="cap-6" class="hist-sec hist-sec--proto">
+            <section id="cap-micro" class="hist-sec hist-sec--proto">
               <p class="hist-titulo-proto hist-anim">Qué hizo <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[19px] w-[51px] shrink-0 object-contain" loading="eager" decoding="async" />360</span> para ofrecerle los microaprendizajes</p>
               <div class="hist-proto hist-anim">
                 <div class="hist-notas">
@@ -1860,11 +1932,11 @@
                   <p class="hist-nota">Un formato para cada momento y cada necesidad.</p>
                 </div>
               </div>
-              <button @click="verEnProto('pieza', 'diabetes', 'cap-6')" class="hist-ver"><span>Ver el microaprendizaje</span><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
+              <button @click="verEnProto('pieza', 'diabetes', 'cap-micro')" class="hist-ver"><span>Ver el microaprendizaje</span><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
             </section>
 
             <!-- 8 · Colegas -->
-            <section id="cap-7" class="hist-sec">
+            <section id="cap-colegas" class="hist-sec">
               <div class="hist-col hist-anim">
                 <h2 class="hist-h2">A Óscar le gusta<br>saber de sus colegas</h2>
                 <p class="hist-p mt-6 max-w-[34rem]">Conocer el trabajo de otros le importa. Quiere participar en espacios académicos y científicos, conocer colegas nuevos, aprender y también aportar lo que sabe.</p>
@@ -1876,7 +1948,7 @@
             </section>
 
             <!-- 9 · Qué hizo · eventos -->
-            <section id="cap-8" class="hist-sec hist-sec--proto">
+            <section id="cap-eventos" class="hist-sec hist-sec--proto">
               <p class="hist-titulo-proto hist-anim">Qué hizo <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[19px] w-[51px] shrink-0 object-contain" loading="eager" decoding="async" />360</span> para ofrecerle espacios digitales</p>
               <div class="hist-proto hist-anim">
                 <div class="hist-notas">
@@ -1889,11 +1961,11 @@
                   <p class="hist-nota">Agenda y recordatorios personalizados para cada evento.</p>
                 </div>
               </div>
-              <button @click="verEnProto('consulta', 'diabetes', 'cap-8')" class="hist-ver"><span>Ver la consulta y los eventos</span><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
+              <button @click="verEnProto('consulta', 'diabetes', 'cap-eventos')" class="hist-ver"><span>Ver la consulta y los eventos</span><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
             </section>
 
             <!-- 10 · Los cuatro momentos -->
-            <section id="cap-9" class="hist-sec hist-sec--cierre">
+            <section id="cap-momentos" class="hist-sec hist-sec--cierre">
               <div class="hist-col hist-anim">
                 <h2 class="hist-h2">Para Óscar,<br><span class="hist-marca hist-marca--grande"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[34px] w-[91px] shrink-0 object-contain" loading="eager" decoding="async" />360</span><br>es el aliado ideal<br>en su día a día</h2>
                 <p class="hist-p mt-7 max-w-[30rem] font-medium">Durante cuatro momentos clave estuvo cuando el médico la necesitó: le acercó y simplificó el acceso a la información que de verdad necesita.</p>
@@ -1905,7 +1977,7 @@
                   ['Microaprendizajes', 'Sigue avanzando en su profesión, se certifica y hace seguimiento de su propio progreso.'],
                   ['Eventos digitales', 'Conoce profesionales nuevos y conecta con colegas que llevan su práctica al siguiente nivel.']]" :key="m[0]">
                   <li>
-                    <button class="hist-momento" @click="verEnProto(['tema', 'formacion', 'pieza', 'consulta'][i], 'diabetes', 'cap-9')">
+                    <button class="hist-momento" @click="verEnProto(['tema', 'formacion', 'pieza', 'consulta'][i], 'diabetes', 'cap-momentos')">
                       <span class="hist-num" x-text="'0' + (i + 1)"></span>
                       <div>
                         <p class="hist-momento-t" x-text="m[0]"></p>
@@ -1918,8 +1990,32 @@
               </ol>
             </section>
 
+
+            <!-- Todo lo que hay dentro, en una parrilla: cada celda entra a su pantalla -->
+            <section id="cap-todo" class="hist-sec hist-sec--parrilla">
+              <div class="hist-col hist-anim">
+                <h2 class="hist-h2">Todo esto ya está<br>navegable</h2>
+                <p class="hist-p mt-5 max-w-[34rem]">No es una lámina: es el producto funcionando en los tres dispositivos. Entra por donde quieras.</p>
+                <div class="hist-cifras">
+                <template x-for="d in [['3', 'dispositivos, una sola experiencia'], ['4', 'momentos del día del médico'], ['25', 'pantallas navegables en el prototipo']]" :key="d[1]">
+                  <div class="hist-cifra"><span x-text="d[0]"></span><p x-text="d[1]"></p></div>
+                </template>
+              </div>
+              </div>
+              <div class="hist-parrilla hist-anim">
+                <template x-for="c in parrilla" :key="c.t">
+                  <button class="hist-celda" @click="verEnProto(c.p, c.e, 'cap-todo')">
+                    <i :data-lucide="c.i" class="h-[18px] w-[18px]"></i>
+                    <span class="hist-celda-t" x-text="c.t"></span>
+                    <span class="hist-celda-d" x-text="c.d"></span>
+                    <i data-lucide="arrow-right" class="hist-celda-f h-4 w-4"></i>
+                  </button>
+                </template>
+              </div>
+            </section>
+
             <!-- 11 · Entrar al prototipo -->
-            <section id="cap-10" class="hist-sec hist-sec--final">
+            <section id="cap-final" class="hist-sec hist-sec--final">
               <p class="hist-kicker">Y esto es lo que construimos</p>
               <h2 class="hist-h1 mt-3 text-center">Navéguenlo ustedes</h2>
               <p class="hist-p mt-5 max-w-[34rem] text-center">El prototipo está completo y funciona en celular, tablet y computador: el registro, los cuatro momentos, el back office y la arquitectura que lo sostiene.</p>
