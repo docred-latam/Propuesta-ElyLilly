@@ -420,16 +420,17 @@
   /* Momentos «qué hizo» */
   .hist-sec--proto { grid-template-columns: 1fr; justify-items: center; align-content: center; gap: 28px; }
   @media (min-width: 1100px) { .hist-sec--proto { grid-template-columns: 1fr; } }
-  .hist-titulo-proto { font-size: clamp(19px, 2vw, 25px); text-align: center; color: rgba(255,255,255,.92); }
-  .hist-marca { display: inline-flex; align-items: baseline; gap: 6px; font-weight: 600; }
+  .hist-titulo-proto { font-size: clamp(19px, 2vw, 25px); text-align: center; color: rgba(255,255,255,.92); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
+  .hist-marca { display: inline-flex; align-items: center; gap: 7px; font-weight: 600; }
   .hist-marca--grande { gap: 10px; }
-  .hist-proto { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: center; width: 100%; max-width: 1080px; }
-  @media (min-width: 1100px) { .hist-proto { grid-template-columns: 1fr auto 1fr; gap: clamp(24px, 3vw, 48px); } }
-  .hist-pantalla { width: min(100%, 330px); justify-self: center; }
+  .hist-proto { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: center; width: 100%; max-width: 1320px; }
+  @media (min-width: 1100px) { .hist-proto { grid-template-columns: minmax(230px, 1fr) minmax(280px, 320px) minmax(230px, 1fr); gap: clamp(28px, 3.5vw, 64px); } }
+  .hist-pantalla { width: 100%; max-width: 320px; justify-self: center; }
   .hist-notas { display: flex; flex-direction: column; gap: 56px; }
   .hist-notas--der { text-align: left; }
   @media (min-width: 1100px) { .hist-notas { text-align: right; } .hist-notas--der { text-align: left; } }
-  .hist-nota { position: relative; font-size: 15.5px; line-height: 1.6; color: rgba(255,255,255,.78); }
+  .hist-nota { position: relative; font-size: 15.5px; line-height: 1.62; color: rgba(255,255,255,.78); max-width: 32ch; }
+  .hist-notas .hist-nota { margin-left: auto; } .hist-notas--der .hist-nota { margin-left: 0; margin-right: auto; }
   .hist-nota::before { content: ''; display: block; width: 46px; height: 1px; background: rgba(255,255,255,.35); margin: 0 0 14px auto; }
   .hist-notas--der .hist-nota::before { margin: 0 auto 14px 0; }
   @media (max-width: 1099px) { .hist-nota::before { margin: 0 0 12px 0; } }
@@ -453,6 +454,16 @@
   .hist-punto span { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-size: 12px;
     color: rgba(255,255,255,.75); opacity: 0; transition: opacity .2s; pointer-events: none; }
   .hist-punto:hover span { opacity: 1; }
+
+  .hist-ver { grid-column: 1 / -1; justify-self: center; margin-top: 12px; display: inline-flex; align-items: center; gap: 9px;
+    height: 44px; padding: 0 20px; border-radius: 9999px; border: 1px solid rgba(255,255,255,.22); color: rgba(255,255,255,.85);
+    font-size: 14.5px; transition: background .2s, border-color .2s, transform .15s; }
+  .hist-ver:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.4); }
+  .hist-ver:active { transform: scale(.97); }
+  .hist-momento { display: flex; gap: 20px; align-items: flex-start; text-align: left; width: 100%; border-radius: 18px; padding: 10px; margin: -10px; transition: background .2s; }
+  .hist-momento:hover { background: rgba(255,255,255,.05); }
+  .hist-momento-v { margin-top: 10px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #D52B1E; opacity: 0; transition: opacity .2s; }
+  .hist-momento:hover .hist-momento-v { opacity: 1; }
 </style>
 </head>
 <body :class="solo ? '!bg-transparent' : ''" class="font-sans bg-[#0B0B0D] text-white h-screen overflow-hidden antialiased" x-data="app()" x-init="init()" x-cloak>
@@ -461,7 +472,7 @@
 <header x-show="!solo" class="proto-panel fixed inset-x-0 top-0 z-30 h-14 bg-[#0B0B0D]/85 backdrop-blur-xl flex items-center px-6 gap-4">
   <div class="flex shrink-0 items-center gap-2.5 whitespace-nowrap">
     <span class="h-2 w-2 rounded-full bg-lilly"></span>
-    <span class="flex items-baseline gap-1.5 font-semibold text-[15px] tracking-tight"><span class="lilly-firma h-[17px] w-[45px]" role="img" aria-label="Lilly"></span>360</span>
+    <span class="flex items-baseline gap-1.5 font-semibold text-[15px] tracking-tight"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[17px] w-[45px] shrink-0 object-contain" loading="eager" decoding="async" />360</span>
     <span x-show="!sinMarco" class="text-white/35 text-[13px]">prototipo navegable</span>
   </div>
   <template x-if="sinMarco && pantalla !== 'historia'">
@@ -492,6 +503,9 @@
   <aside x-show="guia && pantalla !== 'historia'"  class="proto-panel fade-in hidden lg:flex w-[380px] shrink-0 flex-col p-7 gap-5 overflow-y-auto">
     <div class="flex items-center justify-between -mb-1">
       <span class="text-[11px] uppercase tracking-[.16em] text-white/30 font-semibold">La historia</span>
+      <button @click="irHistoria()" class="mr-auto ml-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] text-white/45 hover:bg-white/8 hover:text-white transition-colors" title="Volver a la historia">
+        <i data-lucide="arrow-left" class="h-3.5 w-3.5"></i>Volver a la historia
+      </button>
       <button @click="guia = false" title="Ocultar guía" aria-label="Ocultar guía"
               class="h-8 w-8 flex items-center justify-center rounded-full text-white/45 hover:bg-white/8 hover:text-white transition-colors">
         <i data-lucide="panel-left-close" class="h-4 w-4"></i>
@@ -500,7 +514,8 @@
     <!-- Foto del momento: cambia con fundido al cambiar de pantalla -->
     <div class="guia-foto">
       <img :src="guiaActual.foto" :alt="guiaActual.titulo" loading="lazy" decoding="async" :style="'object-position:' + posFoto(guiaActual.foto)"
-           x-effect="guiaActual.foto; $el.style.opacity = 0" @load="$el.style.opacity = 1" />
+           x-effect="guiaActual.foto; $el.style.opacity = 0; requestAnimationFrame(() => { if ($el.complete && $el.naturalWidth) $el.style.opacity = 1 })"
+           @load="$el.style.opacity = 1" @error="$el.style.opacity = 1" />
     </div>
     <div>
       <p class="text-[11px] uppercase tracking-[.18em] text-lilly font-semibold" x-text="guiaActual.momento"></p>
@@ -570,7 +585,7 @@
         <div class="proto-row">
           <!-- Sidebar de vidrio (iPad y escritorio): reemplaza a la tab bar -->
           <aside class="ios-sidebar" :class="{ 'is-fuera': sinCascaron.includes(pantalla) }">
-            <p class="px-[14px] flex items-baseline gap-1.5 text-[13px] font-semibold tracking-tight"><span class="lilly-firma h-[15px] w-[40px] text-lilly" role="img" aria-label="Lilly"></span><span class="text-ink-3">360</span></p>
+            <p class="px-[14px] flex items-baseline gap-1.5 text-[13px] font-semibold tracking-tight"><img src="img/lilly-firma-roja.png" alt="Lilly" class="h-[15px] w-[40px] shrink-0 object-contain" loading="eager" decoding="async" /><span class="text-ink-3">360</span></p>
             <nav class="mt-5 space-y-1" aria-label="Secciones">
               <template x-for="t in tabBar" :key="'side-' + t.id">
                 <button @click="irRaiz(t.id)" class="ios-side-item press" :aria-selected="sidebarActivo === t.id ? 'true' : 'false'">
@@ -630,7 +645,7 @@
             <div class="stagger @3xl:max-w-[720px]">
               <div class="pt-2 flex items-start justify-between">
                 <h1 class="ios-large-title" x-text="saludo + ', Dr.\u00A0Óscar'"></h1>
-                <span class="mt-2 shrink-0 whitespace-nowrap text-[13px] font-semibold tracking-tight @3xl:hidden"><span class="lilly-firma h-[15px] w-[40px] text-lilly" role="img" aria-label="Lilly"></span> <span class="text-ink-3">360</span></span>
+                <span class="mt-2 shrink-0 whitespace-nowrap text-[13px] font-semibold tracking-tight @3xl:hidden"><img src="img/lilly-firma-roja.png" alt="Lilly" class="h-[15px] w-[40px] shrink-0 object-contain" loading="eager" decoding="async" /> <span class="text-ink-3">360</span></span>
               </div>
 
               <label x-show="dispositivo !== 'iphone'" class="glass ios-search mt-5">
@@ -1286,7 +1301,7 @@
                 <!-- Paso 1 · Bienvenida -->
                 <template x-if="paso === 1">
                   <div class="flex-1 flex flex-col justify-end pb-2 stagger" :class="dir > 0 ? 'reg-in' : 'reg-back'">
-                    <p class="flex items-baseline justify-center gap-2 text-[15px] font-semibold tracking-tight"><span class="lilly-firma h-[19px] w-[51px] text-lilly" role="img" aria-label="Lilly"></span><span class="text-ink-3">360</span></p>
+                    <p class="flex items-baseline justify-center gap-2 text-[15px] font-semibold tracking-tight"><img src="img/lilly-firma-roja.png" alt="Lilly" class="h-[19px] w-[51px] shrink-0 object-contain" loading="eager" decoding="async" /><span class="text-ink-3">360</span></p>
                     <h1 class="ios-large-title mt-3 !text-[40px] @3xl:!text-[44px]">Tu consulta,<br>al minuto</h1>
                     <p class="mt-3 text-[17px] text-ink-2">Para profesionales de la salud en Colombia</p>
                     <button @click="crear()" class="ios-btn w-full mt-10 press">Crear cuenta</button>
@@ -1770,7 +1785,7 @@
 
             <!-- 3 · Qué hizo · búsqueda -->
             <section id="cap-2" class="hist-sec hist-sec--proto">
-              <p class="hist-titulo-proto hist-anim">Qué hizo <span class="hist-marca"><span class="lilly-firma h-[19px] w-[51px]" role="img" aria-label="Lilly"></span>360</span> para que la búsqueda fuera tan rápida</p>
+              <p class="hist-titulo-proto hist-anim">Qué hizo <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[19px] w-[51px] shrink-0 object-contain" loading="eager" decoding="async" />360</span> para que la búsqueda fuera tan rápida</p>
               <div class="hist-proto hist-anim">
                 <div class="hist-notas">
                   <p class="hist-nota">Reconocer antes que recordar: Óscar no tiene que acordarse del título exacto, entra por la enfermedad que ya conoce.</p>
@@ -1782,6 +1797,7 @@
                   <p class="hist-nota">Navegación temática por subniveles: diagnóstico, tratamiento e infografías para el paciente.</p>
                 </div>
               </div>
+              <button @click="verEnProto('tema', 'diabetes', 'cap-2')" class="hist-ver"><span>Ver la búsqueda rápida en el prototipo</span><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
             </section>
 
             <!-- 4 · Mediodía -->
@@ -1798,7 +1814,7 @@
 
             <!-- 5 · Qué hizo · valor rápido -->
             <section id="cap-4" class="hist-sec hist-sec--proto">
-              <p class="hist-titulo-proto hist-anim">Qué hizo <span class="hist-marca"><span class="lilly-firma h-[19px] w-[51px]" role="img" aria-label="Lilly"></span>360</span> para entregarle valor rápido</p>
+              <p class="hist-titulo-proto hist-anim">Qué hizo <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[19px] w-[51px] shrink-0 object-contain" loading="eager" decoding="async" />360</span> para entregarle valor rápido</p>
               <div class="hist-proto hist-anim">
                 <div class="hist-notas">
                   <p class="hist-nota">Guarda y destaca contenido en su biblioteca: acceso rápido y prioritario.</p>
@@ -1810,6 +1826,7 @@
                   <p class="hist-nota">Lo comercial va separado de lo médico: la información para prescribir tiene su propio lugar.</p>
                 </div>
               </div>
+              <button @click="verEnProto('formacion', 'diabetes', 'cap-4')" class="hist-ver"><span>Ver el canal de la enfermedad</span><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
             </section>
 
             <!-- 6 · Quiere saber más -->
@@ -1827,7 +1844,7 @@
 
             <!-- 7 · Qué hizo · microaprendizajes -->
             <section id="cap-6" class="hist-sec hist-sec--proto">
-              <p class="hist-titulo-proto hist-anim">Qué hizo <span class="hist-marca"><span class="lilly-firma h-[19px] w-[51px]" role="img" aria-label="Lilly"></span>360</span> para ofrecerle los microaprendizajes</p>
+              <p class="hist-titulo-proto hist-anim">Qué hizo <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[19px] w-[51px] shrink-0 object-contain" loading="eager" decoding="async" />360</span> para ofrecerle los microaprendizajes</p>
               <div class="hist-proto hist-anim">
                 <div class="hist-notas">
                   <p class="hist-nota">Rutas por área de conocimiento y por eje temático.</p>
@@ -1839,6 +1856,7 @@
                   <p class="hist-nota">Un formato para cada momento y cada necesidad.</p>
                 </div>
               </div>
+              <button @click="verEnProto('pieza', 'diabetes', 'cap-6')" class="hist-ver"><span>Ver el microaprendizaje</span><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
             </section>
 
             <!-- 8 · Colegas -->
@@ -1855,7 +1873,7 @@
 
             <!-- 9 · Qué hizo · eventos -->
             <section id="cap-8" class="hist-sec hist-sec--proto">
-              <p class="hist-titulo-proto hist-anim">Qué hizo <span class="hist-marca"><span class="lilly-firma h-[19px] w-[51px]" role="img" aria-label="Lilly"></span>360</span> para ofrecerle espacios digitales</p>
+              <p class="hist-titulo-proto hist-anim">Qué hizo <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[19px] w-[51px] shrink-0 object-contain" loading="eager" decoding="async" />360</span> para ofrecerle espacios digitales</p>
               <div class="hist-proto hist-anim">
                 <div class="hist-notas">
                   <p class="hist-nota">Información de primera mano: puede preguntar y conectarse con expertos.</p>
@@ -1867,12 +1885,13 @@
                   <p class="hist-nota">Agenda y recordatorios personalizados para cada evento.</p>
                 </div>
               </div>
+              <button @click="verEnProto('consulta', 'diabetes', 'cap-8')" class="hist-ver"><span>Ver la consulta y los eventos</span><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
             </section>
 
             <!-- 10 · Los cuatro momentos -->
             <section id="cap-9" class="hist-sec hist-sec--cierre">
               <div class="hist-col hist-anim">
-                <h2 class="hist-h2">Para Óscar,<br><span class="hist-marca hist-marca--grande"><span class="lilly-firma h-[34px] w-[91px]" role="img" aria-label="Lilly"></span>360</span><br>es el aliado ideal<br>en su día a día</h2>
+                <h2 class="hist-h2">Para Óscar,<br><span class="hist-marca hist-marca--grande"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[34px] w-[91px] shrink-0 object-contain" loading="eager" decoding="async" />360</span><br>es el aliado ideal<br>en su día a día</h2>
                 <p class="hist-p mt-7 max-w-[30rem] font-medium">Durante cuatro momentos clave estuvo cuando el médico la necesitó: le acercó y simplificó el acceso a la información que de verdad necesita.</p>
               </div>
               <ol class="hist-momentos hist-anim">
@@ -1881,12 +1900,15 @@
                   ['Biblioteca de acceso rápido', 'Tiene guardados los ejes temáticos que le interesan y se mantiene al día en cuestión de minutos.'],
                   ['Microaprendizajes', 'Sigue avanzando en su profesión, se certifica y hace seguimiento de su propio progreso.'],
                   ['Eventos digitales', 'Conoce profesionales nuevos y conecta con colegas que llevan su práctica al siguiente nivel.']]" :key="m[0]">
-                  <li class="hist-momento">
-                    <span class="hist-num" x-text="'0' + (i + 1)"></span>
-                    <div>
-                      <p class="hist-momento-t" x-text="m[0]"></p>
-                      <p class="hist-momento-d" x-text="m[1]"></p>
-                    </div>
+                  <li>
+                    <button class="hist-momento" @click="verEnProto(['tema', 'formacion', 'pieza', 'consulta'][i], 'diabetes', 'cap-9')">
+                      <span class="hist-num" x-text="'0' + (i + 1)"></span>
+                      <div>
+                        <p class="hist-momento-t" x-text="m[0]"></p>
+                        <p class="hist-momento-d" x-text="m[1]"></p>
+                        <span class="hist-momento-v">Verlo en el prototipo <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i></span>
+                      </div>
+                    </button>
                   </li>
                 </template>
               </ol>

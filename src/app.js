@@ -10,7 +10,8 @@ function app() {
   return {
     solo: false, // con ?solo=1 queda solo el teléfono sobre negro
     dispositivo: 'iphone', // 'iphone' | 'ipad' | 'desktop' — el marco del prototipo; el contenido se adapta con container queries (@3xl tablet, @6xl escritorio)
-    pantalla: 'historia', // la presentación arranca por la historia; ?p=inicio entra directo al app enfermedad: 'diabetes', tab: 'diagnostico', formato: 'todos',
+    // La presentación arranca por la historia; con ?p=inicio se entra directo al app.
+    pantalla: 'historia', enfermedad: 'diabetes', tab: 'diagnostico', formato: 'todos',
     detalle: {}, pieza: {}, respuesta: null, historial: [], guia: true,
     // Cascarón iOS: dirección de la transición, contador que la re-dispara, texto de la Dynamic Island y si el contenido está desplazado.
     direccion: 'adelante', transicion: 0, island: '', scrolled: false,
@@ -284,6 +285,24 @@ function app() {
     },
     get ragSugerencias() { return this.ragBanco[this.enfermedad].map(r => r.p); },
     get ragRespuesta() { const b = this.ragBanco[this.enfermedad]; return b.find(r => r.p === this.rag.pregunta) || b[0]; },
+    // — Puente narrativa ⇄ prototipo: se sale por un momento de la historia y se vuelve al mismo capítulo —
+    capitulo: 'cap-0',
+    verEnProto(destino, enfermedad, cap) {
+      this.capitulo = cap;
+      if (enfermedad) this.enfermedad = enfermedad;
+      if (destino === 'consulta') { this.ir('tema'); this.$nextTick(() => this.ragAbrir()); return; }
+      this.ir(destino);
+    },
+    irHistoria(cap) {
+      if (cap) this.capitulo = cap;
+      this.ir('historia');
+      // Dos frames: uno para que Alpine muestre la historia y otro para que el contenedor tenga alto medible.
+      this.$nextTick(() => requestAnimationFrame(() => requestAnimationFrame(() => {
+        const sec = document.getElementById(this.capitulo), caja = sec && sec.closest('.hist');
+        if (caja && sec) caja.scrollTop = sec.offsetTop;
+        lucide.createIcons();
+      })));
+    },
     get sinMarco() { return ['dashboard', 'arquitectura', 'historia'].includes(this.pantalla); },
     get tituloNativo() { return { tema: 'Búsqueda rápida', detalle: this.detalle.titulo || 'Algoritmo', formacion: 'Formación ágil', pieza: this.pieza.titulo || this.nombreFormato(this.pieza.formato), guardados: 'Guardados', perfil: 'Perfil', registro: 'Registro', dashboard: 'Back office' }[this.pantalla] || ''; },
     get piezaActual() { return this.pantalla === 'pieza' ? this.pieza : this.detalle; },

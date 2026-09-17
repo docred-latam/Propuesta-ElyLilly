@@ -25,7 +25,7 @@
                 <!-- Paso 1 · Bienvenida -->
                 <template x-if="paso === 1">
                   <div class="flex-1 flex flex-col justify-end pb-2 stagger" :class="dir > 0 ? 'reg-in' : 'reg-back'">
-                    <p class="flex items-baseline justify-center gap-2 text-[15px] font-semibold tracking-tight"><span class="lilly-firma h-[19px] w-[51px] text-lilly" role="img" aria-label="Lilly"></span><span class="text-ink-3">360</span></p>
+                    <p class="flex items-baseline justify-center gap-2 text-[15px] font-semibold tracking-tight"><img src="img/lilly-firma-roja.png" alt="Lilly" class="h-[19px] w-[51px] shrink-0 object-contain" loading="eager" decoding="async" /><span class="text-ink-3">360</span></p>
                     <h1 class="ios-large-title mt-3 !text-[40px] @3xl:!text-[44px]">Tu consulta,<br>al minuto</h1>
                     <p class="mt-3 text-[17px] text-ink-2">Para profesionales de la salud en Colombia</p>
                     <button @click="crear()" class="ios-btn w-full mt-10 press">Crear cuenta</button>
