@@ -79,11 +79,11 @@ function app() {
     formatos: [ { id: 'todos', nombre: 'Todo', icono: 'layout-grid' }, { id: 'video', nombre: 'Video', icono: 'play-circle' }, { id: 'live', nombre: 'En vivo', icono: 'radio' }, { id: 'pdf', nombre: 'Estudio PDF', icono: 'file-text' }, { id: 'info', nombre: 'Infografía', icono: 'image' }, { id: 'encuesta', nombre: 'Encuesta', icono: 'list-checks' } ],
 
     enfermedades: {
-      diabetes: { nombre: 'Diabetes tipo 2', corto: 'Diabetes', area: 'Endocrinología', icono: 'droplet', portada: 'img/diabetes-portada.jpg', hero: 'img/webinar-endocrino.jpg', producto: 'Mounjaro', principio: 'tirzepatida',
+      diabetes: { nombre: 'Diabetes tipo 2', corto: 'Diabetes', area: 'Endocrinología', icono: 'droplet', portada: 'img/diabetes-portada.jpg', hero: 'img/webinar-endocrino.jpg', producto: 'Mounjaro', logo: 'img/marca-mounjaro.png', logoAlto: 30, principio: 'tirzepatida',
         borde: 'border-diabetes/40', chip: 'bg-lillyblue-soft text-lillyblue', soft: 'bg-lillyblue-soft', texto: 'text-lillyblue', formacionSub: 'Webinar hoy 6:00 pm · 12 contenidos nuevos' },
-      mama: { nombre: 'Cáncer de mama', corto: 'C. de mama', area: 'Oncología', icono: 'ribbon', portada: 'img/mama-portada.jpg', hero: 'img/webinar-oncologo.jpg', producto: 'Verzenio', principio: 'abemaciclib',
+      mama: { nombre: 'Cáncer de mama', corto: 'C. de mama', area: 'Oncología', icono: 'ribbon', portada: 'img/mama-portada.jpg', hero: 'img/webinar-oncologo.jpg', producto: 'Verzenio', logo: 'img/marca-verzenio.png', logoAlto: 34, principio: 'abemaciclib',
         borde: 'border-mama/40', chip: 'bg-lillyblue-soft text-lillyblue', soft: 'bg-lillyblue-soft', texto: 'text-lillyblue', formacionSub: 'Nuevo estudio fase 3 · 8 contenidos nuevos' },
-      derma: { nombre: 'Dermatitis atópica', corto: 'Dermatitis', area: 'Dermatología', icono: 'hand', portada: 'img/derma-portada.jpg', hero: 'img/webinar-derma.jpg', producto: 'Ebglyss', principio: 'lebrikizumab',
+      derma: { nombre: 'Dermatitis atópica', corto: 'Dermatitis', area: 'Dermatología', icono: 'hand', portada: 'img/derma-portada.jpg', hero: 'img/webinar-derma.jpg', producto: 'Ebglyss', logo: 'img/marca-ebglyss.png', logoAlto: 27, principio: 'lebrikizumab',
         borde: 'border-derma/40', chip: 'bg-lillyblue-soft text-lillyblue', soft: 'bg-lillyblue-soft', texto: 'text-lillyblue', formacionSub: 'Podcast nuevo · 6 contenidos nuevos' },
     },
 

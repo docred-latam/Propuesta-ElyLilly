@@ -31,3 +31,16 @@ compartió Andrés el 17 de septiembre de 2026. Son **marca registrada de Eli Li
 usan aquí en una propuesta dirigida a la propia Lilly, en un prototipo rotulado como aproximación de
 mockups. No deben reutilizarse fuera de este contexto. Ambos son blancos sobre transparente y se
 aplican como máscara CSS (`.lilly-firma`, `.lilly-lockup`), así que toman el color del contexto.
+
+## Logos de producto
+`marca-mounjaro.png`, `marca-verzenio.png` y `marca-ebglyss.png` salen de los archivos que compartió
+Andrés el 17 de septiembre de 2026. Son **marcas registradas de Eli Lilly and Company** y valen las
+mismas condiciones de arriba: solo dentro de esta propuesta.
+
+- **Mounjaro** llegó en su versión para fondo oscuro (wordmark blanco). Como la tarjeta comercial es
+  blanca, se tiñó a tinta lo acromático (saturación < 25 %) y el símbolo morado/rojo quedó intacto.
+- **Ebglyss** llegó con el lockup de EE. UU., que incluye `(lebrikizumab-lbkz)` y `250mg/2mL injection`:
+  ni el sufijo ni esa dosificación aplican a Colombia, así que se recortó a símbolo + wordmark y el
+  principio activo se dice en texto, como en las otras dos.
+- El alto se define por marca (`logoAlto` en `app.js`, variable CSS `--marca-h`) porque los tres
+  lockups tienen proporciones muy distintas: con una sola altura, Mounjaro se veía el doble que Ebglyss.

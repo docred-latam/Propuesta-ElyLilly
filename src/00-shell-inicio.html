@@ -371,6 +371,11 @@
      Mismos valores que el velo de la hoja inferior, que es la referencia. */
   /* El contenido de atrás se difumina con un filtro sobre su subárbol: `backdrop-filter` dejaba nítido
      todo lo que tuviera contexto de apilamiento propio (títulos con menú, elementos con z-index). */
+  /* Logo de la marca del canal. El alto base viene por marca (--marca-h) porque los tres
+     lockups tienen proporciones muy distintas; en tablet y escritorio crece con el contenedor. */
+  .marca-logo { height: var(--marca-h, 30px); width: auto; object-fit: contain; object-position: left center; }
+  @container (min-width: 48rem) { .marca-logo { height: calc(var(--marca-h, 30px) * 1.2); } }
+  @container (min-width: 72rem) { .marca-logo { height: calc(var(--marca-h, 30px) * 1.35); } }
   .velable { transition: filter .35s cubic-bezier(.32,.72,0,1); }
   .velable.is-velado { filter: blur(8px) opacity(.55); pointer-events: none; }
   .velo { background: rgba(255,255,255,.18); }
