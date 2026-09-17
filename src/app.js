@@ -16,7 +16,7 @@ function app() {
     // Cascarón iOS: dirección de la transición, contador que la re-dispara, texto de la Dynamic Island y si el contenido está desplazado.
     direccion: 'adelante', transicion: 0, island: '', scrolled: false,
     // Marcos del prototipo (tamaño exterior en px) y tamaño de la ventana para escalarlos a la vista.
-    dispositivos: [ { id: 'iphone', nombre: 'iPhone 17 Pro Max' }, { id: 'ipad', nombre: 'iPad' }, { id: 'desktop', nombre: 'Escritorio' } ],
+    dispositivos: [ { id: 'iphone', nombre: 'Mobile' }, { id: 'ipad', nombre: 'Tablet' }, { id: 'desktop', nombre: 'Desktop' } ],
     marcos: { iphone: { w: 460, h: 976 }, ipad: { w: 1230, h: 870 }, desktop: { w: 1440, h: 900 } },
     ventana: { w: window.innerWidth, h: window.innerHeight },
     // Hoja inferior tipo Maps (iPhone): detent small | medium | large; `y` es dónde queda el borde superior de la hoja medido
