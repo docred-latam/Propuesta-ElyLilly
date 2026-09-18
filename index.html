@@ -496,6 +496,13 @@
   .hist-momento-d { margin-top: 6px; font-size: 15px; line-height: 1.6; color: rgba(255,255,255,.72); max-width: 34rem; text-wrap: pretty; }
   .hist-momento-v { margin-top: 10px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #E8412F; opacity: 0; transition: opacity .2s; }
   .hist-momento:hover .hist-momento-v, .hist-momento:focus-visible .hist-momento-v { opacity: 1; }
+  /* Miniatura del Dr. Óscar Martínez en cada beneficio: mismo hueco (52×52, radio 14) que ocupaba
+     el número, con el número ahora superpuesto en la esquina para no perder el orden. */
+  .hist-momento-foto { flex: none; position: relative; width: 52px; height: 52px; border-radius: 14px; overflow: hidden; }
+  .hist-momento-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hist-momento-foto::after { content: attr(data-num); position: absolute; right: 3px; bottom: 3px; min-width: 17px; height: 17px;
+    padding: 0 3px; border-radius: 9999px; background: #0a0a0a; border: 1px solid rgba(255,255,255,.35);
+    font-size: 9px; font-weight: 700; line-height: 17px; text-align: center; color: #fff; }
   /* Cierre */
   .hist-sec--final { grid-template-columns: minmax(0, 1fr); justify-items: center; align-content: center; text-align: center;
     border: 0; background: none; padding: clamp(40px, 8vh, 88px) 0 0; }
@@ -1871,6 +1878,7 @@
                   { id: 'cap-marca', n: 'DocRed' }, { id: 'cap-hero', n: 'Portada' }, { id: 'cap-dia', n: 'El entendimiento del reto' }, { id: 'cap-oscar', n: 'Dr. Óscar' },
                   { id: 'cap-necesidades', n: 'Dos necesidades' }, { id: 'cap-rapida', n: 'Consulta rápida' }, { id: 'cap-busqueda', n: 'Qué hizo: consulta' },
                   { id: 'cap-formacion', n: 'Formación continua' }, { id: 'cap-valor', n: 'Qué hizo: formación' },
+                  { id: 'cap-noche', n: 'Continúa en la noche' }, { id: 'cap-colegas', n: 'Encuentro con colegas' },
                   { id: 'cap-momentos', n: 'Por qué lo proponemos' }, { id: 'cap-todo', n: 'Todo el producto' },
                   { id: 'cap-final', n: 'El prototipo' },
                 ],
@@ -2108,7 +2116,7 @@
                 <p class="hist-p mt-10 max-w-[30rem]">Ve un paciente cada veinte minutos. Entre uno y el siguiente, cierra historias clínicas, resuelve trámites, firma órdenes. Y en medio de todo eso, lo que más disfruta de ser médico —junto con sus pacientes— es seguir aprendiendo: lo nuevo de su especialidad, lo que cambió esta semana, lo que todavía no sabe. Es el médico para quien construimos Lilly 360.</p>
               </div>
               <div class="hist-media hist-anim">
-                <figure class="hist-foto hist-par"><img src="img/oscar-consulta.jpg" alt="Óscar en consulta con una paciente" loading="eager" decoding="async" /></figure>
+                <figure class="hist-foto hist-par"><img src="img/oscar_presentacion.jpg" alt="Dr. Óscar Martínez de pie en su consultorio, antes de comenzar la jornada" loading="eager" decoding="async" /></figure>
               </div>
             </section>
 
@@ -2123,7 +2131,7 @@
                 <p class="hist-pie mt-10 max-w-[34rem]">Lilly 360 tiene que resolver las dos. No una plataforma de contenidos con buscador encima, sino dos experiencias distintas para dos momentos distintos del mismo día.</p>
               </div>
               <div class="hist-media hist-anim">
-                <figure class="hist-foto hist-par"><img src="img/medico-analisis.jpg" alt="Médico analizando información en su laptop, revisando el caso con calma" loading="lazy" decoding="async" /></figure>
+                <figure class="hist-foto hist-par"><img src="img/oscar_entre_consultas.jpg" alt="Dr. Óscar Martínez cerrando una historia clínica en su escritorio, mientras la siguiente paciente espera" loading="lazy" decoding="async" /></figure>
               </div>
             </section>
 
@@ -2141,7 +2149,7 @@
                 <p class="hist-pie mt-10 max-w-[32rem]">Abrió Lilly 360, entró a consulta rápida, y en menos de un minuto confirmó el algoritmo que necesitaba. Siguió la consulta sin perder el hilo, y sin hacer esperar a María.</p>
               </div>
               <div class="hist-media hist-anim">
-                <figure class="hist-foto hist-par"><img src="img/consulta-tablet.jpg" alt="Médico mostrándole a su paciente un diagnóstico en una tablet" loading="lazy" decoding="async" /></figure>
+                <figure class="hist-foto hist-par"><img src="img/oscar_consulta_rapida_maria.jpg" alt="Dr. Óscar Martínez mostrándole a María el algoritmo de diagnóstico en una tablet" loading="lazy" decoding="async" /></figure>
               </div>
             </section>
 
@@ -2168,11 +2176,10 @@
                 <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">06</span><span class="hist-hilo-l"></span></div>
                 <h2 class="hist-h2">Mediodía, por fin<br>un momento para el Dr. Óscar</h2>
                 <p class="hist-p mt-6 max-w-[34rem]">Ya no hay urgencia. Tiene veinte minutos de almuerzo, y quiere aprovecharlos en lo que más disfruta de su profesión: seguir aprendiendo. No le alcanza para leer un estudio completo, pero sí para un webinar corto con un experto, un microaprendizaje con certificado, o el resumen de lo nuevo en su especialidad.</p>
-                <p class="hist-p mt-4 max-w-[34rem]">También es el momento en que se entera de lo que hacen sus colegas: se conecta con otros médicos, participa en espacios académicos, y aporta lo que sabe.</p>
-                <p class="hist-pie mt-10 max-w-[34rem]">Abrió Lilly 360, vio un webinar de quince minutos sobre diabetes, y guardó dos piezas más para la noche. Se fue a almorzar tranquilo, sabiendo algo que antes no sabía.</p>
+                <p class="hist-pie mt-10 max-w-[34rem]">Abrió Lilly 360, vio un webinar de quince minutos sobre diabetes, tomó una nota, y guardó dos piezas más para cuando volviera a tener tiempo. Se fue a la siguiente consulta sabiendo algo que antes no sabía.</p>
               </div>
               <div class="hist-media hist-anim">
-                <figure class="hist-foto hist-par"><img src="img/webinar-vivo.jpg" alt="Doctora presentando un webinar en vivo para la comunidad médica" loading="lazy" decoding="async" /></figure>
+                <figure class="hist-foto hist-par"><img src="img/oscar_formacion_mediodia.jpg" alt="Dr. Óscar Martínez almorzando mientras ve un webinar corto en la tablet y toma una nota" loading="lazy" decoding="async" /></figure>
               </div>
             </section>
 
@@ -2194,23 +2201,49 @@
               <button @click="verEnProto('formacion', 'diabetes', 'cap-valor')" class="hist-ver" aria-label="Ver la formación continua en el prototipo"><span>Ver la formación continua</span><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
             </section>
 
-            <!-- 7 · Por qué se lo proponemos a Lilly -->
-            <section id="cap-momentos" class="hist-sec hist-sec--cierre">
+            <!-- 7 · Cierra el arco de la formación: lo guardado al mediodía, retomado en la noche -->
+            <section id="cap-noche" class="hist-sec">
               <div class="hist-col hist-anim">
                 <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">07</span><span class="hist-hilo-l"></span></div>
+                <h2 class="hist-h2">En la noche, retoma<br>justo donde quedó</h2>
+                <p class="hist-p mt-6 max-w-[34rem]">El webinar de mediodía no lo vio completo: guardó dos piezas más para cuando tuviera tiempo. Esa noche, ya en casa, retomó una de ellas desde el computador, exactamente donde la había dejado.</p>
+                <p class="hist-pie mt-10 max-w-[34rem]">Eso es lo que hace Lilly 360 por su formación: no depende de un solo momento ni de un solo dispositivo. Empieza en el celular al mediodía y termina en el computador en la noche, sin perder el hilo.</p>
+              </div>
+              <div class="hist-media hist-anim">
+                <figure class="hist-foto hist-par"><img src="img/oscar_formacion_noche.jpg" alt="Dr. Óscar Martínez en casa, en la noche, retomando en su computador un contenido guardado" loading="lazy" decoding="async" /></figure>
+              </div>
+            </section>
+
+            <!-- 8 · Comunidad y eventos digitales -->
+            <section id="cap-colegas" class="hist-sec">
+              <div class="hist-col hist-anim">
+                <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">08</span><span class="hist-hilo-l"></span></div>
+                <h2 class="hist-h2">Y también encuentra<br>a sus colegas</h2>
+                <p class="hist-p mt-6 max-w-[34rem]">Una vez al mes, el Dr. Óscar se conecta a una discusión clínica híbrida: algunos médicos están en la sala, otros entran por video desde otras ciudades. Ahí comparte casos, escucha a otros especialistas, y se entera de lo que está cambiando en su práctica.</p>
+                <p class="hist-pie mt-10 max-w-[34rem]">Lilly 360 conecta esos espacios académicos y comunidades de práctica: no es solo contenido para consumir solo, es la red de colegas con la que el Dr. Óscar ya cuenta, ahora un clic más cerca.</p>
+              </div>
+              <div class="hist-media hist-anim">
+                <figure class="hist-foto hist-par"><img src="img/oscar_con_colegas.jpg" alt="Dr. Óscar Martínez participando en una discusión clínica híbrida con colegas, presencial y por video" loading="lazy" decoding="async" /></figure>
+              </div>
+            </section>
+
+            <!-- 9 · Por qué se lo proponemos a Lilly -->
+            <section id="cap-momentos" class="hist-sec hist-sec--cierre">
+              <div class="hist-col hist-anim">
+                <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">09</span><span class="hist-hilo-l"></span></div>
                 <h2 class="hist-h2">Para el Dr. Óscar,<br><span class="hist-marca hist-marca--grande"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[34px] w-[91px] shrink-0 object-contain" loading="eager" decoding="async" />360</span><br>es el aliado que<br>le faltaba</h2>
                 <p class="hist-p mt-7 max-w-[30rem] font-medium">En su día encontró las dos cosas que necesitaba: una respuesta que no podía esperar, y un espacio para seguir aprendiendo en el poco tiempo libre que tiene.</p>
                 <p class="hist-p mt-4 max-w-[30rem]">Por conocer así a los médicos es que DocRed le propone a Lilly un entorno que responde a sus necesidades reales como usuarios digitales. Eso es lo que genera adherencia, y lo que puede convertir a Lilly 360 en un sitio destino para miles de médicos en Colombia.</p>
               </div>
               <ol class="hist-momentos hist-anim">
                 <template x-for="(m, i) in [
-                  ['Búsquedas rápidas y pertinentes', 'Necesitó información exacta en medio de una consulta, la encontró, y prescribió con tranquilidad.'],
-                  ['Biblioteca de acceso rápido', 'Tiene guardados los ejes temáticos que le interesan y se mantiene al día en cuestión de minutos.'],
-                  ['Microaprendizajes', 'Sigue avanzando en su profesión, se certifica y hace seguimiento de su propio progreso.'],
-                  ['Eventos digitales', 'Conoce profesionales nuevos y conecta con colegas que llevan su práctica al siguiente nivel.']]" :key="m[0]">
+                  ['Búsquedas rápidas y pertinentes', 'Necesitó información exacta en medio de una consulta, la encontró, y prescribió con tranquilidad.', 'img/momento-busqueda.jpg'],
+                  ['Biblioteca de acceso rápido', 'Tiene guardados los ejes temáticos que le interesan y se mantiene al día en cuestión de minutos.', 'img/momento-biblioteca.jpg'],
+                  ['Microaprendizajes', 'Sigue avanzando en su profesión, se certifica y hace seguimiento de su propio progreso.', 'img/momento-micro.jpg'],
+                  ['Eventos digitales', 'Conoce profesionales nuevos y conecta con colegas que llevan su práctica al siguiente nivel.', 'img/momento-eventos.jpg']]" :key="m[0]">
                   <li>
                     <button class="hist-momento" @click="verEnProto(['tema', 'formacion', 'pieza', 'consulta'][i], 'diabetes', 'cap-momentos')">
-                      <span class="hist-num" x-text="'0' + (i + 1)"></span>
+                      <span class="hist-momento-foto" :data-num="'0' + (i + 1)"><img :src="m[2]" :alt="'Dr. Óscar Martínez — ' + m[0]" loading="lazy" decoding="async" /></span>
                       <div>
                         <p class="hist-momento-t" x-text="m[0]"></p>
                         <p class="hist-momento-d" x-text="m[1]"></p>

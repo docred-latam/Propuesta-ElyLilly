@@ -496,6 +496,13 @@
   .hist-momento-d { margin-top: 6px; font-size: 15px; line-height: 1.6; color: rgba(255,255,255,.72); max-width: 34rem; text-wrap: pretty; }
   .hist-momento-v { margin-top: 10px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #E8412F; opacity: 0; transition: opacity .2s; }
   .hist-momento:hover .hist-momento-v, .hist-momento:focus-visible .hist-momento-v { opacity: 1; }
+  /* Miniatura del Dr. Óscar Martínez en cada beneficio: mismo hueco (52×52, radio 14) que ocupaba
+     el número, con el número ahora superpuesto en la esquina para no perder el orden. */
+  .hist-momento-foto { flex: none; position: relative; width: 52px; height: 52px; border-radius: 14px; overflow: hidden; }
+  .hist-momento-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hist-momento-foto::after { content: attr(data-num); position: absolute; right: 3px; bottom: 3px; min-width: 17px; height: 17px;
+    padding: 0 3px; border-radius: 9999px; background: #0a0a0a; border: 1px solid rgba(255,255,255,.35);
+    font-size: 9px; font-weight: 700; line-height: 17px; text-align: center; color: #fff; }
   /* Cierre */
   .hist-sec--final { grid-template-columns: minmax(0, 1fr); justify-items: center; align-content: center; text-align: center;
     border: 0; background: none; padding: clamp(40px, 8vh, 88px) 0 0; }
