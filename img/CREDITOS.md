@@ -25,20 +25,39 @@ Descargadas el 17 de septiembre de 2026 a 1200 px de ancho, JPEG, menos de 200 K
 - `oscar-tablet`, `almuerzo-tablet`, `estudio-pdf` y `webinar-oncologo` son verticales (1200 × 1800); el resto son horizontales (1200 × 800).
 - `maria-paciente` no es un primer plano estricto: es la mejor foto libre encontrada de una paciente de ~50 años en consulta. Si hace falta un retrato más cerrado, recortar la mitad derecha.
 - **`oscar-tablet.jpg`, `almuerzo-tablet.jpg` y `estudio-pdf.jpg` quedaron sin usar** tras el rediseño de «El
-  entendimiento del reto» (18 de septiembre de 2026): la nueva narrativa las reemplazó por las cuatro fotos de
-  la tabla siguiente. Se dejaron en el repositorio por si sirven en otra pantalla; no se referencian desde
-  ningún `src/*.html`.
+  entendimiento del reto» (18 de septiembre de 2026). Se dejaron en el repositorio por si sirven en otra
+  pantalla; no se referencian desde ningún `src/*.html`.
+- **`oscar-consulta.jpg`, `medico-analisis.jpg`, `consulta-tablet.jpg` y `webinar-vivo.jpg` quedaron sin usar**
+  en la segunda vuelta del mismo día: mostraban a personas distintas en cada escena (y en dos casos cambiaban
+  de género), así que rompían la continuidad de que es un solo médico, el Dr. Óscar Martínez, a quien se sigue
+  durante todo el día. Las reemplazó el set de `oscar_*.jpg` de la tabla siguiente, un solo actor en las seis
+  fotos. Igual que las anteriores, se dejaron en el repositorio sin referenciar.
 
-## Fotos de «El entendimiento del reto» (rediseño del 18 de septiembre de 2026)
-Las cuatro llegaron directamente de Andrés el 18 de septiembre de 2026 (no se buscaron en Pexels/Unsplash),
-como set ya pensado para esta narrativa. Se recortaron a 1200 px de ancho, JPEG, igual que el resto.
+## Fotos de «El entendimiento del reto», primera vuelta (18 de septiembre de 2026)
+`comite-clinico.jpg` sigue en uso. Las otras tres de esta vuelta quedaron sin usar (ver nota arriba).
 
 | Archivo | Escena | Dónde se usa |
 |---|---|---|
 | `comite-clinico.jpg` | Junta médica: cinco personas revisando resonancias cerebrales en pantalla | Apertura «Quiénes somos» (`cap-marca`) |
-| `medico-analisis.jpg` | Médico solo, revisando algo en su laptop con calma | «Lo que identificamos» (`cap-necesidades`) |
-| `consulta-tablet.jpg` | Médica mostrándole a un paciente un diagnóstico en una tablet | «Consulta rápida» / la escena de María (`cap-rapida`) |
-| `webinar-vivo.jpg` | Doctora presentando a cámara, con una pieza gráfica clínica detrás, en estudio | «Formación continua» (`cap-formacion`) |
+
+## Fotos del Dr. Óscar Martínez, un solo actor (18 de septiembre de 2026, segunda vuelta)
+Las seis llegaron directamente de Andrés el mismo día, ya pensadas como continuidad de un solo personaje:
+mismo actor, mismo consultorio, mismo departamento, misma vista a las montañas. Se recortaron a 1200 px de
+ancho, JPEG, igual que el resto. Las cuatro `momento-*.jpg` son recortes cuadrados de 240 px de esas mismas
+fotos, para las miniaturas de «Por qué lo proponemos» (`cap-momentos`).
+
+| Archivo | Escena | Dónde se usa |
+|---|---|---|
+| `oscar_presentacion.jpg` | De pie en su consultorio, antes de empezar la jornada | Presentación del Dr. Óscar Martínez (`cap-oscar`) |
+| `oscar_entre_consultas.jpg` | Sentado en su escritorio cerrando una historia clínica; la siguiente paciente espera al fondo | «Lo que identificamos» (`cap-necesidades`) |
+| `oscar_consulta_rapida_maria.jpg` | Con María al frente, confirmando el algoritmo de diagnóstico en la tablet | «Consulta rápida» / la escena de María (`cap-rapida`) |
+| `oscar_formacion_mediodia.jpg` | Almorzando, viendo un webinar corto en la tablet y tomando una nota | «Formación continua al mediodía» (`cap-formacion`) |
+| `oscar_formacion_noche.jpg` | En casa, de noche, retomando en el computador un contenido guardado | «Continúa en la noche» (`cap-noche`) |
+| `oscar_con_colegas.jpg` | En una discusión clínica híbrida, algunos colegas presenciales y otros por video | «Encuentro con colegas» (`cap-colegas`) |
+| `momento-busqueda.jpg` | Recorte de `oscar_consulta_rapida_maria.jpg` | Miniatura de «Búsquedas rápidas y pertinentes» |
+| `momento-biblioteca.jpg` | Recorte de `oscar_formacion_noche.jpg` | Miniatura de «Biblioteca de acceso rápido» |
+| `momento-micro.jpg` | Recorte de `oscar_formacion_mediodia.jpg` | Miniatura de «Microaprendizajes» |
+| `momento-eventos.jpg` | Recorte de `oscar_con_colegas.jpg` | Miniatura de «Eventos digitales» |
 
 ## Logo de DocRed
 `docred-logo.png` lo compartió Andrés el 18 de septiembre de 2026: es el logo propio de DocRed (no de
