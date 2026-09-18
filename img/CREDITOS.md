@@ -24,6 +24,27 @@ Descargadas el 17 de septiembre de 2026 a 1200 px de ancho, JPEG, menos de 200 K
 - Se descartaron todos los resultados de Unsplash marcados «Getty Images» o «Curated Lifestyle»: son Unsplash+ (licencia paga).
 - `oscar-tablet`, `almuerzo-tablet`, `estudio-pdf` y `webinar-oncologo` son verticales (1200 × 1800); el resto son horizontales (1200 × 800).
 - `maria-paciente` no es un primer plano estricto: es la mejor foto libre encontrada de una paciente de ~50 años en consulta. Si hace falta un retrato más cerrado, recortar la mitad derecha.
+- **`oscar-tablet.jpg`, `almuerzo-tablet.jpg` y `estudio-pdf.jpg` quedaron sin usar** tras el rediseño de «El
+  entendimiento del reto» (18 de septiembre de 2026): la nueva narrativa las reemplazó por las cuatro fotos de
+  la tabla siguiente. Se dejaron en el repositorio por si sirven en otra pantalla; no se referencian desde
+  ningún `src/*.html`.
+
+## Fotos de «El entendimiento del reto» (rediseño del 18 de septiembre de 2026)
+Las cuatro llegaron directamente de Andrés el 18 de septiembre de 2026 (no se buscaron en Pexels/Unsplash),
+como set ya pensado para esta narrativa. Se recortaron a 1200 px de ancho, JPEG, igual que el resto.
+
+| Archivo | Escena | Dónde se usa |
+|---|---|---|
+| `comite-clinico.jpg` | Junta médica: cinco personas revisando resonancias cerebrales en pantalla | Apertura «Quiénes somos» (`cap-marca`) |
+| `medico-analisis.jpg` | Médico solo, revisando algo en su laptop con calma | «Lo que identificamos» (`cap-necesidades`) |
+| `consulta-tablet.jpg` | Médica mostrándole a un paciente un diagnóstico en una tablet | «Consulta rápida» / la escena de María (`cap-rapida`) |
+| `webinar-vivo.jpg` | Doctora presentando a cámara, con una pieza gráfica clínica detrás, en estudio | «Formación continua» (`cap-formacion`) |
+
+## Logo de DocRed
+`docred-logo.png` lo compartió Andrés el 18 de septiembre de 2026: es el logo propio de DocRed (no de
+Lilly), a color (azul #2D3192 y verde menta #6DCB8A), con transparencia real. Solo se recortó el margen
+transparente sobrante. Como el fondo de la historia es casi negro, se muestra sobre una placa blanca
+(`.cap-marca-logo`) en vez de aplicarse directo sobre el fondo, para no perder contraste.
 
 ## Logo de Lilly
 `lilly-logo.png` (lockup completo) y `lilly-firma.png` (solo la firma) se recortaron del archivo que
