@@ -371,6 +371,15 @@
      Mismos valores que el velo de la hoja inferior, que es la referencia. */
   /* El contenido de atrás se difumina con un filtro sobre su subárbol: `backdrop-filter` dejaba nítido
      todo lo que tuviera contexto de apilamiento propio (títulos con menú, elementos con z-index). */
+  /* Tarjeta de marca. El cuerpo visual es un abanico de rayos que sube desde abajo con los
+     colores del propio logo: es lo que le da presencia a la tarjeta sin usar una foto de producto
+     (no tenemos, y en pharma la foto del empaque es material regulado aparte). */
+  .marca-card { position: relative; isolation: isolate; overflow: hidden; }
+  .marca-rayos {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 252px; z-index: -1; pointer-events: none;
+    background-image: var(--marca-rayos); background-size: 100% 100%; background-position: bottom center; background-repeat: no-repeat;
+  }
+  @container (min-width: 48rem) { .marca-rayos { height: 262px; } }
   /* Logo de la marca del canal. El alto base viene por marca (--marca-h) porque los tres
      lockups tienen proporciones muy distintas; en tablet y escritorio crece con el contenedor. */
   .marca-logo { height: var(--marca-h, 30px); width: auto; object-fit: contain; object-position: left center; }

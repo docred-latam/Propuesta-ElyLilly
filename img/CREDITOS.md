@@ -44,3 +44,11 @@ mismas condiciones de arriba: solo dentro de esta propuesta.
   principio activo se dice en texto, como en las otras dos.
 - El alto se define por marca (`logoAlto` en `app.js`, variable CSS `--marca-h`) porque los tres
   lockups tienen proporciones muy distintas: con una sola altura, Mounjaro se veía el doble que Ebglyss.
+
+- **Ebglyss** venía además con fondo blanco opaco: se le devolvió el alfa (deshaciendo la composición
+  sobre blanco) para que no apareciera un recuadro cuando el color de la tarjeta sube.
+
+## Abanicos de la tarjeta comercial
+`rayos-mounjaro.webp`, `rayos-verzenio.webp` y `rayos-ebglyss.webp` son generados, no descargados:
+`rayos.py` (en la raíz del repo) los dibuja con numpy a ×3 y los reduce, con los colores de cada lockup. Salió de
+los referentes que pasó Andrés el 17 de septiembre (la card de Apple con el abanico de luz).

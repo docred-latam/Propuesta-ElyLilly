@@ -51,17 +51,35 @@
                 </div>
               </div>
 
-              <!-- Tarjeta de marca: lo único comercial de la pantalla. Cada enfermedad va amarrada a su producto (Mounjaro · Verzenio · Ebglyss). -->
-              <section class="mt-6 rounded-3xl bg-white border border-lilly/30 shadow-glass p-4 @3xl:p-5" :aria-label="'Contenido comercial · ' + enf.producto">
-                <p class="text-[12px] font-semibold uppercase tracking-wide text-lilly">Contenido comercial</p>
-                <!-- El logo de la marca hace de título: el lockup ya trae el nombre y el principio activo,
-                     así que repetirlo en texto sobraba. El nombre sigue disponible en el alt. -->
+              <!-- Tarjeta de marca: lo único comercial de la pantalla. Cada enfermedad va amarrada a su producto (Mounjaro · Verzenio · Ebglyss).
+                   Layout de tarjeta con cuerpo visual (referentes que pasó Andrés el 17 de septiembre): el logo hace de titular,
+                   los datos van en una fila con iconos y la acción es un botón ancho; el abanico de rayos ocupa la mitad de abajo. -->
+              <section class="marca-card mt-6 rounded-[28px] bg-white border border-lilly/20 shadow-glass p-5 pb-7 @3xl:p-6 @3xl:pb-8"
+                       :style="'--marca-rayos:url(' + enf.rayos + ')'" :aria-label="'Contenido comercial · ' + enf.producto">
+                <span class="marca-rayos" aria-hidden="true"></span>
+                <div class="flex items-start justify-between gap-3">
+                  <p class="text-[12px] font-semibold uppercase tracking-wide text-lilly">Contenido comercial</p>
+                  <img src="img/lilly-firma-roja.png" alt="Lilly" class="h-[15px] w-auto shrink-0 object-contain" loading="eager" decoding="async" />
+                </div>
+
+                <!-- El logo es el titular: el lockup ya trae el nombre, repetirlo en texto sobraba. -->
                 <img :src="enf.logo" :alt="enf.producto" :style="'--marca-h:' + enf.logoAlto + 'px'"
-                     class="marca-logo mt-2.5 max-w-[70%]" loading="eager" decoding="async" />
-                <p class="mt-2.5 text-[15px] text-ink-2"><span x-text="enf.principio"></span> · <span class="font-medium text-ink">Lilly</span> · aprobado por INVIMA</p>
-                <div class="mt-4 flex flex-col gap-2.5 @3xl:flex-row @3xl:gap-3">
-                  <button @click="ficha = true" class="ios-btn ios-btn-accent press !h-11 !text-[15px] !px-5 w-full @3xl:w-auto"><i data-lucide="file-badge" class="h-4 w-4"></i>Información para prescribir</button>
-                  <button @click="formato = 'pdf'" class="ios-btn-glass glass press !h-11 !text-[15px] !px-5 w-full @3xl:w-auto">Ver estudios</button>
+                     class="marca-logo mt-7 @3xl:mt-9 max-w-[74%] @3xl:max-w-none" loading="eager" decoding="async" />
+
+                <p class="mt-4 max-w-[46ch] text-[15px] @3xl:text-[16px] leading-[1.5] text-ink-2" x-text="enf.descripcion"></p>
+
+                <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-[14px] @3xl:text-[15px] text-ink">
+                  <span class="inline-flex items-center gap-2"><i data-lucide="pill" class="h-4 w-4 shrink-0 text-ink-2" stroke-width="1.75"></i><span class="font-medium" x-text="enf.principio"></span></span>
+                  <span class="inline-flex items-center gap-2"><i data-lucide="badge-check" class="h-4 w-4 shrink-0 text-ink-2" stroke-width="1.75"></i><span class="font-medium">Aprobado por INVIMA</span></span>
+                </div>
+
+                <!-- Las acciones cierran la tarjeta, ya sobre el color. En el teléfono no caben dos
+                     cápsulas con texto: la secundaria queda como botón redondo (patrón del referente). -->
+                <div class="mt-7 @3xl:mt-8 flex items-center gap-2.5">
+                  <button @click="ficha = true" class="ios-btn ios-btn-accent press !h-12 !text-[15px] !px-5 flex-1 @3xl:!flex-none @3xl:!px-7"><i data-lucide="file-badge" class="h-4 w-4"></i>Información para prescribir</button>
+                  <button @click="formato = 'pdf'" aria-label="Ver estudios" title="Ver estudios"
+                          class="glass press inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full @3xl:hidden"><i data-lucide="file-text" class="h-5 w-5 text-ink" stroke-width="1.75"></i></button>
+                  <button @click="formato = 'pdf'" class="ios-btn-glass glass press !h-12 !text-[15px] !px-6 hidden @3xl:inline-flex">Ver estudios</button>
                 </div>
               </section>
 

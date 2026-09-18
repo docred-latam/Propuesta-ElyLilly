@@ -79,11 +79,11 @@ function app() {
     formatos: [ { id: 'todos', nombre: 'Todo', icono: 'layout-grid' }, { id: 'video', nombre: 'Video', icono: 'play-circle' }, { id: 'live', nombre: 'En vivo', icono: 'radio' }, { id: 'pdf', nombre: 'Estudio PDF', icono: 'file-text' }, { id: 'info', nombre: 'Infografía', icono: 'image' }, { id: 'encuesta', nombre: 'Encuesta', icono: 'list-checks' } ],
 
     enfermedades: {
-      diabetes: { nombre: 'Diabetes tipo 2', corto: 'Diabetes', area: 'Endocrinología', icono: 'droplet', portada: 'img/diabetes-portada.jpg', hero: 'img/webinar-endocrino.jpg', producto: 'Mounjaro', logo: 'img/marca-mounjaro.png', logoAlto: 30, principio: 'tirzepatida',
+      diabetes: { nombre: 'Diabetes tipo 2', corto: 'Diabetes', area: 'Endocrinología', icono: 'droplet', portada: 'img/diabetes-portada.jpg', hero: 'img/webinar-endocrino.jpg', producto: 'Mounjaro', descripcion: 'Agonista dual GIP/GLP-1 en una sola inyección semanal para diabetes tipo 2 en adultos.', rayos: 'img/rayos-mounjaro.webp', logo: 'img/marca-mounjaro.png', logoAlto: 40, principio: 'tirzepatida',
         borde: 'border-diabetes/40', chip: 'bg-lillyblue-soft text-lillyblue', soft: 'bg-lillyblue-soft', texto: 'text-lillyblue', formacionSub: 'Webinar hoy 6:00 pm · 12 contenidos nuevos' },
-      mama: { nombre: 'Cáncer de mama', corto: 'C. de mama', area: 'Oncología', icono: 'ribbon', portada: 'img/mama-portada.jpg', hero: 'img/webinar-oncologo.jpg', producto: 'Verzenio', logo: 'img/marca-verzenio.png', logoAlto: 34, principio: 'abemaciclib',
+      mama: { nombre: 'Cáncer de mama', corto: 'C. de mama', area: 'Oncología', icono: 'ribbon', portada: 'img/mama-portada.jpg', hero: 'img/webinar-oncologo.jpg', producto: 'Verzenio', descripcion: 'Inhibidor de CDK4/6 para cáncer de mama HR+/HER2− en adyuvancia y enfermedad avanzada.', rayos: 'img/rayos-verzenio.webp', logo: 'img/marca-verzenio.png', logoAlto: 46, principio: 'abemaciclib',
         borde: 'border-mama/40', chip: 'bg-lillyblue-soft text-lillyblue', soft: 'bg-lillyblue-soft', texto: 'text-lillyblue', formacionSub: 'Nuevo estudio fase 3 · 8 contenidos nuevos' },
-      derma: { nombre: 'Dermatitis atópica', corto: 'Dermatitis', area: 'Dermatología', icono: 'hand', portada: 'img/derma-portada.jpg', hero: 'img/webinar-derma.jpg', producto: 'Ebglyss', logo: 'img/marca-ebglyss.png', logoAlto: 27, principio: 'lebrikizumab',
+      derma: { nombre: 'Dermatitis atópica', corto: 'Dermatitis', area: 'Dermatología', icono: 'hand', portada: 'img/derma-portada.jpg', hero: 'img/webinar-derma.jpg', producto: 'Ebglyss', descripcion: 'Anticuerpo monoclonal anti-IL-13 para dermatitis atópica moderada a severa.', rayos: 'img/rayos-ebglyss.webp', logo: 'img/marca-ebglyss.png', logoAlto: 36, principio: 'lebrikizumab',
         borde: 'border-derma/40', chip: 'bg-lillyblue-soft text-lillyblue', soft: 'bg-lillyblue-soft', texto: 'text-lillyblue', formacionSub: 'Podcast nuevo · 6 contenidos nuevos' },
     },
 
