@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lilly 360 · Prototipo</title>
+<link rel="preload" as="image" href="img/lilly-firma-blanca.png" />
+<link rel="preload" as="image" href="img/lilly-firma-roja.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com?plugins=container-queries"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans: ['-apple-system', '"SF Pro Display"', '"SF Pro Text"', 'Inter', 'system-ui', 'sans-serif'] },
+        colors: {
+          ink: { DEFAULT: '#1A1A1A', 2: '#5F6368', 3: '#9AA0A6' },
+          lilly: { DEFAULT: '#D52B1E', dark: '#A81F15', soft: '#FDECEA' },
+          lillyblue: { DEFAULT: '#1F5FA8', soft: '#E6F0FA' },
+          diabetes: { DEFAULT: '#1F5FA8', soft: '#E6F0FA' },
+          mama:     { DEFAULT: '#C8102E', soft: '#FBE9EC' },
+          derma:    { DEFAULT: '#0F7C7C', soft: '#E3F3F3' },
+          sep: 'rgba(60,60,67,.12)',
+        },
+        boxShadow: {
+          phone: '0 40px 80px -20px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.06)',
+          glass: '0 8px 32px rgba(0,0,0,.06), inset 0 1px 0 rgba(255,255,255,.7)',
+          pill: '0 1px 3px rgba(0,0,0,.08), 0 6px 16px rgba(0,0,0,.06)',
+        },
+      },
+    },
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script src="src/sileo.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="src/persona.js"></script>
+<style>
+  /* ===== Tokens compartidos (ver design.md). Los tres agentes usan estas clases; no se redefinen en las pantallas. ===== */
+  [x-cloak] { display: none !important; }
+  .scroll-hide::-webkit-scrollbar { display: none; }
+  .scroll-hide { scrollbar-width: none; }
+  .phone-screen { scroll-behavior: smooth; }
+
+  /* Fondo de escena: gradiente suave con dos manchas de luz. Se tinta por enfermedad. */
+  .bg-scene { position: relative; background: linear-gradient(180deg, #F7F7F8 0%, #F4F4F6 60%, #F2F2F4 100%); }
+  .bg-scene::before, .bg-scene::after { content: ''; position: absolute; inset: auto; border-radius: 9999px; filter: blur(60px); pointer-events: none; opacity: 1; transition: background 600ms ease; }
+  .bg-scene::before { width: 320px; height: 320px; top: -120px; right: -100px; background: rgba(213,43,30,.18); }
+  .bg-scene::after  { width: 280px; height: 280px; bottom: 40px; left: -120px; background: rgba(31,95,168,.14); }
+  .bg-scene[data-tinte="diabetes"]::before { background: rgba(31,95,168,.22); } .bg-scene[data-tinte="diabetes"]::after { background: rgba(31,95,168,.12); }
+  .bg-scene[data-tinte="mama"]::before     { background: rgba(200,16,46,.18); } .bg-scene[data-tinte="mama"]::after     { background: rgba(200,16,46,.10); }
+  .bg-scene[data-tinte="derma"]::before    { background: rgba(15,124,124,.20); } .bg-scene[data-tinte="derma"]::after    { background: rgba(15,124,124,.10); }
+  .bg-scene > * { position: relative; z-index: 1; }
+
+  /* Vidrio */
+  .glass        { background: rgba(255,255,255,.65); -webkit-backdrop-filter: blur(24px) saturate(1.4); backdrop-filter: blur(24px) saturate(1.4); border: 1px solid rgba(255,255,255,.6); box-shadow: 0 8px 32px rgba(0,0,0,.06), inset 0 1px 0 rgba(255,255,255,.7); }
+  .glass-strong { background: rgba(255,255,255,.85); -webkit-backdrop-filter: blur(28px) saturate(1.6); backdrop-filter: blur(28px) saturate(1.6); border: 1px solid rgba(255,255,255,.7); box-shadow: 0 8px 32px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.8); }
+  .glass-dark   { background: rgba(20,20,22,.55); -webkit-backdrop-filter: blur(24px) saturate(1.4); backdrop-filter: blur(24px) saturate(1.4); border: 1px solid rgba(255,255,255,.18); color: #fff; }
+
+  /* Componentes iOS 27 */
+  .ios-large-title { font-size: 34px; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; color: #1A1A1A; }
+  .ios-navbar { position: sticky; top: 0; z-index: 20; height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+  .ios-back { display: inline-flex; align-items: center; gap: 2px; height: 36px; padding: 0 12px 0 8px; border-radius: 9999px; font-size: 15px; font-weight: 500; color: #D52B1E; }
+  .ios-search { display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-radius: 9999px; color: #8E8E93; font-size: 17px; }
+  .ios-segmented { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; padding: 3px; border-radius: 9999px; position: relative; }
+  .ios-segment { position: relative; z-index: 1; height: 38px; border-radius: 9999px; font-size: 14px; font-weight: 500; color: #5F6368; transition: color 300ms; }
+  .ios-segment[aria-selected="true"] { color: #1A1A1A; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 6px 16px rgba(0,0,0,.06); font-weight: 600; }
+  .ios-chip { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 9999px; font-size: 14px; font-weight: 500; color: #1A1A1A; white-space: nowrap; transition: all 250ms; }
+  .ios-chip[aria-selected="true"] { background: #D52B1E; color: #fff; border-color: #D52B1E; }
+  .ios-list { border-radius: 24px; overflow: hidden; }
+  .ios-row { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 12px 16px; text-align: left; width: 100%; }
+  .ios-row + .ios-row { border-top: 1px solid rgba(60,60,67,.12); }
+  .ios-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 50px; padding: 0 22px; border-radius: 9999px; font-size: 17px; font-weight: 600; background: #D52B1E; color: #fff; transition: transform 150ms, opacity 150ms; }
+  .ios-btn:active { transform: scale(.97); }
+  .ios-btn-accent { background: #D52B1E; }
+  .ios-btn-glass { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 50px; padding: 0 22px; border-radius: 9999px; font-size: 17px; font-weight: 600; color: #1A1A1A; }
+  .ios-tabbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 12px; z-index: 30; display: flex; align-items: center; gap: 4px; padding: 6px; border-radius: 9999px; }
+  .ios-tab { display: inline-flex; align-items: center; gap: 6px; height: 46px; padding: 0 14px; border-radius: 9999px; color: #5F6368; font-size: 13px; font-weight: 600; transition: all 300ms cubic-bezier(.32,.72,0,1); }
+  .ios-tab[aria-selected="true"] { background: #fff; color: #1A1A1A; box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 6px 16px rgba(0,0,0,.06); padding: 0 16px; }
+  .ios-sheet { border-radius: 28px 28px 0 0; padding-top: 8px; }
+  .ios-sheet::before { content: ''; display: block; width: 36px; height: 5px; border-radius: 9999px; background: #C7C7CC; margin: 0 auto 10px; }
+  .ios-ask { display: flex; align-items: center; gap: 10px; height: 52px; padding: 4px 6px 4px 6px; border-radius: 9999px; }
+  /* Alias vacíos: los orbes de IA ahora son Persona (src/persona.js). */
+  .ios-orb { width: 40px; height: 40px; border-radius: 9999px; flex: none; position: relative; }
+  .ios-orb.is-active { animation: none; }
+  .ios-orb.is-active { animation: orb-spin 6s linear infinite; }
+  .dynamic-island { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); height: 34px; min-width: 122px; border-radius: 9999px; background: #000; color: #fff; z-index: 40; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 14px; font-size: 12px; font-weight: 600; transition: min-width 400ms cubic-bezier(.2,.8,.2,1), height 400ms cubic-bezier(.2,.8,.2,1); overflow: hidden; }
+  .dynamic-island.is-expanded { min-width: 220px; height: 38px; }
+
+  /* Movimiento */
+  @keyframes screen-in   { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @keyframes screen-back { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+  @keyframes card-in     { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: none; } }
+  @keyframes orb-spin    { to { transform: rotate(360deg); } }
+  .screen-enter { animation: screen-in 320ms cubic-bezier(.32,.72,0,1) both; }
+  .screen-back  { animation: screen-back 320ms cubic-bezier(.32,.72,0,1) both; }
+  .stagger > * { animation: card-in 420ms cubic-bezier(.2,.8,.2,1) both; }
+  .stagger > *:nth-child(1) { animation-delay: 0ms; }  .stagger > *:nth-child(2) { animation-delay: 40ms; }
+  .stagger > *:nth-child(3) { animation-delay: 80ms; } .stagger > *:nth-child(4) { animation-delay: 120ms; }
+  .stagger > *:nth-child(5) { animation-delay: 160ms; } .stagger > *:nth-child(6) { animation-delay: 200ms; }
+  .press { transition: transform 150ms cubic-bezier(.2,.8,.2,1); } .press:active { transform: scale(.97); }
+  @media (prefers-reduced-motion: reduce) { .screen-enter, .screen-back, .stagger > *, .ios-orb.is-active { animation: none !important; } }
+
+  /* Árbol de decisión (detalle) */
+  .tree-line { position: relative; }
+  .tree-line::before { content: ''; position: absolute; left: 50%; top: -14px; width: 2px; height: 14px; background: rgba(60,60,67,.18); }
+
+  /* ===== Añadido por el cascarón: status bar, acción de nav bar, tarjetas tintadas, degradado bajo la tab bar ===== */
+  .ios-status { height: 54px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 10px 26px 0 30px; font-size: 15px; font-weight: 600; color: #1A1A1A; letter-spacing: -0.01em; }
+  .ios-nav-action { display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 0 14px; border-radius: 9999px; font-size: 15px; font-weight: 600; color: #D52B1E; }
+  .glass-icon { width: 44px; height: 44px; border-radius: 9999px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,.85); border: 1px solid rgba(255,255,255,.95); box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04); color: #1A1A1A; }
+  /* Formación ágil: gradiente muy diluido por enfermedad sobre vidrio; nunca bloques saturados. */
+  .tint-card { border: 1px solid rgba(255,255,255,.75); box-shadow: 0 8px 32px rgba(0,0,0,.05), inset 0 1px 0 rgba(255,255,255,.85); -webkit-backdrop-filter: blur(24px) saturate(1.4); backdrop-filter: blur(24px) saturate(1.4); }
+  .tint-card[data-tinte="diabetes"] { background: linear-gradient(135deg, rgba(255,255,255,.86) 0%, rgba(31,95,168,.14) 100%); }
+  .tint-card[data-tinte="mama"]     { background: linear-gradient(135deg, rgba(255,255,255,.86) 0%, rgba(200,16,46,.12) 100%); }
+  .tint-card[data-tinte="derma"]    { background: linear-gradient(135deg, rgba(255,255,255,.86) 0%, rgba(15,124,124,.13) 100%); }
+  /* El contenido pasa por debajo de la tab bar flotante: este degradado lo apaga suavemente. */
+  .tab-fade { position: absolute; left: 0; right: 0; bottom: 0; height: 112px; pointer-events: none; z-index: 25; background: linear-gradient(to top, rgba(242,242,244,.96) 0%, rgba(242,242,244,.6) 45%, rgba(242,242,244,0) 100%); }
+  .ios-navbar.is-scrolled { background: rgba(255,255,255,.72); -webkit-backdrop-filter: blur(24px) saturate(1.4); backdrop-filter: blur(24px) saturate(1.4); box-shadow: 0 1px 0 rgba(60,60,67,.08); }
+  .proto-panel { font-family: Inter, system-ui, sans-serif; }
+  /* La isla expandida nunca alcanza el reloj ni los iconos del sistema. */
+  .dynamic-island.is-expanded { min-width: 172px; max-width: 188px; }
+  /* ===== Siri / Apple Intelligence (ver siri-referencia.md): glow de borde, Type to Siri, respuesta ===== */
+  @property --siri-angle  { syntax: "<angle>"; inherits: false; initial-value: 180deg; }
+  @property --siri-w      { syntax: "<length>"; inherits: true; initial-value: 0px; }
+  @property --siri-reveal { syntax: "<percentage>"; inherits: true; initial-value: 0%; }
+  /* Overlay dentro de la pantalla, con su mismo radio. Nace desde abajo (máscara radial desde el borde inferior), respira y gira lento. */
+  .siri-glow { position: absolute; inset: 0; border-radius: 42px; pointer-events: none; z-index: 35; opacity: 0; --siri-w: 0px; --siri-reveal: 0%;
+    transition: opacity .55s ease-in, --siri-w .55s ease-in, --siri-reveal .55s ease-in;
+    -webkit-mask: radial-gradient(circle at 50% 100%, #000 var(--siri-reveal), transparent calc(var(--siri-reveal) + 30%));
+            mask: radial-gradient(circle at 50% 100%, #000 var(--siri-reveal), transparent calc(var(--siri-reveal) + 30%)); }
+  /* Halo Lilly (alias .lilly-glow): dos lóbulos de luz —rojo abajo a la izquierda, azul arriba a la derecha— que recorren el
+     borde en sentidos opuestos (9 s y 13 s) sobre un anillo base tenue rojo·blanco·azul. Nada de amarillo ni verde. */
+  @property --lobA { syntax: "<angle>"; inherits: false; initial-value: 190deg; }
+  @property --lobB { syntax: "<angle>"; inherits: false; initial-value: 350deg; }
+  .siri-glow::before, .siri-glow::after, .lilly-glow::before, .lilly-glow::after { content: ''; position: absolute; inset: 0; border-radius: inherit;
+    background:
+      conic-gradient(from var(--lobA), rgba(213,43,30,0) 0deg, #D52B1E 28deg, #F0705E 55deg, #FFF4F1 82deg, rgba(255,244,241,0) 125deg, rgba(213,43,30,0) 360deg),
+      conic-gradient(from var(--lobB), rgba(207,224,250,0) 0deg, #CFE0FA 28deg, #1F5FA8 55deg, #6B4FBF 82deg, rgba(107,79,191,0) 125deg, rgba(207,224,250,0) 360deg),
+      conic-gradient(from 0deg, rgba(213,43,30,.45), rgba(226,77,62,.45), rgba(240,112,94,.45), rgba(244,156,150,.45), rgba(248,201,207,.45), rgba(251,222,224,.45), rgba(255,244,241,.45), rgba(231,234,245,.45), rgba(207,224,250,.45), rgba(119,159,209,.45), rgba(31,95,168,.45), rgba(69,87,179,.45), rgba(107,79,191,.45), rgba(160,61,110,.45), rgba(213,43,30,.45));
+    padding: var(--siri-w);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    animation: lilly-lobA 9s linear infinite, lilly-lobB 13s linear infinite; }
+  @keyframes lilly-lobA { to { --lobA: 550deg; } }
+  @keyframes lilly-lobB { to { --lobB: -10deg; } }
+  .siri-glow::before { filter: blur(2.5px); }
+  .siri-glow::after  { filter: blur(14px); opacity: .8; }
+  .lilly-glow { position: absolute; inset: 0; border-radius: 42px; pointer-events: none; z-index: 35; }
+  .lilly-orb { width: 40px; height: 40px; border-radius: 9999px; flex: none; position: relative; }
+  .siri-glow.is-on { opacity: 1; --siri-w: 7px; --siri-reveal: 140%;
+    transition: opacity .4s ease-out, --siri-w .4s ease-out, --siri-reveal .45s ease-out;
+    animation: siri-breathe 2.4s ease-in-out .4s infinite; }
+  .siri-glow.is-thinking { animation: siri-breathe-fast 1.2s ease-in-out infinite; }
+  /* Pensando: los lóbulos aceleran (2,4 s) y se ensanchan con el anillo. */
+  .siri-glow.is-thinking::before, .siri-glow.is-thinking::after { animation-duration: 2.4s, 2.4s; }
+  .siri-glow.is-speaking { opacity: .4; }
+  @keyframes siri-spin         { to { --siri-angle: 540deg; } }
+  @keyframes siri-breathe      { 0%, 100% { --siri-w: 7px; }  50% { --siri-w: 11px; } }
+  @keyframes siri-breathe-fast { 0%, 100% { --siri-w: 10px; } 50% { --siri-w: 14px; } }
+
+  /* Barra de consulta: sube 6 px y gana sombra al enfocar; botón ↑ blanco cuando hay texto. */
+  .ios-ask-wrap { transition: transform .42s cubic-bezier(.32,.72,0,1); }
+  .ios-ask-wrap .ios-ask { transition: box-shadow .42s cubic-bezier(.32,.72,0,1); }
+  .ios-ask-wrap.is-focus { transform: translateY(-6px); }
+  .ios-ask-wrap.is-focus .ios-ask { box-shadow: 0 18px 44px rgba(0,0,0,.16), 0 2px 6px rgba(0,0,0,.05), inset 0 1px 0 rgba(255,255,255,.8); }
+  .ios-send { width: 38px; height: 38px; border-radius: 9999px; flex: none; display: inline-flex; align-items: center; justify-content: center; background: #fff; color: #1A1A1A; box-shadow: 0 1px 3px rgba(0,0,0,.1), 0 4px 12px rgba(0,0,0,.08); }
+  .ios-suggestion { display: flex; align-items: center; gap: 10px; width: 100%; height: 38px; padding: 0 6px; text-align: left; font-size: 15px; color: #1A1A1A; border-radius: 12px; }
+  /* Tarjeta de respuesta: cae desde arriba; el contenido de atrás se atenúa con filter (no con opacity, que la animación de pantalla mantiene fija). */
+  .siri-card { animation: siri-card-in .45s cubic-bezier(.32,.72,0,1) both; }
+  .siri-pill { animation: siri-card-in .45s cubic-bezier(.32,.72,0,1) .12s both; }
+  @keyframes siri-card-in { from { opacity: 0; transform: translateY(-16px) scale(.98); } to { opacity: 1; transform: none; } }
+  .phone-screen { transition: filter 380ms cubic-bezier(.32,.72,0,1); }
+  .phone-screen.is-velo-drag { transition: none; }
+  .phone-screen.is-dimmed { filter: blur(8px) opacity(.55); }
+  @media (prefers-reduced-motion: reduce) { .siri-glow, .siri-glow::before, .siri-glow::after, .lilly-glow::before, .lilly-glow::after, .siri-card, .siri-pill { animation: none !important; } .siri-glow.is-on { --siri-w: 8px; } }
+  /* ===== Marcos del prototipo: un solo marco que muta (iPhone 17 Pro Max · iPad 11" · ventana macOS) ===== */
+  .proto-fit   { transition: width .38s cubic-bezier(.32,.72,0,1), height .38s cubic-bezier(.32,.72,0,1); }
+  .proto-frame { position: relative; transform-origin: 0 0; transition: width .38s cubic-bezier(.32,.72,0,1), height .38s cubic-bezier(.32,.72,0,1), border-radius .38s cubic-bezier(.32,.72,0,1), padding .38s cubic-bezier(.32,.72,0,1), transform .38s cubic-bezier(.32,.72,0,1), background .38s ease, box-shadow .38s ease; }
+  .proto-frame.is-iphone  { padding: 10px; border-radius: 72px; background: #1C1C1E; box-shadow: 0 40px 80px -20px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.06); }
+  .proto-frame.is-ipad    { padding: 18px; border-radius: 40px; background: #17171A; box-shadow: 0 40px 90px -20px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.06); }
+  .proto-frame.is-desktop { padding: 0;    border-radius: 12px; background: #FBFBFD; box-shadow: 0 60px 120px -30px rgba(0,0,0,.65), 0 0 0 1px rgba(255,255,255,.08); }
+  .proto-screen { height: 100%; width: 100%; overflow: hidden; display: flex; flex-direction: column; position: relative; transition: border-radius .38s cubic-bezier(.32,.72,0,1); }
+  .is-iphone  .proto-screen, .is-iphone  .siri-glow { border-radius: 62px; }
+  .is-ipad    .proto-screen, .is-ipad    .siri-glow { border-radius: 22px; }
+  .is-desktop .proto-screen, .is-desktop .siri-glow { border-radius: 12px; }
+  /* Las manchas de luz crecen con la pantalla. */
+  .is-ipad .bg-scene::before, .is-desktop .bg-scene::before { width: 640px; height: 640px; top: -220px; right: -160px; }
+  .is-ipad .bg-scene::after,  .is-desktop .bg-scene::after  { width: 560px; height: 560px; bottom: -120px; left: -160px; }
+  /* Fila sidebar + contenido. El sidebar se abre por ancho para que el cambio de marco sea un morph. */
+  .proto-row  { flex: 1; display: flex; min-height: 0; }
+  .proto-main { flex: 1; min-width: 0; display: flex; flex-direction: column; position: relative; }
+  .ios-sidebar { flex: none; width: 0; opacity: 0; overflow: hidden; display: flex; flex-direction: column; padding: 18px 0; background: rgba(255,255,255,.42); -webkit-backdrop-filter: blur(24px) saturate(1.4); backdrop-filter: blur(24px) saturate(1.4); transition: width .38s cubic-bezier(.32,.72,0,1), opacity .3s ease, padding .38s cubic-bezier(.32,.72,0,1); }
+  .is-ipad    .ios-sidebar { width: 240px; opacity: 1; padding: 18px 14px; border-right: 1px solid rgba(255,255,255,.6); }
+  .is-desktop .ios-sidebar { width: 260px; opacity: 1; padding: 20px 16px; border-right: 1px solid rgba(255,255,255,.6); }
+  .ios-sidebar > * { width: 100%; min-width: 212px; }
+  .is-ipad .ios-sidebar.is-fuera, .is-desktop .ios-sidebar.is-fuera { width: 0; opacity: 0; padding: 18px 0; border-right: 0; }
+  .ios-side-item { display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 14px; border-radius: 14px; font-size: 15px; font-weight: 500; color: #1A1A1A; text-align: left; transition: background .3s cubic-bezier(.32,.72,0,1), box-shadow .3s; }
+  .ios-side-item:hover { background: rgba(255,255,255,.45); }
+  .ios-side-item[aria-selected="true"] { background: #fff; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 6px 16px rgba(0,0,0,.05); }
+  .ios-side-item[aria-selected="true"] > svg { color: #D52B1E; }
+  .ios-side-label { padding: 0 14px; margin: 22px 0 6px; font-size: 12px; font-weight: 600; color: #9AA0A6; }
+  /* Status bar de iPadOS y barra de título de macOS */
+  .ipad-status { height: 24px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; font-size: 12px; font-weight: 600; color: #1A1A1A; }
+  .mac-titlebar { height: 40px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; background: rgba(246,246,248,.92); border-bottom: 1px solid rgba(60,60,67,.1); }
+  .mac-url { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 26px; min-width: 380px; padding: 0 14px; border-radius: 9999px; background: rgba(60,60,67,.08); font-size: 12px; color: #5F6368; }
+  /* Switcher de dispositivo en la barra del prototipo */
+  .proto-seg { display: inline-flex; padding: 3px; border-radius: 9999px; background: rgba(255,255,255,.08); }
+  .proto-seg button { height: 28px; padding: 0 12px; border-radius: 9999px; font-size: 12px; font-weight: 500; color: rgba(255,255,255,.55); transition: all .3s cubic-bezier(.32,.72,0,1); white-space: nowrap; }
+  .proto-seg button[aria-selected="true"] { background: #fff; color: #000; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+  /* ===== Hoja inferior tipo Apple Maps (iPhone, ver maps-sheet-referencia.md): tarjeta de vidrio inset en small y medium,
+     opaca y pegada a los bordes en large; tres detents, arrastre 1:1, snap con la curva iOS ===== */
+  .ios-hoja { position: absolute; left: 8px; right: 8px; bottom: 0; z-index: 28; display: flex; flex-direction: column; border-radius: 30px; overflow: hidden; will-change: height; touch-action: none;
+    box-shadow: 0 -2px 24px rgba(0,0,0,.10), 0 12px 40px rgba(0,0,0,.14), inset 0 1px 0 rgba(255,255,255,.8);
+    transition: height 380ms cubic-bezier(.32,.72,0,1), bottom 350ms cubic-bezier(.32,.72,0,1), left 350ms ease, right 350ms ease, border-radius 350ms ease, background 350ms ease, transform 380ms cubic-bezier(.32,.72,0,1); }
+  .ios-hoja.is-medium { left: 4px; right: 4px; border-radius: 36px; }
+  .ios-hoja.is-large  { left: 0; right: 0; border-radius: 28px 28px 0 0; background: rgba(242,242,247,.985); -webkit-backdrop-filter: none; backdrop-filter: none; border-color: transparent; }
+  .ios-hoja.is-dragging { transition: bottom 350ms cubic-bezier(.32,.72,0,1), left 350ms ease, right 350ms ease, border-radius 350ms ease, background 350ms ease; }
+  .ios-hoja.is-oculta { transform: translateY(calc(100% + 120px)) !important; pointer-events: none; }
+  .hoja-asa-zona { position: absolute; top: 0; left: 0; right: 0; height: 44px; display: flex; justify-content: center; padding-top: 5px; z-index: 2; cursor: grab; }
+  .hoja-asa { width: 36px; height: 5px; border-radius: 2.5px; background: rgba(60,60,67,.30); }
+  .hoja-head { flex: none; padding: 20px 16px 12px; }
+  .hoja-body { flex: 1; min-height: 0; overflow: hidden; }
+  .ios-hoja.is-large .hoja-body { overflow-y: auto; touch-action: pan-y; overscroll-behavior: contain; }
+  .hoja-body::-webkit-scrollbar { display: none; }
+  /* La tab bar se desliza hacia abajo cuando la hoja pasa de small (como Maps oculta sus controles). */
+  .ios-tabbar { transition: transform 380ms cubic-bezier(.32,.72,0,1), opacity 300ms ease; }
+  .ios-tabbar.is-oculta { transform: translate(-50%, 120px); opacity: 0; pointer-events: none; }
+  /* ===== Modo consulta (RAG): panel, orbe 3D, onda de voz, barras, micrófono, interruptores ===== */
+  .consulta-panel { box-shadow: 0 -12px 40px rgba(0,0,0,.12), 0 24px 60px rgba(0,0,0,.18); }
+  .ios-hoja.is-dimmed { filter: blur(8px) opacity(.55); }
+  @property --orb3d { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+  /* Esfera tipo canica: conic difuminado que gira detrás, brillo arriba-izquierda y sombra interior fijos encima. */
+  .siri-orb-3d { position: relative; width: 132px; height: 132px; border-radius: 50%; }
+  @keyframes orb3d-spin { to { --orb3d: 360deg; } }
+  @keyframes orb-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.045); } }
+  /* Onda de voz: cuatro curvas translúcidas que se desplazan a distinta velocidad sobre vidrio oscuro. */
+  .voz-onda { height: 76px; border-radius: 20px; overflow: hidden; background: rgba(20,20,22,.82); border: 1px solid rgba(255,255,255,.12); }
+  .voz-onda svg { width: 200%; height: 100%; display: block; }
+  .voz-onda path { animation: onda-mover linear infinite; }
+  .voz-onda path:nth-child(1) { fill: rgba(213,43,30,.42);  animation-duration: 2.6s; }
+  .voz-onda path:nth-child(2) { fill: rgba(31,95,168,.42);  animation-duration: 3.4s; }
+  .voz-onda path:nth-child(3) { fill: rgba(158,98,166,.42); animation-duration: 4.4s; animation-direction: reverse; }
+  .voz-onda path:nth-child(4) { fill: rgba(255,255,255,.20); animation-duration: 5.2s; }
+  .voz-onda.is-quiet path { animation-play-state: paused; opacity: .5; }
+  @keyframes onda-mover { to { transform: translateX(-400px); } }
+  .voz-barras { display: inline-flex; align-items: center; gap: 3px; height: 24px; }
+  .voz-barras i { display: block; width: 4px; height: 6px; border-radius: 2px; background: #1A1A1A; opacity: .3; }
+  .voz-barras.is-on i { opacity: .85; animation: barra 1s ease-in-out infinite; }
+  .voz-barras i:nth-child(2) { animation-delay: .12s; } .voz-barras i:nth-child(3) { animation-delay: .24s; } .voz-barras i:nth-child(4) { animation-delay: .36s; } .voz-barras i:nth-child(5) { animation-delay: .48s; }
+  @keyframes barra { 0%, 100% { height: 6px; } 50% { height: 22px; } }
+  .voz-mic { position: relative; width: 56px; height: 56px; border-radius: 50%; background: #fff; color: #1A1A1A; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 6px 16px rgba(0,0,0,.08); }
+  .voz-mic.is-on { color: #D52B1E; }
+  .voz-mic.is-on::before { content: ''; position: absolute; inset: -4px; border-radius: 50%; padding: 3px; background: conic-gradient(from var(--siri-angle), #D52B1E, #9E62A6, #1F5FA8, #9E62A6, #D52B1E);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; animation: siri-spin 4s linear infinite; }
+  .ios-switch { position: relative; width: 51px; height: 31px; flex: none; border-radius: 9999px; background: rgba(120,120,128,.22); transition: background 250ms ease; }
+  .ios-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,.15), 0 1px 1px rgba(0,0,0,.06); transition: transform 250ms cubic-bezier(.32,.72,0,1); }
+  .ios-switch[aria-checked="true"] { background: #34C759; }
+  .ios-switch[aria-checked="true"]::after { transform: translateX(20px); }
+  .ios-switch:disabled { opacity: .55; }
+  .siri-sheet-up { animation: sheet-up 420ms cubic-bezier(.32,.72,0,1) both; }
+  .fade-in { animation: fade-in 200ms ease both; }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+  .burbuja-usuario { background: rgba(255,255,255,.72); border: 1px solid rgba(255,255,255,.85); border-radius: 20px 20px 6px 20px; }
+  @media (prefers-reduced-motion: reduce) { .siri-orb-3d, .siri-orb-3d::before, .voz-onda path, .voz-barras i, .voz-mic.is-on::before, .siri-sheet-up { animation: none !important; } }
+  /* ===== Revisión UX: tab bar de 3 + búsqueda, HUD, foco visible, sidebar de dos grupos ===== */
+  .ios-tabbar-wrap { position: absolute; left: 50%; transform: translateX(-50%); bottom: 12px; z-index: 30; display: flex; align-items: center; gap: 8px; transition: transform 380ms cubic-bezier(.32,.72,0,1), opacity 300ms ease; }
+  .ios-tabbar-wrap .ios-tabbar { position: static; transform: none; }
+  .ios-tabbar-wrap.is-oculta { transform: translate(-50%, 120px); opacity: 0; pointer-events: none; }
+  .ios-tab-search { width: 58px; height: 58px; border-radius: 9999px; display: inline-flex; align-items: center; justify-content: center; color: #1A1A1A; flex: none; }
+  /* Minimizada al bajar (iOS 26): solo el ícono del tab activo. */
+  .ios-tabbar-wrap.is-min .ios-tab:not([aria-selected="true"]) { width: 0; padding: 0; opacity: 0; overflow: hidden; }
+  .ios-tabbar-wrap.is-min .ios-tab[aria-selected="true"] span { display: none; }
+  .ios-tabbar-wrap.is-min .ios-tab[aria-selected="true"] { padding: 0 12px; }
+  .ios-tab { overflow: hidden; }
+  /* Los avisos ahora son Sileo (src/sileo.js); .ios-hud se retiró. */
+  .sileo-normal { text-transform: none !important; }
+  /* ?captura=1: sin transiciones ni animaciones CSS. Chrome headless cambia el viewport capturado si hay animaciones en curso
+     (transform/height en vuelo) y el marco salía con tamaño y posición distintos en cada captura. Solo para pantallazos. */
+  .sin-animacion *, .sin-animacion *::before, .sin-animacion *::after { transition: none !important; animation: none !important; }
+  :focus-visible { outline: 2px solid #1F5FA8; outline-offset: 2px; border-radius: inherit; }
+  .ios-side-group { padding: 0 14px; margin: 18px 0 6px; font-size: 12px; font-weight: 600; color: #9AA0A6; }
+  .ios-side-item.is-sub { height: 40px; font-size: 14px; }
+  /* ===== Nav bar iOS 26: Atrás como círculo de 44 con solo chevron; acciones (orbe · bookmark · share) en círculos de vidrio ===== */
+  .ios-back { width: 44px; height: 44px; padding: 0; justify-content: center; gap: 0; }
+  .ios-nav-circle { width: 44px; height: 44px; border-radius: 9999px; display: inline-flex; align-items: center; justify-content: center; color: #1A1A1A; }
+  .ios-nav-circle[aria-pressed="true"] svg { fill: currentColor; color: #D52B1E; }
+  /* Scroll edge effect en la lista de la hoja: el segmented queda fijo en la cabecera y la lista se desvanece al pasar por debajo. */
+  .ios-hoja.is-large .hoja-body { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 24px); mask-image: linear-gradient(to bottom, transparent, #000 24px); }
+  /* ===== Aurora (traducción CSS del Aurora Background de Aceternity, versión clara) solo detrás del Inicio: bandas de luz
+     azul Lilly / lavanda / rosa en positivo, muy difuminadas, que nacen arriba a la derecha y se mueven muy despacio ===== */
+  .aurora { position: absolute; inset: -40px; overflow: hidden; pointer-events: none; opacity: .6; z-index: -1;
+    --tr: transparent; --w: #fff;
+    --aurora: repeating-linear-gradient(100deg, #CFE0FA 10%, #E9DDFA 15%, #FBDDE4 20%, #D6E6FB 25%, #CFE0FA 30%);
+    --white-gradient: repeating-linear-gradient(100deg, var(--w) 0%, var(--w) 7%, var(--tr) 10%, var(--tr) 12%, var(--w) 16%);
+    background-image: var(--white-gradient), var(--aurora);
+    background-size: 300%, 200%; background-position: 50% 50%, 50% 50%;
+    filter: blur(40px); will-change: transform;
+    -webkit-mask-image: radial-gradient(ellipse at 100% 0%, #000 10%, transparent 70%); mask-image: radial-gradient(ellipse at 100% 0%, #000 10%, transparent 70%); }
+  .aurora::after { content: ''; position: absolute; inset: 0; opacity: .75;
+    background-image: var(--white-gradient), var(--aurora);
+    background-size: 200%, 100%; mix-blend-mode: normal;
+    animation: aurora 60s linear infinite; }
+  @keyframes aurora { from { background-position: 50% 50%, 50% 50%; } to { background-position: 350% 50%, 350% 50%; } }
+  /* Entrada del Inicio la primera vez (curva del demo): opacidad 0→1 y 40 px→0 en 800 ms con 300 ms de retardo. */
+  .inicio-enter { animation: inicio-in 800ms cubic-bezier(.32,.72,0,1) 300ms both; }
+  @keyframes inicio-in { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .aurora::after { animation: none; } .inicio-enter { animation: none; } }
+  /* ===== Fotos: cards de Formación con foto y velo del tinte de la enfermedad ===== */
+  .foto-card { position: relative; overflow: hidden; color: #fff; }
+  .foto-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .foto-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, var(--velo) 0%, rgba(0,0,0,.12) 55%, rgba(0,0,0,0) 100%); }
+  .foto-card[data-tinte="diabetes"] { --velo: rgba(31,95,168,.85); }
+  .foto-card[data-tinte="mama"]     { --velo: rgba(200,16,46,.85); }
+  .foto-card[data-tinte="derma"]    { --velo: rgba(15,124,124,.85); }
+  .foto-card > .foto-texto { position: relative; z-index: 1; }
+  .guia-foto { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 16px; background: rgba(255,255,255,.04); }
+  .guia-foto img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; transition: opacity 500ms ease; }
+  .guia-foto::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.55) 0%, rgba(0,0,0,0) 55%); }
+  /* ===== Registro (onboarding iOS de vidrio): deslizamiento entre pasos y segmentos de progreso ===== */
+  .reg-in   { animation: reg-in 380ms cubic-bezier(.32,.72,0,1) both; }
+  .reg-back { animation: reg-back 380ms cubic-bezier(.32,.72,0,1) both; }
+  @keyframes reg-in   { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+  @keyframes reg-back { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+  .reg-seg { height: 4px; flex: 1; border-radius: 9999px; background: rgba(60,60,67,.14); transition: background 300ms ease; }
+  .reg-seg.is-done { background: #1A1A1A; }
+  .reg-campo { flex: 1; min-width: 0; background: transparent; outline: none; font-size: 16px; color: #1A1A1A; }
+  .reg-campo::placeholder { color: #9AA0A6; }
+  .reg-menu { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 50; border-radius: 18px; overflow: hidden; background: rgba(255,255,255,.96); box-shadow: 0 12px 40px rgba(0,0,0,.14); animation: siri-card-in 250ms cubic-bezier(.32,.72,0,1) both; }
+  @media (prefers-reduced-motion: reduce) { .reg-in, .reg-back, .reg-menu { animation: none !important; } }
+  /* ===== Persona (halo) ===== */
+  .persona { display: block; flex: none; }
+  .persona-disco { display: inline-flex; align-items: center; justify-content: center; flex: none; border-radius: 9999px; background: rgba(255,255,255,.85); border: 1px solid rgba(255,255,255,.95); box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04); }
+
+  /* ===== Back office · piel de PostHog (NO es la UI de Lilly: el contraste es el mensaje) ===== */
+  .ph-card { background:#fff; border:1px solid #e5e7e0; border-radius:6px; display:flex; flex-direction:column; }
+  .ph-head { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px 14px 0; }
+  .ph-kicker { display:flex; align-items:center; gap:6px; font-size:9.5px; font-weight:600; letter-spacing:.09em; color:#8a8f80; }
+  .ph-bar { width:3px; height:12px; border-radius:2px; background:#1d4aff; }
+  .ph-acts { display:flex; align-items:center; gap:6px; font-size:11.5px; color:#6b6f63; }
+  .ph-title { padding:4px 14px 0; font-size:15px; font-weight:600; letter-spacing:-0.005em; }
+
+  /* ===== Arquitectura tecnológica · valores del mockup de Leonardo ===== */
+  .arq { background:#FAF9F5; color:#16161D; font-family:"IBM Plex Sans", system-ui, sans-serif; }
+  .arq-h1 { font-family:"Space Grotesk", sans-serif; font-weight:500; font-size:30px; letter-spacing:-0.01em; margin:0; }
+  .arq-h2 { font-family:"Space Grotesk", sans-serif; font-weight:500; font-size:15px; color:#3B3B6E; margin:0; }
+  .arq-sub { font-size:14px; color:#5B5A68; margin:0; }
+  .arq-panel { background:#fff; border:1px solid #D7D5E2; border-radius:16px; padding:18px; display:flex; flex-direction:column; gap:12px; }
+  .arq-nucleo { background:#fff; border:1.5px solid #3B3B6E; border-radius:18px; padding:18px; display:flex; flex-direction:column; gap:14px; }
+  .arq-card { display:block; width:100%; text-align:left; border:1px solid #E3E1EA; border-radius:10px; padding:11px 13px; background:#FCFBF8; transition:box-shadow .2s, transform .2s, border-color .2s; }
+  .arq-card:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(22,22,29,.07); }
+  .arq-card.is-sel { box-shadow:0 0 0 2px #3B3B6E; }
+  .arq-name { font-family:"Space Grotesk", sans-serif; font-weight:500; font-size:15px; margin:0 0 3px; }
+  .arq-desc { font-size:12.5px; color:#55545F; margin:0; line-height:1.35; }
+  .arq-card.p { border-color:#CFCAEE; } .arq-card.p .arq-name { color:#443A9E; }
+  .arq-card.d { border-color:#BFE0D4; } .arq-card.d .arq-name { color:#0E6B54; }
+  .arq-card.x { border-color:#EED4C6; } .arq-card.x .arq-name { color:#914620; }
+  .arq-card.g { border-color:#DCDAD0; } .arq-card.g .arq-name { color:#46453F; }
+  .arq-group { border:1px dashed #B7B4CA; border-radius:12px; padding:13px; display:flex; flex-direction:column; gap:9px; }
+  .arq-glabel { font-family:"Space Grotesk", sans-serif; font-size:12.5px; font-weight:500; color:#56548A; margin:0; }
+  .arq-chip { border:1px solid #DCDAD0; border-radius:999px; padding:7px 14px; font-size:13px; color:#46453F; background:#FCFBF8; }
+  .arq-flecha { display:block; width:1.5px; height:26px; background:#8A88A0; position:relative; }
+  .arq-flecha::after { content:''; position:absolute; left:50%; bottom:0; width:9px; height:9px; border-right:1.5px solid #8A88A0; border-bottom:1.5px solid #8A88A0; transform:translateX(-50%) rotate(45deg); }
+  .arq-leyenda { display:inline-flex; align-items:center; gap:7px; font-size:12.5px; color:#55545F; }
+  .arq-punto { width:9px; height:9px; border-radius:999px; display:inline-block; }
+
+  /* Un solo velo para todo lo que se abre encima: aclara y difumina, nunca oscurece.
+     Mismos valores que el velo de la hoja inferior, que es la referencia. */
+  /* El contenido de atrás se difumina con un filtro sobre su subárbol: `backdrop-filter` dejaba nítido
+     todo lo que tuviera contexto de apilamiento propio (títulos con menú, elementos con z-index). */
+  /* Tarjeta de marca. El cuerpo visual es un abanico de rayos que sube desde abajo con los
+     colores del propio logo: es lo que le da presencia a la tarjeta sin usar una foto de producto
+     (no tenemos, y en pharma la foto del empaque es material regulado aparte). */
+  .marca-card { position: relative; isolation: isolate; overflow: hidden; }
+  .marca-rayos {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 252px; z-index: -1; pointer-events: none;
+    background-image: var(--marca-rayos); background-size: 100% 100%; background-position: bottom center; background-repeat: no-repeat;
+    opacity: .5;   /* el color no puede pelearse con el texto que queda encima */
+  }
+  @container (min-width: 48rem) { .marca-rayos { height: 262px; } }
+  /* Logo de la marca del canal. El alto base viene por marca (--marca-h) porque los tres
+     lockups tienen proporciones muy distintas; en tablet y escritorio crece con el contenedor. */
+  .marca-logo { height: var(--marca-h, 30px); width: auto; object-fit: contain; object-position: left center; }
+  @container (min-width: 48rem) { .marca-logo { height: calc(var(--marca-h, 30px) * 1.2); } }
+  @container (min-width: 72rem) { .marca-logo { height: calc(var(--marca-h, 30px) * 1.35); } }
+  .velable { transition: filter .35s cubic-bezier(.32,.72,0,1); }
+  .velable.is-velado { filter: blur(8px) opacity(.55); pointer-events: none; }
+  .velo { background: rgba(255,255,255,.18); }
+
+  /* Firma de Lilly como máscara: hereda el color del contexto (roja sobre claro, blanca sobre oscuro).
+     Es la marca del cliente, usada en una propuesta dirigida a él; el prototipo va siempre rotulado como mockup. */
+  .lilly-firma { display:inline-block; background-color: currentColor; vertical-align: -0.06em;
+    -webkit-mask: url(img/lilly-firma.png) no-repeat center/contain; mask: url(img/lilly-firma.png) no-repeat center/contain; }
+  .lilly-lockup { display:block; background-color: currentColor;
+    -webkit-mask: url(img/lilly-logo.png) no-repeat center/contain; mask: url(img/lilly-logo.png) no-repeat center/contain; }
+
+  /* ===== La historia · lámina narrativa (negro + cortina de luz roja, como las láminas de Andrés) ===== */
+  .hist { position: relative; background: #050505; color: #fff; overflow-x: hidden; }
+  .hist-luz { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: .9;
+    background:
+      repeating-linear-gradient(90deg, rgba(213,43,30,0) 0 42px, rgba(213,43,30,.22) 42px 64px, rgba(213,43,30,0) 64px 106px),
+      radial-gradient(60% 55% at 62% 78%, rgba(213,43,30,.5), transparent 70%);
+    -webkit-mask-image: radial-gradient(75% 60% at 60% 80%, #000, transparent 75%);
+    mask-image: radial-gradient(75% 60% at 60% 80%, #000, transparent 75%); filter: blur(1px); }
+  .hist > section { position: relative; z-index: 1; }
+  .hist { padding: 0 clamp(20px, 5vw, 72px) clamp(40px, 8vh, 96px); }
+  /* Un solo riel para toda la historia: el hero y las tarjetas empiezan y terminan en la misma línea.
+     Antes el hero tenía su propio padding y quedaba 70px adentro respecto de las tarjetas. */
+  .hist-hero, .hist-sec { width: min(100%, 1240px); margin-left: auto; margin-right: auto; }
+  /* Foco visible: la historia se recorre con teclado en la presentación */
+  .hist-btn:focus-visible, .hist-ver:focus-visible, .hist-punto:focus-visible { outline: 2px solid rgba(255,255,255,.92); outline-offset: 3px; }
+  .hist-celda:focus-visible, .hist-momento:focus-visible { outline: 2px solid rgba(255,255,255,.92); outline-offset: -2px; }
+  /* Entrada: el contenido sube y aparece cuando la sección entra en cuadro */
+  .hist-anim { opacity: 0; transform: translateY(34px); transition: opacity .9s cubic-bezier(.32,.72,0,1), transform .9s cubic-bezier(.32,.72,0,1); }
+  .is-dentro .hist-anim { opacity: 1; transform: none; }
+  .is-dentro .hist-anim:nth-child(2) { transition-delay: .09s; }
+  .is-dentro .hist-anim:nth-child(3) { transition-delay: .18s; }
+  .hist-par { will-change: transform; }
+  @media (prefers-reduced-motion: reduce) { .hist-anim { opacity: 1; transform: none; } .hist-par { transform: none !important; } }
+  /* minmax(0,1fr): sin esto una parrilla interna impone su min-content y la historia entera se desborda a lo ancho */
+  .hist-sec { display: grid; grid-template-columns: minmax(0, 1fr); align-items: stretch;
+    margin-bottom: clamp(56px, 8vh, 104px); border: 1px solid rgba(255,255,255,.1); border-radius: 26px; overflow: hidden;
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.012)); scroll-margin-top: 76px; }
+  /* El hero corta por abajo; la primera tarjeta necesita el mismo aire que las hermanas, no cero */
+  .hist > section:first-of-type + .hist-sec { margin-top: clamp(56px, 8vh, 104px); }
+  @media (min-width: 900px) { .hist-sec { grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr); } }
+  .hist-col { max-width: 40rem; padding: clamp(28px, 4.4vw, 56px); align-self: center; }
+  @media (min-width: 900px) { .hist-sec:nth-of-type(even) .hist-media { order: -1; } }
+  /* Escala de la historia: 62 hero · 48 apertura · 40 sección · 22 bloque · 16.5 cuerpo · 15 pie · 14.5 nota · 13 dato */
+  .hist-kicker { font-size: 15px; font-weight: 500; letter-spacing: .01em; color: rgba(255,255,255,.78); }
+  .hist-h1 { font-size: clamp(34px, 3.8vw, 48px); font-weight: 600; line-height: 1.06; letter-spacing: -.025em; text-wrap: balance; }
+  .hist-h2 { font-size: clamp(28px, 3.1vw, 40px); font-weight: 600; line-height: 1.12; letter-spacing: -.02em; text-wrap: balance; }
+  .hist-rol { margin-top: 8px; font-size: 17px; color: rgba(255,255,255,.72); }
+  .hist-p { font-size: 16.5px; line-height: 1.62; color: rgba(255,255,255,.78); text-wrap: pretty; }
+  .hist-pie { font-size: 15px; line-height: 1.6; color: rgba(255,255,255,.68); text-wrap: pretty; }
+  .hist-legal { margin-top: clamp(40px, 6vh, 64px); font-size: 13px; line-height: 1.5; color: rgba(255,255,255,.45); text-wrap: pretty; }
+  .hist-dato { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 18px; border: 1px solid rgba(213,43,30,.5); border-radius: 16px; padding: 16px 22px; max-width: 40rem; }
+  .hist-dato-n { font-size: 40px; font-weight: 600; line-height: 1; }
+  .hist-dato-u { font-size: 13px; color: rgba(255,255,255,.72); align-self: flex-end; padding-bottom: 5px; margin-left: -8px; }
+  .hist-dato-t { flex: 1 1 14rem; min-width: 0; font-size: 15px; line-height: 1.5; color: rgba(255,255,255,.78); border-left: 1px solid rgba(255,255,255,.16); padding-left: 18px; }
+  /* Foto de cada momento */
+  .hist-media { display: flex; }
+  .hist-foto { position: relative; width: 100%; min-height: 340px; overflow: hidden; margin: 0; }
+  .hist-foto img { width: 100%; height: 100%; object-fit: cover; }
+  /* En una columna la foto no puede seguir el alto del texto: se le da proporción propia */
+  @media (max-width: 899px) { .hist-foto { min-height: 0; aspect-ratio: 16 / 10; } }
+  @media (max-width: 560px) { .hist-foto { aspect-ratio: 4 / 3; } }
+  /* Carga en mosaico, como las imágenes de Sanity: las celdas se retiran en desorden y revelan la foto */
+  .hist-px { position: absolute; inset: 0; display: grid; pointer-events: none; z-index: 2; }
+  .hist-px i { background: #050505; opacity: 1; transition: opacity .55s cubic-bezier(.32,.72,0,1); }
+  .hist-foto.is-revelada .hist-px i { opacity: 0; }
+  .hist-foto img { transition: transform .9s cubic-bezier(.32,.72,0,1), filter .9s; transform: scale(1.06); filter: saturate(.7); }
+  .hist-foto.is-revelada img { transform: scale(1); filter: none; }
+  /* Momentos «qué hizo» */
+  .hist-sec--proto { grid-template-columns: minmax(0, 1fr); padding: clamp(24px, 3.2vw, 40px); background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.01)); }
+  @media (min-width: 900px) { .hist-sec--proto { grid-template-columns: minmax(0, 1fr); } }
+  .hist-titulo-proto { font-size: clamp(19px, 1.7vw, 22px); line-height: 1.38; font-weight: 500; color: rgba(255,255,255,.96); text-wrap: balance; }
+  /* En bloque, no en flex: en flex cada tramo de texto era un ítem y el titular se partía en pedazos */
+  .hist-marca { display: inline-flex; align-items: center; gap: 3px; font-weight: 600; vertical-align: -.24em; }
+  .hist-marca--grande { gap: 5px; vertical-align: -.3em; margin-left: -10px; }
+  .hist-proto { position: relative; margin-top: clamp(18px, 2.2vw, 26px); display: grid; grid-template-columns: minmax(0, 1fr); width: 100%;
+    border: 1px solid rgba(255,255,255,.1); border-radius: 20px; overflow: hidden; background: #070707; }
+  .hist-proto::before { content: ''; position: absolute; inset: 0 0 auto; height: 78%; pointer-events: none;
+    background: radial-gradient(52% 78% at 50% 100%, rgba(213,43,30,.34), transparent 72%); filter: blur(24px); }
+  /* Visor: alto fijo y la captura, más grande, lo recorre entera con el scroll. */
+  .hist-visor { position: relative; order: -1; grid-column: 1 / -1; display: flex; justify-content: center;
+    height: clamp(380px, 54vh, 600px); overflow: hidden; padding-top: clamp(20px, 3vw, 34px);
+    mask-image: linear-gradient(180deg, transparent, #000 7%, #000 88%, transparent);
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 7%, #000 88%, transparent); }
+  .hist-pantalla { position: relative; width: min(88%, 470px); height: auto; align-self: flex-start;
+    will-change: transform; transition: none; }
+  /* Las cuatro decisiones: una sola rejilla, con las filas iguales (grid-auto-rows: 1fr) */
+  .hist-notas { order: 1; display: grid; grid-template-columns: minmax(0, 1fr); grid-auto-rows: 1fr; gap: 1px;
+    background: rgba(255,255,255,.1); border-top: 1px solid rgba(255,255,255,.1); position: relative;
+    margin-top: clamp(-34px, -2.6vw, -18px); }
+  @media (min-width: 760px) { .hist-notas { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .hist-nota { position: relative; font-size: 14.5px; line-height: 1.55; color: rgba(255,255,255,.74); background: #070707;
+    padding: 20px clamp(18px, 2vw, 26px); margin: 0; text-wrap: pretty; }
+  /* Los cuatro momentos y la parrilla: sin borde, pero con el mismo aire entre hermanas que las tarjetas */
+  .hist-sec--cierre, .hist-sec--parrilla { border: 0; background: none; padding: 0; }
+  .hist-sec--cierre .hist-col, .hist-sec--parrilla .hist-col { padding-left: 0; padding-right: clamp(24px, 4vw, 56px); }
+  .hist-momentos { display: flex; flex-direction: column; gap: 30px; list-style: none; padding: 0; margin: 0; }
+  .hist-num { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px;
+    border: 1px solid rgba(213,43,30,.55); border-radius: 14px; font-size: 15px; color: rgba(255,255,255,.9); }
+  .hist-momento { display: flex; gap: 20px; align-items: flex-start; text-align: left; width: 100%; border-radius: 18px;
+    padding: 10px; margin: -10px; transition: background .2s; }
+  .hist-momento:hover { background: rgba(255,255,255,.05); }
+  .hist-momento-t { font-size: 18px; font-weight: 600; line-height: 1.3; text-wrap: balance; }
+  .hist-momento-d { margin-top: 6px; font-size: 15px; line-height: 1.6; color: rgba(255,255,255,.72); max-width: 34rem; text-wrap: pretty; }
+  .hist-momento-v { margin-top: 10px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #E8412F; opacity: 0; transition: opacity .2s; }
+  .hist-momento:hover .hist-momento-v, .hist-momento:focus-visible .hist-momento-v { opacity: 1; }
+  /* Cierre */
+  .hist-sec--final { grid-template-columns: minmax(0, 1fr); justify-items: center; align-content: center; text-align: center;
+    border: 0; background: none; padding: clamp(40px, 8vh, 88px) 0 0; }
+  .hist-btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; height: 52px; padding: 0 26px; border-radius: 9999px; background: #D52B1E; color: #fff; font-size: 16px; font-weight: 600; white-space: nowrap; transition: transform .15s, background .2s; }
+  .hist-btn:hover { background: #bb2418; } .hist-btn:active { transform: scale(.97); }
+  .hist-btn--ghost { background: rgba(255,255,255,.08); } .hist-btn--ghost:hover { background: rgba(255,255,255,.14); }
+  /* Índice: el punto mide 7px, pero el área de clic (::after) llega a 25×31 para poder acertarle */
+  .hist-indice { position: fixed; right: 26px; top: 50%; transform: translateY(-50%); z-index: 20; flex-direction: column; gap: 12px; }
+  .hist-punto { width: 7px; height: 7px; border-radius: 9999px; background: rgba(255,255,255,.3); transition: background .2s, transform .2s; position: relative; }
+  .hist-punto::after { content: ''; position: absolute; inset: -6px -12px; }
+  .hist-punto:hover, .hist-punto:focus-visible { background: #D52B1E; transform: scale(1.4); }
+  .hist-punto span { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-size: 12px;
+    color: rgba(255,255,255,.88); opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .hist-punto:hover span, .hist-punto:focus-visible span { opacity: 1; }
+  .hist-ver { grid-column: 1 / -1; justify-self: end; margin-top: clamp(18px, 2.2vw, 24px); display: inline-flex; align-items: center; gap: 9px;
+    height: 44px; padding: 0 20px; border-radius: 9999px; border: 1px solid rgba(255,255,255,.24); color: rgba(255,255,255,.88);
+    font-size: 15px; transition: background .2s, border-color .2s, transform .15s; }
+  .hist-ver:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.42); }
+  .hist-ver:active { transform: scale(.97); }
+
+  /* Cuando algo se abre encima, la barra de navegación se vela igual que el contenido: es parte del fondo. */
+  .ios-navbar.is-velada { filter: blur(8px) opacity(.55); pointer-events: none; }
+  .ios-navbar { transition: filter .35s cubic-bezier(.32,.72,0,1); }
+
+  /* ===== Hero y parrilla · lenguaje de Framer con la voz de Lilly ===== */
+  /* El hero dura dos pantallas de scroll: el contenido queda fijo mientras el teléfono se endereza. */
+  .hist-hero { height: 100vh; position: relative; }
+  .hist-hero-fijo { height: 100%; display: grid; grid-template-columns: 1fr; align-content: center;
+    gap: clamp(24px, 4vh, 44px); padding: clamp(76px, 11vh, 124px) 0 clamp(24px, 4vh, 48px); overflow: hidden; }
+  @media (min-width: 1000px) { .hist-hero-fijo { grid-template-columns: 1.04fr .96fr; align-items: center; column-gap: clamp(32px, 4vw, 72px); padding-top: clamp(56px, 8vh, 96px); } }
+  .hist-hero-col { max-width: 62rem; }
+  /* La píldora se parte en dos líneas antes que desbordar: a 420px no cabía y arrastraba toda la historia */
+  
+  
+  .hist-hero-h1 { margin-top: 0; font-size: clamp(32px, 4.6vw, 62px); font-weight: 600; line-height: 1.05; letter-spacing: -.03em; text-wrap: balance; }
+  .hist-hero-p { margin-top: clamp(14px, 2.2vh, 22px); max-width: 40rem; font-size: 17px; line-height: 1.6; color: rgba(255,255,255,.74); text-wrap: pretty; }
+    .hist-baja { margin-top: clamp(26px, 4vh, 44px); display: flex; align-items: center; gap: 14px; }
+  .hist-baja-linea { position: relative; width: 1px; height: 46px; background: linear-gradient(180deg, rgba(255,255,255,.35), transparent); overflow: hidden; }
+  .hist-baja-linea::after { content: ''; position: absolute; inset-inline: 0; height: 14px; background: #D52B1E; animation: baja 2.4s cubic-bezier(.32,.72,0,1) infinite; }
+  @keyframes baja { 0% { top: -14px; opacity: 0; } 25% { opacity: 1; } 100% { top: 46px; opacity: 0; } }
+  .hist-baja-texto { font-size: 13px; color: rgba(255,255,255,.4); }
+  @media (prefers-reduced-motion: reduce) { .hist-baja-linea::after { animation: none; top: 0; } }
+  /* La ventana del producto: borde fino, radio grande y una luz roja detrás */
+  
+  
+  
+  
+  /* Cifras: una rejilla, no un flex que deja 2 arriba y 1 huérfana abajo */
+  .hist-cifras { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: clamp(20px, 2.6vw, 32px);
+    margin-top: clamp(26px, 3.4vw, 36px); padding-top: 26px; border-top: 1px solid rgba(255,255,255,.1); }
+  .hist-cifra { display: flex; flex-direction: column; gap: 4px; }
+  .hist-cifra span { font-size: 40px; font-weight: 600; line-height: 1; letter-spacing: -.02em; }
+  .hist-cifra p { font-size: 14.5px; color: rgba(255,255,255,.7); line-height: 1.45; text-wrap: pretty; }
+  /* Parrilla de capacidades, con las líneas finas de Framer */
+  .hist-sec--parrilla { align-items: center; }
+  .hist-parrilla { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1px; background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.1); border-radius: 22px; overflow: hidden; }
+  @media (min-width: 560px) { .hist-parrilla { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .hist-celda { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 7px;
+    background: #070707; padding: 22px 46px 24px 20px; text-align: left; color: rgba(255,255,255,.7); transition: background .25s; }
+  .hist-celda:hover { background: #0e0e0e; }
+  .hist-celda-t { font-size: 16px; font-weight: 600; line-height: 1.3; color: #fff; text-wrap: balance; }
+  .hist-celda-d { font-size: 14.5px; line-height: 1.45; text-wrap: pretty; }
+  .hist-celda-f { position: absolute; top: 22px; right: 18px; opacity: 0; transform: translateX(-4px); transition: all .25s; color: #E8412F; }
+  .hist-celda:hover .hist-celda-f, .hist-celda:focus-visible .hist-celda-f { opacity: 1; transform: none; }
+
+  /* Texto que se «genera»: cada palabra entra con el desenfoque despejándose (referencia: text-generate-effect). */
+  .gen-palabra { display: inline-block; opacity: 0; filter: blur(9px); animation: gen-palabra .72s cubic-bezier(.32,.72,0,1) forwards; }
+  @keyframes gen-palabra { to { opacity: 1; filter: blur(0); } }
+  .sin-animacion .gen-palabra, .hist-hero-h1 .gen-palabra:only-child { opacity: 1; filter: none; animation: none; }
+  @media (prefers-reduced-motion: reduce) { .gen-palabra { opacity: 1; filter: none; animation: none; } }
+
+  /* Escena del hero: el teléfono acostado que se endereza con el scroll (referencia: macbook-scroll). */
+  .hist-escena { position: relative; min-height: 0; height: 100%; display: flex; align-items: center; justify-content: center;
+    perspective: 1500px; perspective-origin: 50% 45%; }
+  .hist-escena-luz { position: absolute; inset: auto 0 -12% 0; height: 80%; pointer-events: none;
+    background: radial-gradient(52% 100% at 50% 100%, rgba(213,43,30,.46), transparent 72%); filter: blur(34px); }
+  .hist-cometa { position: relative; transform-style: preserve-3d; will-change: transform; border-radius: 42px; }
+  .hist-tel3d { display: block; height: min(66vh, 620px); width: auto; max-width: 100%;
+    filter: drop-shadow(0 34px 70px rgba(0,0,0,.7)); }
+  .hist-destello { position: absolute; inset: 0; border-radius: 42px; pointer-events: none; opacity: .35;
+    mix-blend-mode: overlay; transition: opacity .3s;
+    mask-image: url(img/proto-hero.png); -webkit-mask-image: url(img/proto-hero.png);
+    mask-size: 100% 100%; -webkit-mask-size: 100% 100%; mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat; }
+  @media (max-width: 999px) { .hist-tel3d { height: min(46vh, 420px); } }
+
+  /* Puente hero → Óscar: la frase se descifra letra a letra (referencia: encrypted-text). */
+  .hist-dia { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; gap: clamp(18px, 2.6vh, 28px); padding: clamp(80px, 12vh, 140px) 0; }
+  .hist-cifrado { max-width: 42ch; font-size: clamp(19px, 1.85vw, 26px); font-weight: 600; line-height: 1.34; letter-spacing: -.01em;
+    color: rgba(255,255,255,.28); text-wrap: balance; }
+  .hist-cifrado .cifra { transition: color .2s; }
+  .hist-cifrado .cifra.es-clara { color: #fff; }
+  .hist-dia-pie { max-width: 34rem; font-size: 15px; line-height: 1.6; color: rgba(255,255,255,.55); }
+  @media (prefers-reduced-motion: reduce) { .hist-cifrado { color: #fff; } }
+  .sin-animacion .hist-cifrado { color: #fff; }
+</style>
+</head>
+<body :class="solo ? '!bg-transparent' : ''" class="font-sans bg-[#0B0B0D] text-white h-screen overflow-hidden antialiased" x-data="app()" x-init="init()" x-cloak>
+
+<!-- Barra superior del prototipo (no es parte del app) -->
+<header x-show="!solo" class="proto-panel fixed inset-x-0 top-0 z-30 h-14 bg-[#0B0B0D]/85 backdrop-blur-xl flex items-center px-6 gap-4">
+  <div class="flex shrink-0 items-center gap-2.5 whitespace-nowrap">
+    <span class="h-2 w-2 rounded-full bg-lilly"></span>
+    <span class="flex items-baseline gap-1.5 font-semibold text-[15px] tracking-tight"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[17px] w-[45px] shrink-0 object-contain" loading="eager" decoding="async" />360</span>
+    <span x-show="!sinMarco" class="text-white/35 text-[13px]">prototipo navegable</span>
+  </div>
+  <template x-if="sinMarco && pantalla !== 'historia'">
+    <div class="ml-3 flex shrink-0 items-center gap-2 whitespace-nowrap">
+      <span class="inline-flex h-7 items-center gap-1.5 rounded-full bg-white/8 px-3 text-[12px] text-white/70"><span class="h-1.5 w-1.5 rounded-full bg-lillyblue"></span><span x-text="pantalla === 'dashboard' ? 'Fuera del app · herramienta de analítica' : 'Fuera del app · lámina de la propuesta'"></span></span>
+      <button @click="irRaiz('inicio')" class="inline-flex h-7 shrink-0 items-center whitespace-nowrap rounded-full bg-white px-3 text-[12px] font-semibold text-black hover:bg-white/90 transition-colors">Volver al prototipo</button>
+    </div>
+  </template>
+  <nav class="ml-auto hidden md:flex items-center gap-1 text-[13px]">
+    <template x-for="s in atajos" :key="s.id || s.sep">
+      <span>
+        <span x-show="s.sep" class="mx-2 inline-block h-4 w-px align-middle bg-white/15"></span>
+        <button x-show="!s.sep" @click="ir(s.id, s.extra)" class="px-3.5 py-1.5 rounded-full transition-colors duration-200"
+                :class="pantalla === s.id ? 'bg-white/12 text-white' : 'text-white/50 hover:text-white/80 hover:bg-white/5'" x-text="s.nombre"></button>
+      </span>
+    </template>
+  </nav>
+</header>
+
+<main class="pt-14 h-screen flex items-stretch overflow-hidden">
+
+  <!-- Panel de guía (la narrativa de Óscar; es del prototipo, no del app) -->
+  <!-- Con el panel plegado queda su manija, para poder volver a abrirlo -->
+  <button x-show="!guia && pantalla !== 'historia'" @click="guia = true" title="Mostrar guía" aria-label="Mostrar guía"
+          class="fade-in hidden lg:flex fixed left-4 top-[72px] z-20 h-9 w-9 items-center justify-center rounded-full bg-white/8 text-white/60 hover:bg-white/12 hover:text-white transition-colors">
+    <i data-lucide="panel-left-open" class="h-4 w-4"></i>
+  </button>
+  <aside x-show="guia && pantalla !== 'historia'"  class="proto-panel fade-in hidden lg:flex w-[380px] shrink-0 flex-col p-7 gap-5 overflow-y-auto">
+    <div class="flex items-center justify-between -mb-1">
+      <span class="text-[11px] uppercase tracking-[.16em] text-white/30 font-semibold">La historia</span>
+      <button @click="irHistoria()" class="mr-auto ml-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] text-white/45 hover:bg-white/8 hover:text-white transition-colors" title="Volver a la historia">
+        <i data-lucide="arrow-left" class="h-3.5 w-3.5"></i>Volver a la historia
+      </button>
+      <button @click="guia = false" title="Ocultar guía" aria-label="Ocultar guía"
+              class="h-8 w-8 flex items-center justify-center rounded-full text-white/45 hover:bg-white/8 hover:text-white transition-colors">
+        <i data-lucide="panel-left-close" class="h-4 w-4"></i>
+      </button>
+    </div>
+    <!-- Foto del momento: cambia con fundido al cambiar de pantalla -->
+    <div class="guia-foto">
+      <img :src="guiaActual.foto" :alt="guiaActual.titulo" loading="lazy" decoding="async" :style="'object-position:' + posFoto(guiaActual.foto)"
+           x-effect="guiaActual.foto; $el.style.opacity = 0; requestAnimationFrame(() => { if ($el.complete && $el.naturalWidth) $el.style.opacity = 1 })"
+           @load="$el.style.opacity = 1" @error="$el.style.opacity = 1" />
+    </div>
+    <div>
+      <p class="text-[11px] uppercase tracking-[.18em] text-lilly font-semibold" x-text="guiaActual.momento"></p>
+      <h2 class="mt-2 text-[24px] font-semibold leading-tight tracking-tight" x-text="guiaActual.titulo"></h2>
+      <p class="mt-1.5 text-white/40 text-[13px]" x-text="guiaActual.hora"></p>
+    </div>
+    <p class="text-white/70 text-[14px] leading-relaxed" x-text="guiaActual.historia"></p>
+    <div class="rounded-2xl bg-white/5 p-4">
+      <p class="text-[11px] uppercase tracking-[.18em] text-white/35 font-semibold mb-3">Qué resuelve la pantalla</p>
+      <ul class="space-y-2.5 text-[14px] text-white/75">
+        <template x-for="p in guiaActual.puntos" :key="p"><li class="flex gap-2.5"><span class="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-lilly"></span><span x-text="p"></span></li></template>
+      </ul>
+    </div>
+    <div class="mt-auto space-y-3">
+      <p class="rounded-2xl bg-white/[.03] p-4 text-[12px] text-white/40 leading-relaxed">
+        Aproximación de mockups. Imágenes de referencia hasta tener aprobaciones. No es una propuesta definitiva.
+      </p>
+      <div class="flex gap-2">
+        <button @click="atras()" :disabled="historial.length === 0" class="flex-1 rounded-full bg-white/8 px-3 py-2.5 text-[13px] text-white/80 hover:bg-white/12 disabled:opacity-30 transition-colors">Atrás</button>
+        <button @click="ir('inicio')" class="flex-1 rounded-full bg-white px-3 py-2.5 text-[13px] font-semibold text-black hover:bg-white/90 transition-colors">Inicio</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Marco: uno solo, muta entre iPhone, iPad y ventana de escritorio y se escala para caber en la vista -->
+  <section x-show="!sinMarco"  class="flex-1 flex flex-col items-center justify-center gap-4 p-8 overflow-hidden fade-in">
+    <div class="proto-fit" :style="`width:${marco.w * escala}px;height:${marco.h * escala}px`">
+      <div class="proto-frame" :class="'is-' + dispositivo" :style="`width:${marco.w}px;height:${marco.h}px;transform:scale(${escala})`">
+      <div class="bg-scene proto-screen text-ink" :data-tinte="pantalla === 'inicio' ? '' : enfermedad">
+
+        <!-- Glow de borde tipo Apple Intelligence: recorre el borde interior de la pantalla o ventana; solo se enciende con la consulta al RAG -->
+        <div class="siri-glow" :class="{ 'is-on': rag.foco || rag.abierto || rag.estado !== 'idle', 'is-thinking': rag.estado === 'pensando' || rag.escuchando, 'is-speaking': rag.estado === 'respuesta' && !rag.foco && !rag.escuchando }"></div>
+
+        <!-- Dynamic Island (solo iPhone): compacta por defecto; se expande con `island` (estado de una tarea) o mientras el RAG consulta -->
+        <div x-show="dispositivo === 'iphone'" class="dynamic-island" :class="{ 'is-expanded': island || rag.estado === 'pensando' }">
+          <template x-if="rag.estado === 'pensando'">
+            <span class="flex items-center gap-2 whitespace-nowrap screen-enter">
+              <span class="persona" style="width:20px;height:20px" x-init="montarPersona($el, 20, 'thinking', { rol: 'isla', mono: true })"></span>
+              <span>Consultando estudios…</span>
+            </span>
+          </template>
+          <template x-if="island && rag.estado !== 'pensando'">
+            <span class="flex items-center gap-2 whitespace-nowrap screen-enter">
+              <span class="h-2 w-2 rounded-full bg-[#30D158]"></span>
+              <span x-text="island"></span>
+            </span>
+          </template>
+        </div>
+
+        <!-- Barra de estado iOS (iPhone) -->
+        <div x-show="dispositivo === 'iphone'" class="ios-status">
+          <span>9:41</span>
+          <span class="flex items-center gap-1.5"><i data-lucide="signal" class="h-[15px] w-[15px]"></i><i data-lucide="wifi" class="h-[15px] w-[15px]"></i><i data-lucide="battery-full" class="h-[18px] w-[18px]"></i></span>
+        </div>
+        <!-- Barra de estado iPadOS -->
+        <div x-show="dispositivo === 'ipad'" class="ipad-status">
+          <span class="flex items-center gap-3"><span>9:41</span><span class="font-medium text-ink-2">Jue 17 sep</span></span>
+          <span class="flex items-center gap-1.5"><i data-lucide="wifi" class="h-[13px] w-[13px]"></i><i data-lucide="battery-full" class="h-[16px] w-[16px]"></i></span>
+        </div>
+        <!-- Barra de título macOS (escritorio) -->
+        <div x-show="dispositivo === 'desktop'" class="mac-titlebar">
+          <span class="flex items-center gap-2"><span class="h-3 w-3 rounded-full bg-[#FF5F57]"></span><span class="h-3 w-3 rounded-full bg-[#FEBC2E]"></span><span class="h-3 w-3 rounded-full bg-[#28C840]"></span></span>
+          <span class="mac-url"><i data-lucide="lock" class="h-3 w-3"></i>lilly360.com.co</span>
+          <span class="w-[52px]"></span>
+        </div>
+
+        <div class="proto-row">
+          <!-- Sidebar de vidrio (iPad y escritorio): reemplaza a la tab bar -->
+          <aside class="ios-sidebar" :class="{ 'is-fuera': sinCascaron.includes(pantalla) }">
+            <p class="px-[14px] flex items-baseline gap-1.5 text-[13px] font-semibold tracking-tight"><img src="img/lilly-firma-roja.png" alt="Lilly" class="h-[15px] w-[40px] shrink-0 object-contain" loading="eager" decoding="async" /><span class="text-ink-3">360</span></p>
+            <nav class="mt-5 space-y-1" aria-label="Secciones">
+              <template x-for="t in tabBar" :key="'side-' + t.id">
+                <button @click="irRaiz(t.id)" class="ios-side-item press" :aria-selected="sidebarActivo === t.id ? 'true' : 'false'">
+                  <i :data-lucide="t.icono" class="h-5 w-5 text-ink-2"></i><span x-text="t.nombre"></span>
+                </button>
+              </template>
+            </nav>
+            <p class="ios-side-group">Búsqueda rápida</p>
+            <nav class="space-y-0.5" aria-label="Búsqueda rápida por enfermedad">
+              <template x-for="(e, k) in enfermedades" :key="'side-b-' + k">
+                <button @click="abrirTema(k)" class="ios-side-item is-sub press" :aria-selected="sidebarActivo === 'busqueda-' + k ? 'true' : 'false'">
+                  <i :data-lucide="e.icono" class="h-[18px] w-[18px] text-ink-2"></i><span x-text="e.nombre"></span>
+                </button>
+              </template>
+            </nav>
+            <p class="ios-side-group">Formación ágil</p>
+            <nav class="space-y-0.5" aria-label="Formación ágil por enfermedad">
+              <template x-for="(e, k) in enfermedades" :key="'side-f-' + k">
+                <button @click="abrirFormacion(k)" class="ios-side-item is-sub press" :aria-selected="sidebarActivo === 'formacion-' + k ? 'true' : 'false'">
+                  <i :data-lucide="e.icono" class="h-[18px] w-[18px] text-ink-2"></i><span x-text="e.nombre"></span>
+                </button>
+              </template>
+            </nav>
+            <button @click="irRaiz('perfil')" class="mt-auto flex items-center gap-3 px-[10px] pt-4 text-left press">
+              <span class="glass-icon !h-10 !w-10 text-[14px] font-semibold">Ó</span>
+              <span class="min-w-0"><span class="block text-[14px] font-semibold text-ink truncate">Dr. Óscar Martínez</span><span class="block text-[12px] text-ink-2 truncate">Médico general</span></span>
+            </button>
+          </aside>
+
+          <div class="proto-main" x-ref="main">
+        <!-- Aurora solo en el Inicio, en los tres dispositivos: detrás del contenido, encima del .bg-scene, sin tocar el tinte de las otras pantallas -->
+        <div x-show="pantalla === 'inicio' || pantalla === 'registro'"  class="aurora fade-in" aria-hidden="true"></div>
+        <!-- Nav bar iOS 26: Atrás en círculo de vidrio, título compacto (el de la pieza en Detalle y Pieza), acciones orbe · bookmark · share -->
+        <div class="ios-navbar" :class="{ 'is-scrolled': scrolled, 'is-velada': modal || rag.abierto || rag.fuentesAbierto }" x-show="!['inicio', 'guardados', 'perfil', 'registro', 'dashboard', 'arquitectura'].includes(pantalla) && !(dispositivo === 'iphone' && pantalla === 'tema')">
+          <button @click="atras()" class="ios-back glass press" aria-label="Atrás"><i data-lucide="chevron-left" class="h-[22px] w-[22px]"></i></button>
+          <span class="truncate text-[17px] font-semibold text-ink pointer-events-none transition-opacity duration-300"
+                :class="['detalle', 'pieza'].includes(pantalla) && dispositivo === 'iphone' ? ['relative flex-1 min-w-0 px-3 text-left', scrolled ? 'opacity-100' : 'opacity-0'] : 'absolute left-1/2 -translate-x-1/2 max-w-[50%]'"
+                x-text="tituloNativo"></span>
+          <div x-show="['detalle', 'pieza'].includes(pantalla)" class="flex items-center gap-2">
+            <button @click="ragAbrirCon(piezaActual)" class="ios-nav-circle glass press" aria-label="Preguntar a Lilly 360 sobre esta pieza"><span class="persona" style="width:32px;height:32px" x-init="montarPersona($el, 32, rag.abierto ? 'listening' : 'idle', { rol: 'mini' })"></span></button>
+            <button @click="guardar(piezaActual)" class="ios-nav-circle glass press" :aria-pressed="esGuardado(piezaActual) ? 'true' : 'false'" :aria-label="esGuardado(piezaActual) ? 'Quitar de Guardados' : 'Guardar'"><i data-lucide="bookmark" class="h-5 w-5"></i></button>
+            <button @click="hud('Enlace copiado')" class="ios-nav-circle glass press" aria-label="Compartir"><i data-lucide="share" class="h-5 w-5"></i></button>
+          </div>
+        </div>
+
+        <!-- Los avisos (Guardado, Enlace copiado, Cuenta creada…) son toasts Sileo montados en .proto-main desde app.js -->
+
+        <!-- Contenido (@container: @3xl tablet, @6xl escritorio): recibe la transición de pantalla y se re-dispara con `transicion` -->
+        <div class="@container flex-1 overflow-y-auto scroll-hide phone-screen" x-ref="scroll"
+             :class="[direccion === 'atras' ? 'screen-back' : 'screen-enter', rag.abierto ? 'is-dimmed' : '', hoja.arrastrando ? 'is-velo-drag' : '']" :style="hojaVeloEstilo"
+             x-effect="transicion; $el.style.animation = 'none'; void $el.offsetWidth; $el.style.animation = ''"
+             @scroll.passive="alDesplazar($el)"
+             @click="if (dispositivo === 'iphone' && pantalla === 'inicio' && hoja.detent === 'medium' && !$event.target.closest('button')) hojaIr('small')">
+

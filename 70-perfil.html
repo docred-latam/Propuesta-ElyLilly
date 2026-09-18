@@ -1,0 +1,37 @@
+          <!-- ============ PERFIL · lista agrupada de vidrio (capa absoluta, igual que Guardados) ============ -->
+          <div x-show="pantalla === 'perfil'" class="@container screen-enter absolute inset-0 overflow-y-auto scroll-hide px-5 pt-0 pb-36 @3xl:px-10 @3xl:pt-6 @3xl:pb-16 @3xl:mx-auto @3xl:w-full @3xl:max-w-[720px]">
+            <div class="pt-2">
+              <h1 class="ios-large-title">Perfil</h1>
+            </div>
+            <div class="glass ios-list mt-6">
+              <div class="ios-row py-4">
+                <span class="glass-icon !h-12 !w-12 text-[17px] font-semibold">Ó</span>
+                <span class="flex-1 min-w-0"><span class="block text-[17px] font-semibold text-ink">Dr. Óscar Martínez</span><span class="block mt-0.5 text-[14px] text-ink-2">Médico general · Bogotá</span></span>
+                <span class="glass inline-flex h-7 items-center rounded-full px-2.5 text-[12px] font-medium text-lillyblue">Verificado</span>
+              </div>
+            </div>
+
+            <p class="mt-7 px-1 text-[13px] font-medium text-ink-2">Intereses</p>
+            <div class="mt-2 flex flex-wrap gap-2">
+              <template x-for="(e, k) in enfermedades" :key="'int-' + k">
+                <button @click="perfil.intereses.includes(k) ? perfil.intereses.splice(perfil.intereses.indexOf(k), 1) : perfil.intereses.push(k)" class="ios-chip glass press" :aria-selected="perfil.intereses.includes(k) ? 'true' : 'false'" x-text="e.nombre"></button>
+              </template>
+              <button class="ios-chip glass press" aria-selected="false">Obesidad</button>
+            </div>
+
+            <p class="mt-7 px-1 text-[13px] font-medium text-ink-2">Notificaciones</p>
+            <div class="glass ios-list mt-2">
+              <div class="ios-row"><span class="flex-1 min-w-0"><span class="block text-[16px] text-ink">Contenido nuevo</span><span class="block text-[12px] text-ink-2">Un resumen semanal por enfermedad</span></span><button class="ios-switch" role="switch" :aria-checked="perfil.notificaciones ? 'true' : 'false'" @click="perfil.notificaciones = !perfil.notificaciones" aria-label="Contenido nuevo"></button></div>
+              <div class="ios-row"><span class="flex-1 min-w-0"><span class="block text-[16px] text-ink">Webinars en vivo</span><span class="block text-[12px] text-ink-2">Aviso 15 minutos antes</span></span><button class="ios-switch" role="switch" :aria-checked="perfil.envivo ? 'true' : 'false'" @click="perfil.envivo = !perfil.envivo" aria-label="Webinars en vivo"></button></div>
+            </div>
+
+            <div class="glass ios-list mt-6">
+              <button class="ios-row press"><span class="flex-1 text-[16px] text-ink">Información legal</span><i data-lucide="chevron-right" class="h-5 w-5 shrink-0 text-ink-3"></i></button>
+              <button class="ios-row press"><span class="flex-1 text-[16px] text-ink">Información para prescribir</span><span class="text-[12px] text-ink-3">Contenido comercial</span><i data-lucide="chevron-right" class="h-5 w-5 shrink-0 text-ink-3"></i></button>
+            </div>
+            <div class="glass ios-list mt-4">
+              <button @click="hud('Sesión cerrada (simulado)')" class="ios-row press justify-center"><span class="text-[16px] font-medium text-lilly">Cerrar sesión</span></button>
+            </div>
+            <p class="mt-4 text-center text-[12px] text-ink-3">Lilly 360 · versión de prueba 0.1</p>
+          </div>
+
