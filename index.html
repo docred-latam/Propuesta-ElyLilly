@@ -422,6 +422,10 @@
   .is-dentro .hist-anim { opacity: 1; transform: none; }
   .is-dentro .hist-anim:nth-child(2) { transition-delay: .09s; }
   .is-dentro .hist-anim:nth-child(3) { transition-delay: .18s; }
+  /* Las láminas de intervención tienen más hermanos directos (puente, título, cápsula, resultado):
+     la cascada sigue hasta el quinto para que no todos aparezcan de golpe. */
+  .is-dentro .hist-anim:nth-child(4) { transition-delay: .27s; }
+  .is-dentro .hist-anim:nth-child(5) { transition-delay: .36s; }
   .hist-par { will-change: transform; }
   @media (prefers-reduced-motion: reduce) { .hist-anim { opacity: 1; transform: none; } .hist-par { transform: none !important; } }
   /* minmax(0,1fr): sin esto una parrilla interna impone su min-content y la historia entera se desborda a lo ancho */
@@ -458,6 +462,29 @@
   .hist-foto.is-revelada .hist-px i { opacity: 0; }
   .hist-foto img { transition: transform .9s cubic-bezier(.32,.72,0,1), filter .9s; transform: scale(1.06); filter: saturate(.7); }
   .hist-foto.is-revelada img { transform: scale(1); filter: none; }
+  /* Escenas humanas (el día de Óscar): sin caja de tarjeta. El borde, el fondo y el radio de
+     ".hist-sec" son el lenguaje de producto; aquí el aire lo da el espacio, no un contorno, y la
+     proporción se abre para que la foto domine, como una crónica, no como una ficha. */
+  .hist-sec--humana { border: 0; background: none; border-radius: 0; overflow: visible; }
+  @media (min-width: 900px) {
+    .hist-sec--humana { grid-template-columns: minmax(0, .9fr) minmax(0, 1.24fr); column-gap: clamp(32px, 5vw, 72px); }
+  }
+  .hist-sec--humana .hist-col { padding: clamp(12px, 2vh, 24px) 0; }
+  .hist-sec--humana .hist-foto { min-height: 420px; border-radius: 22px; }
+  @media (min-width: 900px) { .hist-sec--humana .hist-foto { min-height: 480px; } }
+  /* Hora del día: ancla el momento en el reloj (no es la señal roja; esa nace al final, con la
+     necesidad). Punto neutro a propósito — el rojo se reserva para cuando interviene Lilly 360. */
+  .hist-hora { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 10px;
+    font-size: 13px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+  .hist-hora::before { content: ''; flex: none; width: 6px; height: 6px; border-radius: 9999px; background: rgba(255,255,255,.4); }
+  /* Señal roja: nace al cierre de la escena humana (la necesidad que queda abierta) y anticipa,
+     antes de la frase puente, que algo va a intervenir. Es la única cosa roja en toda la escena. */
+  .hist-hilo-rojo { width: 34px; height: 3px; border-radius: 9999px; background: #E8412F;
+    margin-top: clamp(22px, 3vh, 34px); position: relative; }
+  .hist-hilo-rojo::after { content: ''; position: absolute; left: 100%; top: 50%; margin-top: -4px; margin-left: 6px;
+    width: 8px; height: 8px; border-radius: 9999px; background: #E8412F; animation: pulso-rojo 1.8s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .hist-hilo-rojo::after { animation: none; } }
+  @keyframes pulso-rojo { 0%, 100% { opacity: .5; transform: scale(.85); } 50% { opacity: 1; transform: scale(1.2); } }
   /* Momentos «qué hizo» */
   .hist-sec--proto { grid-template-columns: minmax(0, 1fr); padding: clamp(24px, 3.2vw, 40px); background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.01)); }
   @media (min-width: 900px) { .hist-sec--proto { grid-template-columns: minmax(0, 1fr); } }
@@ -483,6 +510,49 @@
   @media (min-width: 760px) { .hist-notas { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .hist-nota { position: relative; font-size: 14.5px; line-height: 1.55; color: rgba(255,255,255,.74); background: #070707;
     padding: 20px clamp(18px, 2vw, 26px); margin: 0; text-wrap: pretty; }
+  /* Intervención de Lilly 360: mismo cascarón que «qué hizo» (.hist-sec--proto), pero con lenguaje
+     propio para que no se lea como otro capítulo de la vida de Óscar. Tinte rojo apenas perceptible,
+     borde con el mismo rojo y un leve solape hacia arriba (menos aire que entre escenas humanas),
+     como si la lámina se activara justo donde termina la escena que la necesitaba. */
+  .hist-sec--intervencion { position: relative; z-index: 1; margin-top: clamp(-30px, -3vw, -52px);
+    background: linear-gradient(180deg, rgba(213,43,30,.08), rgba(255,255,255,.02) 45%, rgba(255,255,255,.012));
+    border-color: rgba(213,43,30,.24); }
+  /* Frase puente: el punto rojo "recoge" la señal que quedó abierta en la escena humana y marca el
+     cambio de lenguaje visual antes de mostrar la captura. */
+  .hist-puente { display: flex; align-items: center; gap: 10px; margin-bottom: clamp(18px, 2.6vh, 28px);
+    font-size: 15px; font-weight: 500; color: rgba(255,255,255,.86); }
+  .hist-puente-punto { flex: none; width: 8px; height: 8px; border-radius: 9999px; background: #E8412F;
+    box-shadow: 0 0 0 4px rgba(213,43,30,.18); }
+  .is-dentro .hist-puente-punto { animation: pulso-rojo 1.8s ease-in-out 2; }
+  @media (prefers-reduced-motion: reduce) { .is-dentro .hist-puente-punto { animation: none; } }
+  /* Anotaciones de la intervención: señales cortas alrededor de la captura, no la rejilla de cuatro
+     celdas iguales que usa el resto de láminas «qué hizo» — aquí son puntos, no explicaciones. */
+  .hist-notas--anotacion { display: flex; flex-wrap: wrap; gap: 10px; background: none; border-top: 0;
+    margin-top: clamp(18px, 2.4vw, 28px); }
+  .hist-nota--anotacion { flex: 0 1 auto; display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.13); border-radius: 9999px;
+    padding: 9px 16px 9px 8px; margin: 0; font-size: 13.5px; line-height: 1.3; color: rgba(255,255,255,.86); }
+  .hist-nota-n { flex: none; display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 9999px; background: rgba(213,43,30,.85); color: #fff;
+    font-size: 11px; font-weight: 700; }
+  /* Aparición en cascada de las anotaciones: no todas a la vez, para narrar "esto resuelve, y esto,
+     y esto" en vez de una lista estática. */
+  .hist-nota--anotacion { opacity: 0; transform: translateY(10px);
+    transition: opacity .6s cubic-bezier(.32,.72,0,1), transform .6s cubic-bezier(.32,.72,0,1); }
+  .is-dentro .hist-nota--anotacion { opacity: 1; transform: none; }
+  .is-dentro .hist-nota--anotacion:nth-child(1) { transition-delay: .5s; }
+  .is-dentro .hist-nota--anotacion:nth-child(2) { transition-delay: .62s; }
+  .is-dentro .hist-nota--anotacion:nth-child(3) { transition-delay: .74s; }
+  .is-dentro .hist-nota--anotacion:nth-child(4) { transition-delay: .86s; }
+  .is-dentro .hist-nota--anotacion:nth-child(5) { transition-delay: .98s; }
+  .is-dentro .hist-nota--anotacion:nth-child(6) { transition-delay: 1.1s; }
+  @media (prefers-reduced-motion: reduce) { .hist-nota--anotacion { opacity: 1; transform: none; transition: none; } }
+  /* Resultado: cierra la intervención con lo que Óscar obtuvo. No es un "qué hizo" más — es la
+     consecuencia — así que lleva su propia etiqueta y un acento rojo discreto a la izquierda. */
+  .hist-resultado { margin-top: clamp(20px, 3vh, 32px); padding-left: 16px; border-left: 2px solid rgba(213,43,30,.55);
+    font-size: 16.5px; line-height: 1.55; color: rgba(255,255,255,.9); text-wrap: pretty; }
+  .hist-resultado-tag { display: block; margin-bottom: 5px; font-size: 12px; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; color: #E8412F; }
   /* Los cuatro momentos y la parrilla: sin borde, pero con el mismo aire entre hermanas que las tarjetas */
   .hist-sec--cierre, .hist-sec--parrilla { border: 0; background: none; padding: 0; }
   .hist-sec--cierre .hist-col, .hist-sec--parrilla .hist-col { padding-left: 0; padding-right: clamp(24px, 4vw, 56px); }
@@ -2107,9 +2177,10 @@
             </section>
 
             <!-- 1 · Quién es el médico -->
-            <section id="cap-oscar" class="hist-sec">
+            <section id="cap-oscar" class="hist-sec hist-sec--humana">
               <div class="hist-col hist-anim">
                 <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">03</span><span class="hist-hilo-l"></span></div>
+                <p class="hist-hora">Inicio de la jornada</p>
                 <p class="hist-kicker">Queremos presentarles a</p>
                 <h1 class="hist-h1 mt-3">Dr. Óscar Martínez</h1>
                 <p class="hist-rol">Médico general · Bogotá</p>
@@ -2121,7 +2192,7 @@
             </section>
 
             <!-- 2 · Las dos necesidades que identificamos -->
-            <section id="cap-necesidades" class="hist-sec">
+            <section id="cap-necesidades" class="hist-sec hist-sec--humana">
               <div class="hist-col hist-anim">
                 <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">04</span><span class="hist-hilo-l"></span></div>
                 <p class="hist-kicker">Lo que identificamos</p>
@@ -2135,10 +2206,12 @@
               </div>
             </section>
 
-            <!-- 3 · Consulta rápida, en la práctica -->
-            <section id="cap-rapida" class="hist-sec">
+            <!-- 3 · Consulta rápida, en la práctica. Termina en la necesidad, no en la solución:
+                 lo que Lilly 360 resuelve se cuenta en cap-busqueda, no aquí. -->
+            <section id="cap-rapida" class="hist-sec hist-sec--humana">
               <div class="hist-col hist-anim">
                 <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">05</span><span class="hist-hilo-l"></span></div>
+                <p class="hist-hora">9:00 a. m.</p>
                 <h2 class="hist-h2">Consulta rápida,<br>con la paciente en frente</h2>
                 <p class="hist-p mt-6 max-w-[34rem]">A las nueve entra María, 54 años. Los signos apuntan a diabetes tipo 2, pero el Dr. Óscar tiene una sospecha que no puede quedar para después: necesita confirmar el protocolo de diagnóstico ahí mismo, con ella sentada frente a él.</p>
                 <div class="hist-dato mt-9">
@@ -2146,37 +2219,42 @@
                   <span class="hist-dato-u">minutos</span>
                   <span class="hist-dato-t">es todo lo que el Dr. Óscar tiene para resolver lo que María necesita</span>
                 </div>
-                <p class="hist-pie mt-10 max-w-[32rem]">Abrió Lilly 360, entró a consulta rápida, y en menos de un minuto confirmó el algoritmo que necesitaba. Siguió la consulta sin perder el hilo, y sin hacer esperar a María.</p>
+                <div class="hist-hilo-rojo hist-anim" aria-hidden="true"></div>
               </div>
               <div class="hist-media hist-anim">
                 <figure class="hist-foto hist-par"><img src="img/oscar_consulta_rapida_maria.jpg" alt="Dr. Óscar Martínez mostrándole a María el algoritmo de diagnóstico en una tablet" loading="lazy" decoding="async" /></figure>
               </div>
             </section>
 
-            <!-- 4 · Qué hizo · consulta rápida -->
-            <section id="cap-busqueda" class="hist-sec hist-sec--proto">
+            <!-- 4 · Qué hizo · consulta rápida. Lenguaje distinto a la escena humana: sin la tarjeta
+                 redonda ni el ritmo simétrico, con la señal roja y la frase puente por delante. -->
+            <section id="cap-busqueda" class="hist-sec hist-sec--proto hist-sec--intervencion">
+              <p class="hist-puente hist-anim"><span class="hist-puente-punto" aria-hidden="true"></span>En ese momento, <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[15px] w-[40px] shrink-0 object-contain inline-block" loading="eager" decoding="async" />360</span> entra en su día.</p>
               <p class="hist-titulo-proto hist-anim">Qué hizo <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[19px] w-[51px] shrink-0 object-contain block" loading="eager" decoding="async" />360</span> para que la consulta rápida no le quitara ni un minuto</p>
               <div class="hist-proto hist-anim">
                 <div class="hist-visor">
                   <img src="img/proto-busqueda.png" alt="Búsqueda rápida en el prototipo" class="hist-pantalla" loading="lazy" decoding="async" />
                 </div>
-                <div class="hist-notas">
-                  <p class="hist-nota">Reconocer antes que recordar: el Dr. Óscar no tiene que acordarse del título exacto, entra por la enfermedad que ya conoce.</p>
-                  <p class="hist-nota">Cinco a siete elementos por nivel. Menos carga mental, lectura más rápida.</p>
-                  <p class="hist-nota">Búsqueda sobre el contenido aprobado por Lilly, indexado y siempre vigente.</p>
-                  <p class="hist-nota">Navegación temática por subniveles: diagnóstico, tratamiento e infografías para el paciente.</p>
+                <div class="hist-notas hist-notas--anotacion">
+                  <p class="hist-nota hist-nota--anotacion"><span class="hist-nota-n">1</span>Entra por la enfermedad, no por el título</p>
+                  <p class="hist-nota hist-nota--anotacion"><span class="hist-nota-n">2</span>Contenido aprobado y siempre vigente</p>
+                  <p class="hist-nota hist-nota--anotacion"><span class="hist-nota-n">3</span>Pocos elementos por nivel: baja carga mental</p>
+                  <p class="hist-nota hist-nota--anotacion"><span class="hist-nota-n">4</span>Confirma el algoritmo en menos de un minuto</p>
                 </div>
               </div>
+              <p class="hist-resultado hist-anim"><span class="hist-resultado-tag">Resultado</span>Óscar continuó la consulta sin perder el hilo y sin hacer esperar a María.</p>
               <button @click="verEnProto('tema', 'diabetes', 'cap-busqueda')" class="hist-ver"><span>Ver la consulta rápida en el prototipo</span><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
             </section>
 
-            <!-- 5 · Formación continua, en la práctica -->
-            <section id="cap-formacion" class="hist-sec">
+            <!-- 5 · Formación continua, en la práctica. Termina en el deseo de aprender, no en la
+                 solución: eso se cuenta en cap-valor. -->
+            <section id="cap-formacion" class="hist-sec hist-sec--humana">
               <div class="hist-col hist-anim">
                 <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">06</span><span class="hist-hilo-l"></span></div>
+                <p class="hist-hora">Mediodía</p>
                 <h2 class="hist-h2">Mediodía, por fin<br>un momento para el Dr. Óscar</h2>
                 <p class="hist-p mt-6 max-w-[34rem]">Ya no hay urgencia. Tiene veinte minutos de almuerzo, y quiere aprovecharlos en lo que más disfruta de su profesión: seguir aprendiendo. No le alcanza para leer un estudio completo, pero sí para un webinar corto con un experto, un microaprendizaje con certificado, o el resumen de lo nuevo en su especialidad.</p>
-                <p class="hist-pie mt-10 max-w-[34rem]">Abrió Lilly 360, vio un webinar de quince minutos sobre diabetes, tomó una nota, y guardó dos piezas más para cuando volviera a tener tiempo. Se fue a la siguiente consulta sabiendo algo que antes no sabía.</p>
+                <div class="hist-hilo-rojo hist-anim" aria-hidden="true"></div>
               </div>
               <div class="hist-media hist-anim">
                 <figure class="hist-foto hist-par"><img src="img/oscar_formacion_mediodia.jpg" alt="Dr. Óscar Martínez almorzando mientras ve un webinar corto en la tablet y toma una nota" loading="lazy" decoding="async" /></figure>
@@ -2184,27 +2262,31 @@
             </section>
 
             <!-- 6 · Qué hizo · formación continua -->
-            <section id="cap-valor" class="hist-sec hist-sec--proto">
+            <section id="cap-valor" class="hist-sec hist-sec--proto hist-sec--intervencion">
+              <p class="hist-puente hist-anim"><span class="hist-puente-punto" aria-hidden="true"></span>En ese momento, <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[15px] w-[40px] shrink-0 object-contain inline-block" loading="eager" decoding="async" />360</span> entra en su día.</p>
               <p class="hist-titulo-proto hist-anim">Qué hizo <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[19px] w-[51px] shrink-0 object-contain block" loading="eager" decoding="async" />360</span> para que la formación continua no se sintiera como una tarea más</p>
               <div class="hist-proto hist-anim">
                 <div class="hist-visor">
                   <img src="img/proto-formacion.png" alt="Formación ágil en el prototipo" class="hist-pantalla" loading="lazy" decoding="async" />
                 </div>
-                <div class="hist-notas">
-                  <p class="hist-nota">Guarda y destaca contenido en su biblioteca: acceso rápido y prioritario.</p>
-                  <p class="hist-nota">Multiformato: video, audio, estudio, infografía o webinar en vivo, según el momento del día.</p>
-                  <p class="hist-nota">Microaprendizajes que preguntan de vuelta: el video se detiene y evalúa lo aprendido, con certificado al final.</p>
-                  <p class="hist-nota">Webinars con expertos y sesiones grabadas, con descarga y apoyo documental.</p>
-                  <p class="hist-nota">Lo comercial va separado de lo médico: la información para prescribir tiene su propio lugar.</p>
+                <div class="hist-notas hist-notas--anotacion">
+                  <p class="hist-nota hist-nota--anotacion"><span class="hist-nota-n">1</span>Video, audio, estudio o infografía</p>
+                  <p class="hist-nota hist-nota--anotacion"><span class="hist-nota-n">2</span>Webinars cortos y sesiones grabadas</p>
+                  <p class="hist-nota hist-nota--anotacion"><span class="hist-nota-n">3</span>Microaprendizajes que evalúan y certifican</p>
+                  <p class="hist-nota hist-nota--anotacion"><span class="hist-nota-n">4</span>Biblioteca para guardar y priorizar</p>
+                  <p class="hist-nota hist-nota--anotacion"><span class="hist-nota-n">5</span>Continúa entre momentos y dispositivos</p>
+                  <p class="hist-nota hist-nota--anotacion"><span class="hist-nota-n">6</span>Lo comercial, separado de lo médico</p>
                 </div>
               </div>
+              <p class="hist-resultado hist-anim"><span class="hist-resultado-tag">Resultado</span>Óscar se fue a almorzar sabiendo algo que antes no sabía.</p>
               <button @click="verEnProto('formacion', 'diabetes', 'cap-valor')" class="hist-ver" aria-label="Ver la formación continua en el prototipo"><span>Ver la formación continua</span><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
             </section>
 
             <!-- 7 · Cierra el arco de la formación: lo guardado al mediodía, retomado en la noche -->
-            <section id="cap-noche" class="hist-sec">
+            <section id="cap-noche" class="hist-sec hist-sec--humana">
               <div class="hist-col hist-anim">
                 <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">07</span><span class="hist-hilo-l"></span></div>
+                <p class="hist-hora">Al final del día</p>
                 <h2 class="hist-h2">En la noche, retoma<br>justo donde quedó</h2>
                 <p class="hist-p mt-6 max-w-[34rem]">El webinar de mediodía no lo vio completo: guardó dos piezas más para cuando tuviera tiempo. Esa noche, ya en casa, retomó una de ellas desde el computador, exactamente donde la había dejado.</p>
                 <p class="hist-pie mt-10 max-w-[34rem]">Eso es lo que hace Lilly 360 por su formación: no depende de un solo momento ni de un solo dispositivo. Empieza en el celular al mediodía y termina en el computador en la noche, sin perder el hilo.</p>
@@ -2215,7 +2297,7 @@
             </section>
 
             <!-- 8 · Comunidad y eventos digitales -->
-            <section id="cap-colegas" class="hist-sec">
+            <section id="cap-colegas" class="hist-sec hist-sec--humana">
               <div class="hist-col hist-anim">
                 <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">08</span><span class="hist-hilo-l"></span></div>
                 <h2 class="hist-h2">Y también encuentra<br>a sus colegas</h2>
