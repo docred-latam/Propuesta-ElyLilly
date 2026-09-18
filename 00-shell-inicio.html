@@ -666,7 +666,11 @@
     color: rgba(255,255,255,.28); text-wrap: balance; }
   .hist-cifrado .cifra { transition: color .2s; }
   .hist-cifrado .cifra.es-clara { color: #fff; }
-  .hist-dia-pie { max-width: 34rem; font-size: 15px; line-height: 1.6; color: rgba(255,255,255,.55); }
+  /* Indicación hacia Óscar, no una intervención: por eso es neutra, no roja — el rojo Lilly se
+     reserva para cuando la plataforma entra en escena, más adelante. */
+  .hist-dia-cta { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 500; color: rgba(255,255,255,.68); }
+  .hist-dia-cta b { color: #fff; font-weight: 600; }
+  .hist-dia-cta i { color: rgba(255,255,255,.45); }
 
   /* Hilo conductor: un número por momento, con una línea corta a la derecha (junto al kicker) o
      debajo (variante --centro, para cap-dia). Deliberadamente corto: ".hist-sec" ya recorta con
@@ -680,19 +684,49 @@
   .hist-hilo-l { flex: 1 1 auto; max-width: 96px; height: 1px; background: rgba(255,255,255,.16); }
   .hist-hilo--centro { justify-content: center; margin-bottom: 18px; }
 
-  /* 0 · Quiénes somos (DocRed): mismo patrón de tarjeta que el resto, con un tratamiento tipográfico
-     propio (variedad de tamaño y peso) como excepción deliberada a la escala única de ui-historia.md,
-     porque este es el único momento que habla de DocRed y no de Lilly 360. */
-  .hist-sec--marca { background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(109,203,138,.035)); }
+  /* 0 · Quiénes somos (DocRed): apertura de credenciales, no una tarjeta «qué hizo» ni una escena de
+     Óscar — es su propio tercer lenguaje visual. Foto a página completa dentro de la sección (no a todo
+     el viewport: sigue en el mismo riel de 1240px que el resto de la historia) con velo azul marino
+     por la izquierda, donde vive el contenido. Tratamiento tipográfico propio (título grande, sin la
+     escala única de ui-historia.md) como excepción deliberada, igual que antes: es el único tramo que
+     habla de DocRed y no de Lilly 360. Acentos en azul marino y verde menta —los colores de marca de
+     DocRed—, nunca en rojo Lilly: ese rojo se reserva para cuando la plataforma interviene, más adelante. */
+  .hist-sec--marca { border: 0; border-radius: 0; background: #050510; overflow: hidden; position: relative;
+    isolation: isolate; min-height: clamp(520px, 76vh, 720px); display: flex; flex-direction: column;
+    justify-content: center; padding: clamp(36px, 6vh, 64px) clamp(24px, 4vw, 48px); }
+  .cap-marca-col { position: relative; z-index: 1; max-width: 36rem; }
   .cap-marca-logo { display: inline-flex; align-items: center; background: #fff; border-radius: 14px; padding: 12px 18px; }
   .cap-marca-logo-img { height: 26px; width: auto; display: block; }
-  .cap-marca-lead { margin-top: 26px; max-width: 32rem; font-size: clamp(19px, 2vw, 24px); font-weight: 500;
-    line-height: 1.46; color: rgba(255,255,255,.86); text-wrap: pretty; }
-  .cap-marca-enfasis { font-weight: 700; color: #fff; }
-  .cap-marca-grande { margin-top: 20px; max-width: 34rem; font-size: clamp(28px, 3.4vw, 44px); font-weight: 600;
-    line-height: 1.16; letter-spacing: -.02em; text-wrap: balance; }
-  .cap-marca-subraya { color: #6DCB8A; text-decoration: underline; text-decoration-color: rgba(109,203,138,.45);
-    text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  .cap-marca-grande { margin-top: 22px; max-width: 34rem; font-size: clamp(29px, 3.4vw, 45px); font-weight: 600;
+    line-height: 1.15; letter-spacing: -.02em; color: #fff; text-wrap: balance; }
+  .cap-marca-lead { margin-top: 16px; max-width: 31rem; font-size: 16.5px; line-height: 1.62; color: rgba(255,255,255,.8); text-wrap: pretty; }
+  .cap-marca-lead--enfasis { color: rgba(255,255,255,.94); font-weight: 500; }
+  /* Foto de referencia: en móvil es un bloque normal después del texto (orden 1-2-3-4 del encargo);
+     en escritorio se vuelve el fondo completo de la sección, detrás del contenido. */
+  .cap-marca-foto { position: relative; margin: 24px 0 0; border-radius: 16px; overflow: hidden;
+    aspect-ratio: 4 / 3; }
+  .cap-marca-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cap-marca-foto::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(5,5,16,.55)); }
+  .cap-marca-ref { position: absolute; right: 12px; bottom: 10px; z-index: 1; font-size: 10.5px; letter-spacing: .03em;
+    color: rgba(255,255,255,.68); background: rgba(5,5,16,.55); padding: 4px 9px; border-radius: 9999px; }
+  /* Credenciales: una franja integrada con separadores, no cuatro cajas. Cifra grande, explicación breve. */
+  .cap-marca-cifras { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 18px; margin-top: 28px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.14); max-width: 34rem; }
+  .cap-marca-cifra { display: flex; flex-direction: column; gap: 4px; }
+  .cap-marca-cifra-n { font-size: clamp(24px, 2.4vw, 32px); font-weight: 700; letter-spacing: -.01em; color: #6DCB8A; }
+  .cap-marca-cifra-d { font-size: 12.5px; line-height: 1.4; color: rgba(255,255,255,.66); max-width: 11rem; }
+  @media (min-width: 900px) {
+    .hist-sec--marca { display: block; padding: clamp(40px, 6vh, 72px) clamp(32px, 4.4vw, 56px); }
+    .cap-marca-col { display: flex; flex-direction: column; justify-content: center; min-height: clamp(448px, 64vh, 592px); }
+    .cap-marca-foto { position: absolute; inset: 0; margin: 0; border-radius: 0; aspect-ratio: auto; z-index: 0; }
+    .cap-marca-foto::after { background:
+      linear-gradient(90deg, rgba(5,5,16,.97) 0%, rgba(5,5,16,.94) 27%, rgba(8,8,22,.52) 55%, rgba(8,8,22,.1) 76%, transparent 92%),
+      linear-gradient(180deg, rgba(5,5,16,.25), transparent 30%, transparent 68%, rgba(5,5,16,.4)); }
+    .cap-marca-ref { right: 20px; bottom: 18px; }
+    .cap-marca-cifras { display: flex; flex-wrap: wrap; grid-template-columns: none; gap: 0; max-width: 44rem; }
+    .cap-marca-cifra { flex: 1 1 11rem; padding: 0 22px; border-left: 1px solid rgba(255,255,255,.16); }
+    .cap-marca-cifra:first-child { padding-left: 0; border-left: 0; }
+  }
   @media (prefers-reduced-motion: reduce) { .hist-cifrado { color: #fff; } }
   .sin-animacion .hist-cifrado { color: #fff; }
 </style>

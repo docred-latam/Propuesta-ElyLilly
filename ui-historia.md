@@ -93,14 +93,85 @@ Auditoría y corrección aplicadas sobre `src/85-historia.html` y los bloques `.
 - **La pantalla de cada lámina deja mucho negro a los lados** del teléfono. Llenarlo pedía otra
   composición, no acabado, así que no se tocó.
 
-## Excepción deliberada (18 de septiembre de 2026): «Quiénes somos» (`cap-marca`)
-La regla 5 de arriba («escala tipográfica única») **no aplica** a `.cap-marca-lead`, `.cap-marca-grande` y
-`.cap-marca-enfasis`, del nuevo primer momento de la historia (DocRed, antes de entrar a Lilly 360). Es a
-propósito: es el único tramo que habla de DocRed y no de Lilly 360, así que se le dio un tratamiento
-editorial propio (tamaños y pesos distintos dentro del mismo párrafo) para que se sienta como apertura,
-no como una tarjeta más. No es un patrón a replicar en el resto de la historia.
+## Excepción deliberada (18 de septiembre de 2026, con recomposición el mismo día): «Quiénes somos» (`cap-marca`)
+La regla 5 de arriba («escala tipográfica única») **no aplica** a `.cap-marca-lead` y `.cap-marca-grande`,
+del primer momento de la historia (DocRed, antes de entrar a Lilly 360). Es a propósito: es el único
+tramo que habla de DocRed y no de Lilly 360, así que se le dio un tratamiento editorial propio para que
+se sienta como apertura de credenciales, no como una tarjeta «qué hizo» ni como una escena de Óscar. No
+es un patrón a replicar en el resto de la historia.
 
-También se agregó `.hist-hilo`: un número (01–07) con una línea corta, antes del kicker o titular de cada
-momento narrativo (no de las láminas «qué hizo»), a modo de hilo conductor. Es corto a propósito: `.hist-sec`
-recorta con `overflow:hidden`, así que una línea que intentara cruzar de una tarjeta a la siguiente se vería
-cortada a mitad de camino.
+Encargo posterior del mismo día: recomponer `cap-marca` como una apertura de credenciales, no como
+publicidad institucional ni como una escena del día de Óscar. Los cinco puntos que debía demostrar
+(conocimiento del comportamiento digital de los médicos, experiencia en educación médica, acceso a una
+comunidad profesional latinoamericana, capacidad de producir contenido y desarrollar experiencias
+digitales, comprensión del contexto farmacéutico) se resolvieron así:
+
+- **Foto a página completa con velo azul marino a la izquierda**, en vez de la foto lateral que tenía
+  antes. `.cap-marca-foto` es un bloque normal después del texto en móvil (logo, titular, texto, imagen,
+  credenciales, como pidió el encargo) y, desde 900px, se vuelve el fondo absoluto de toda la sección,
+  con `.cap-marca-foto::after` como el velo (dos degradados: uno horizontal, opaco a la izquierda y
+  transparente hacia la derecha; uno vertical, más sutil). Sigue dentro del riel de 1240px de la
+  historia, no del viewport completo: sería un cambio estructural mayor que el encargo no pidió.
+- **Acentos en azul marino y verde menta** (`#2D3192` y `#6DCB8A`, los colores de marca documentados en
+  `img/CREDITOS.md`), nunca rojo Lilly: el encargo original pedía "turquesa y magenta", pero esos no son
+  los colores de marca validados de DocRed — se usaron los reales para no introducir una paleta sin
+  respaldo.
+- **Credenciales como franja integrada** (`.cap-marca-cifras`/`.cap-marca-cifra`), con separadores
+  verticales en escritorio y una cuadrícula de dos columnas en móvil, no cuatro cajas sueltas. De las
+  cuatro cifras pedidas, dos están confirmadas en la documentación de este proyecto (más de 100.000
+  profesionales de la salud verificados; más de 6 años de experiencia) y dos —15 países, más de 4.500
+  contenidos producidos— se tomaron tal como las dictó Andrés en el encargo, sin una fuente propia del
+  proyecto para cruzarlas: quedan pendientes de que él las confirme antes de que esta pieza salga de aquí.
+- **Titular como elemento principal** (`.cap-marca-grande`, reutilizada la misma clase para no romper el
+  efecto de revelado por palabras que ya la animaba desde el JS) y el texto de respaldo dividido en dos
+  párrafos (`.cap-marca-lead` / `.cap-marca-lead--enfasis`), en vez de un párrafo largo.
+- **Transición hacia Óscar**: la frase cifrada de `cap-dia` (que ya existía como puente, con el efecto
+  encrypted-text) se reemplazó por la frase exacta del encargo, y se agregó `.hist-dia-cta` — una
+  indicación neutra, no roja, con "Conozca al Dr. Óscar Martínez" — donde antes había un párrafo
+  descriptivo del reto. DocRed desaparece como protagonista ahí: de `cap-oscar` en adelante nada de esta
+  vuelta se tocó.
+
+También se agregó `.hist-hilo`: un número (01–07, hoy 01–09) con una línea corta, antes del kicker o
+titular de cada momento narrativo (no de las láminas «qué hizo»), a modo de hilo conductor. Es corto a
+propósito: `.hist-sec` recorta con `overflow:hidden`, así que una línea que intentara cruzar de una
+tarjeta a la siguiente se vería cortada a mitad de camino.
+
+## Dos lenguajes visuales deliberadamente distintos (18 de septiembre de 2026): escena humana vs. intervención de Lilly 360
+Encargo del propio Andrés: «La Historia» debe sentirse como el día del Dr. Óscar Martínez, y el momento en
+que Lilly 360 aparece debe leerse como una intervención digital, no como otro capítulo de su vida. Antes,
+las escenas humanas y las láminas «qué hizo» compartían el mismo cascarón de tarjeta (`.hist-sec`: borde,
+fondo, radio de 26px, ritmo simétrico), así que la solución se leía como "más de lo mismo". Se resolvió con
+dos clases modificadoras que conviven con las que ya existían, sin tocar la mecánica de alternancia par/impar
+ni la rejilla base:
+
+- **`.hist-sec--humana`** (escenas de Óscar: `cap-oscar`, `cap-necesidades`, `cap-rapida`, `cap-formacion`,
+  `cap-noche`, `cap-colegas`). Quita el cascarón de tarjeta (`border:0; background:none; border-radius:0;
+  overflow:visible`) y abre la proporción columna/foto a `.9fr / 1.24fr` en escritorio: la fotografía manda,
+  el texto respira sin caja. `.hist-hora` (Inicio de la jornada, 9:00 a. m., Mediodía, Al final del día) ancla
+  cada escena en el reloj del día con un punto **neutro**, no rojo — el rojo se reserva por completo para
+  cuando interviene Lilly 360. Cada escena que termina en una necesidad sin resolver (`cap-rapida`,
+  `cap-formacion`) cierra con `.hist-hilo-rojo`: una línea con un punto rojo que pulsa, la única cosa roja en
+  toda la escena, anticipando que algo va a intervenir.
+- **`.hist-sec--intervencion`** (`cap-busqueda`, `cap-valor`, ambas ya `.hist-sec--proto`). Añade un tinte
+  rojo casi imperceptible (`rgba(213,43,30,.08)` en degradado, no un fondo rojo sólido — el encargo pedía la
+  señal roja como jerarquía, no la sección entera en rojo), borde con el mismo rojo, y un `margin-top`
+  negativo que reduce el aire con la escena anterior (efecto de solape leve, no un recorte real de la foto:
+  no hay forma de probarlo visualmente desde esta sesión, así que se optó por el ajuste más conservador que
+  cumple la intención). Abre con `.hist-puente` — la frase obligatoria «En ese momento, Lilly 360 entra en su
+  día.» con un punto rojo que repite el pulso de `.hist-hilo-rojo`, como si la señal de la escena anterior se
+  "recogiera" aquí. Las notas pasan de la rejilla de cuatro celdas iguales (`.hist-notas`/`.hist-nota`, que
+  sigue existiendo para otras láminas) a `.hist-notas--anotacion`/`.hist-nota--anotacion`: píldoras cortas y
+  numeradas que aparecen en cascada (`transition-delay` escalonado bajo `.is-dentro`), no una explicación
+  larga. Cierra con `.hist-resultado`: la frase de resultado que antes vivía al final de la escena humana se
+  movió aquí, porque es la consecuencia de la intervención, no de la escena — lleva su propia etiqueta
+  («Resultado») y un acento rojo a la izquierda, en vez de ser un párrafo más.
+
+Las animaciones también se diferenciaron: las escenas humanas siguen con el revelado que ya existía (foto en
+mosaico, `.hist-anim` con `translateY`); las intervenciones activan además el pulso rojo del punto puente y
+la cascada de anotaciones. Se extendió el stagger existente (`.is-dentro .hist-anim:nth-child(2)/(3)`) a
+`nth-child(4)` y `(5)` porque las láminas de intervención tienen más hermanos directos (puente, título,
+cápsula, resultado) que las dos hermanas de una escena humana.
+
+`cap-momentos` (el cierre «Por qué lo proponemos») no se marcó con ninguna de las dos clases a propósito: no
+es una escena de Óscar ni una intervención puntual, es la síntesis de ambas — se deja con su tratamiento
+`--cierre` existente.
