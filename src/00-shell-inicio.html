@@ -378,6 +378,7 @@
   .marca-rayos {
     position: absolute; left: 0; right: 0; bottom: 0; height: 252px; z-index: -1; pointer-events: none;
     background-image: var(--marca-rayos); background-size: 100% 100%; background-position: bottom center; background-repeat: no-repeat;
+    opacity: .5;   /* el color no puede pelearse con el texto que queda encima */
   }
   @container (min-width: 48rem) { .marca-rayos { height: 262px; } }
   /* Logo de la marca del canal. El alto base viene por marca (--marca-h) porque los tres

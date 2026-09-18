@@ -378,6 +378,7 @@
   .marca-rayos {
     position: absolute; left: 0; right: 0; bottom: 0; height: 252px; z-index: -1; pointer-events: none;
     background-image: var(--marca-rayos); background-size: 100% 100%; background-position: bottom center; background-repeat: no-repeat;
+    opacity: .5;   /* el color no puede pelearse con el texto que queda encima */
   }
   @container (min-width: 48rem) { .marca-rayos { height: 262px; } }
   /* Logo de la marca del canal. El alto base viene por marca (--marca-h) porque los tres
@@ -1049,7 +1050,7 @@
                 <img :src="enf.logo" :alt="enf.producto" :style="'--marca-h:' + enf.logoAlto + 'px'"
                      class="marca-logo mt-7 @3xl:mt-9 max-w-[74%] @3xl:max-w-none" loading="eager" decoding="async" />
 
-                <p class="mt-4 max-w-[46ch] text-[15px] @3xl:text-[16px] leading-[1.5] text-ink-2" x-text="enf.descripcion"></p>
+                <p class="mt-4 max-w-[46ch] text-[15px] @3xl:text-[16px] leading-[1.5] text-ink/75" x-text="enf.descripcion"></p>
 
                 <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-[14px] @3xl:text-[15px] text-ink">
                   <span class="inline-flex items-center gap-2"><i data-lucide="pill" class="h-4 w-4 shrink-0 text-ink-2" stroke-width="1.75"></i><span class="font-medium" x-text="enf.principio"></span></span>
