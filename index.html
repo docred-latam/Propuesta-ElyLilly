@@ -406,6 +406,10 @@
     -webkit-mask-image: radial-gradient(75% 60% at 60% 80%, #000, transparent 75%);
     mask-image: radial-gradient(75% 60% at 60% 80%, #000, transparent 75%); filter: blur(1px); }
   .hist > section { position: relative; z-index: 1; }
+  /* cap-marca es un <div>, no un <section>: a propósito, para no correr en el conteo de
+     section:nth-of-type que alterna foto izquierda/derecha más abajo. Repone aquí lo que
+     ".hist > section" le da a los demás. */
+  #cap-marca { position: relative; z-index: 1; }
   .hist { padding: 0 clamp(20px, 5vw, 72px) clamp(40px, 8vh, 96px); }
   /* Un solo riel para toda la historia: el hero y las tarjetas empiezan y terminan en la misma línea.
      Antes el hero tenía su propio padding y quedaba 70px adentro respecto de las tarjetas. */
@@ -586,6 +590,32 @@
   .hist-cifrado .cifra { transition: color .2s; }
   .hist-cifrado .cifra.es-clara { color: #fff; }
   .hist-dia-pie { max-width: 34rem; font-size: 15px; line-height: 1.6; color: rgba(255,255,255,.55); }
+
+  /* Hilo conductor: un número por momento, con una línea corta a la derecha (junto al kicker) o
+     debajo (variante --centro, para cap-dia). Deliberadamente corto: ".hist-sec" ya recorta con
+     overflow:hidden, así que una línea larga cruzando entre tarjetas no se vería completa igual. */
+  .hist-hilo { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .hist-hilo-n { flex: none; position: relative; width: 28px; height: 28px; border-radius: 9999px;
+    border: 1px solid rgba(255,255,255,.26); display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; letter-spacing: .02em; color: rgba(255,255,255,.85); }
+  .hist-hilo-n::after { content: ''; position: absolute; top: 100%; left: 50%; width: 1px; height: 18px;
+    transform: translateX(-50%); background: linear-gradient(180deg, rgba(255,255,255,.35), transparent); }
+  .hist-hilo-l { flex: 1 1 auto; max-width: 96px; height: 1px; background: rgba(255,255,255,.16); }
+  .hist-hilo--centro { justify-content: center; margin-bottom: 18px; }
+
+  /* 0 · Quiénes somos (DocRed): mismo patrón de tarjeta que el resto, con un tratamiento tipográfico
+     propio (variedad de tamaño y peso) como excepción deliberada a la escala única de ui-historia.md,
+     porque este es el único momento que habla de DocRed y no de Lilly 360. */
+  .hist-sec--marca { background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(109,203,138,.035)); }
+  .cap-marca-logo { display: inline-flex; align-items: center; background: #fff; border-radius: 14px; padding: 12px 18px; }
+  .cap-marca-logo-img { height: 26px; width: auto; display: block; }
+  .cap-marca-lead { margin-top: 26px; max-width: 32rem; font-size: clamp(19px, 2vw, 24px); font-weight: 500;
+    line-height: 1.46; color: rgba(255,255,255,.86); text-wrap: pretty; }
+  .cap-marca-enfasis { font-weight: 700; color: #fff; }
+  .cap-marca-grande { margin-top: 20px; max-width: 34rem; font-size: clamp(28px, 3.4vw, 44px); font-weight: 600;
+    line-height: 1.16; letter-spacing: -.02em; text-wrap: balance; }
+  .cap-marca-subraya { color: #6DCB8A; text-decoration: underline; text-decoration-color: rgba(109,203,138,.45);
+    text-decoration-thickness: 2px; text-underline-offset: 4px; }
   @media (prefers-reduced-motion: reduce) { .hist-cifrado { color: #fff; } }
   .sin-animacion .hist-cifrado { color: #fff; }
 </style>
@@ -1838,7 +1868,7 @@
             function narrativa() {
               return {
                 capitulos: [
-                  { id: 'cap-hero', n: 'Portada' }, { id: 'cap-dia', n: 'El entendimiento del reto' }, { id: 'cap-oscar', n: 'Dr. Óscar' },
+                  { id: 'cap-marca', n: 'DocRed' }, { id: 'cap-hero', n: 'Portada' }, { id: 'cap-dia', n: 'El entendimiento del reto' }, { id: 'cap-oscar', n: 'Dr. Óscar' },
                   { id: 'cap-necesidades', n: 'Dos necesidades' }, { id: 'cap-rapida', n: 'Consulta rápida' }, { id: 'cap-busqueda', n: 'Qué hizo: consulta' },
                   { id: 'cap-formacion', n: 'Formación continua' }, { id: 'cap-valor', n: 'Qué hizo: formación' },
                   { id: 'cap-momentos', n: 'Por qué lo proponemos' }, { id: 'cap-todo', n: 'Todo el producto' },
@@ -1960,6 +1990,7 @@
                         this.generar(e.target.querySelector('.hist-hero-h1'), 105, 120);
                         this.generar(e.target.querySelector('.hist-hero-p'), 22, 900);
                       }
+                      if (e.target.id === 'cap-marca' && suave) this.generar(e.target.querySelector('.cap-marca-grande'), 55, 250);
                       e.target.querySelectorAll('.hist-foto').forEach((f) => f.classList.add('is-revelada'));
                       io.unobserve(e.target);
                     });
@@ -2021,12 +2052,28 @@
             </nav>
 
 
+            <!-- 0 · Quiénes somos: la credibilidad de DocRed, antes de hablar de Lilly 360. Es un <div>, no un
+                 <section>, a propósito: así no corre en el conteo de section:nth-of-type que alterna foto
+                 izquierda/derecha en el resto de la historia, y todo lo que viene después queda intacto. -->
+            <div id="cap-marca" class="hist-sec hist-sec--marca">
+              <div class="hist-col hist-anim">
+                <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">01</span><span class="hist-hilo-l"></span></div>
+                <span class="cap-marca-logo"><img src="img/docred-logo.png" alt="DocRed" class="cap-marca-logo-img" loading="eager" decoding="async" /></span>
+                <p class="cap-marca-lead">DocRed lleva <b class="cap-marca-enfasis">más de 5 años</b> entregando valor a la comunidad médica en Colombia y otros países de Latinoamérica.</p>
+                <p class="cap-marca-grande">Y lo hemos hecho tras entender a nuestros usuarios: <span class="cap-marca-subraya">los médicos.</span></p>
+                <p class="hist-pie mt-8 max-w-[34rem]">Por eso, antes de mostrarles <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[16px] w-[43px] shrink-0 object-contain block" loading="eager" decoding="async" />360</span>, les mostramos cómo llegamos a entender el reto que resuelve.</p>
+              </div>
+              <div class="hist-media hist-anim">
+                <figure class="hist-foto hist-par"><img src="img/comite-clinico.jpg" alt="Equipo médico en junta clínica, revisando estudios de imagen en pantalla" loading="eager" decoding="async" /></figure>
+              </div>
+            </div>
+
             <!-- Hero: lo primero que ve Lilly. Titular a la izquierda y el producto dentro de una ventana, como Framer. -->
             <section id="cap-hero" class="hist-hero">
               <div class="hist-hero-fijo">
               <div class="hist-hero-col hist-anim">
                                 <h1 class="hist-hero-h1">La información que el médico<br class="hidden md:block" /> necesita, en el minuto<br class="hidden md:block" /> en que la necesita</h1>
-                <p class="hist-hero-p">Una plataforma para los cuatro momentos del día de un médico: resolver la duda con el paciente al frente, ponerse al día en el break, seguir formándose y encontrarse con sus colegas.</p>
+                <p class="hist-hero-p"><span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[15px] w-[40px] shrink-0 object-contain inline-block" loading="eager" decoding="async" />360</span> es la plataforma para los cuatro momentos del día de un médico: resolver la duda con el paciente al frente, ponerse al día en el break, seguir formándose y encontrarse con sus colegas.</p>
                 <div class="hist-baja" aria-hidden="true">
                   <span class="hist-baja-linea"></span>
                   <span class="hist-baja-texto">Desliza para conocer al Dr. Óscar</span>
@@ -2045,18 +2092,20 @@
 
             <!-- Puente entre el hero y el reto: la frase se descifra al entrar, como el efecto encrypted-text. -->
             <section id="cap-dia" class="hist-dia">
+              <div class="hist-hilo hist-hilo--centro hist-anim" aria-hidden="true"><span class="hist-hilo-n">02</span></div>
               <p class="hist-kicker hist-anim">El entendimiento del reto</p>
               <p class="hist-cifrado hist-anim" data-cifrar>El día de un médico no espera. Entre un paciente y el siguiente hay veinte minutos, y en esos veinte minutos cabe una decisión que no puede quedar para después.</p>
-              <p class="hist-dia-pie hist-anim">Por eso no empezamos por la plataforma. Empezamos por entender su día completo: sus pacientes, lo administrativo, y lo que más disfruta de su profesión.</p>
+              <p class="hist-dia-pie hist-anim">Por eso no empezamos por Lilly 360. Empezamos por entender su día completo: sus pacientes, lo administrativo, y lo que más disfruta de su profesión.</p>
             </section>
 
             <!-- 1 · Quién es el médico -->
             <section id="cap-oscar" class="hist-sec">
               <div class="hist-col hist-anim">
+                <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">03</span><span class="hist-hilo-l"></span></div>
                 <p class="hist-kicker">Queremos presentarles a</p>
                 <h1 class="hist-h1 mt-3">Dr. Óscar Martínez</h1>
                 <p class="hist-rol">Médico general · Bogotá</p>
-                <p class="hist-p mt-10 max-w-[30rem]">Ve un paciente cada veinte minutos. Entre uno y el siguiente, cierra historias clínicas, resuelve trámites, firma órdenes. Y en medio de todo eso, lo que más disfruta de ser médico —junto con sus pacientes— es seguir aprendiendo: lo nuevo de su especialidad, lo que cambió esta semana, lo que todavía no sabe.</p>
+                <p class="hist-p mt-10 max-w-[30rem]">Ve un paciente cada veinte minutos. Entre uno y el siguiente, cierra historias clínicas, resuelve trámites, firma órdenes. Y en medio de todo eso, lo que más disfruta de ser médico —junto con sus pacientes— es seguir aprendiendo: lo nuevo de su especialidad, lo que cambió esta semana, lo que todavía no sabe. Es el médico para quien construimos Lilly 360.</p>
               </div>
               <div class="hist-media hist-anim">
                 <figure class="hist-foto hist-par"><img src="img/oscar-consulta.jpg" alt="Óscar en consulta con una paciente" loading="eager" decoding="async" /></figure>
@@ -2066,6 +2115,7 @@
             <!-- 2 · Las dos necesidades que identificamos -->
             <section id="cap-necesidades" class="hist-sec">
               <div class="hist-col hist-anim">
+                <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">04</span><span class="hist-hilo-l"></span></div>
                 <p class="hist-kicker">Lo que identificamos</p>
                 <h2 class="hist-h2">Dos preguntas resuelven casi todo su día digital</h2>
                 <p class="hist-p mt-6 max-w-[34rem]"><b>Consultas rápidas.</b> Preguntas que no dan espera: surgen con el paciente en frente, y la respuesta tiene que llegar ahí mismo, no después.</p>
@@ -2073,13 +2123,14 @@
                 <p class="hist-pie mt-10 max-w-[34rem]">Lilly 360 tiene que resolver las dos. No una plataforma de contenidos con buscador encima, sino dos experiencias distintas para dos momentos distintos del mismo día.</p>
               </div>
               <div class="hist-media hist-anim">
-                <figure class="hist-foto hist-par"><img src="img/estudio-pdf.jpg" alt="Notas y documentos de estudio sobre un escritorio, con gafas y laptop" loading="lazy" decoding="async" /></figure>
+                <figure class="hist-foto hist-par"><img src="img/medico-analisis.jpg" alt="Médico analizando información en su laptop, revisando el caso con calma" loading="lazy" decoding="async" /></figure>
               </div>
             </section>
 
             <!-- 3 · Consulta rápida, en la práctica -->
             <section id="cap-rapida" class="hist-sec">
               <div class="hist-col hist-anim">
+                <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">05</span><span class="hist-hilo-l"></span></div>
                 <h2 class="hist-h2">Consulta rápida,<br>con la paciente en frente</h2>
                 <p class="hist-p mt-6 max-w-[34rem]">A las nueve entra María, 54 años. Los signos apuntan a diabetes tipo 2, pero el Dr. Óscar tiene una sospecha que no puede quedar para después: necesita confirmar el protocolo de diagnóstico ahí mismo, con ella sentada frente a él.</p>
                 <div class="hist-dato mt-9">
@@ -2090,7 +2141,7 @@
                 <p class="hist-pie mt-10 max-w-[32rem]">Abrió Lilly 360, entró a consulta rápida, y en menos de un minuto confirmó el algoritmo que necesitaba. Siguió la consulta sin perder el hilo, y sin hacer esperar a María.</p>
               </div>
               <div class="hist-media hist-anim">
-                <figure class="hist-foto hist-par"><img src="img/oscar-tablet.jpg" alt="Óscar consultando el celular en la consulta" loading="lazy" decoding="async" style="object-position:center 10%" /></figure>
+                <figure class="hist-foto hist-par"><img src="img/consulta-tablet.jpg" alt="Médico mostrándole a su paciente un diagnóstico en una tablet" loading="lazy" decoding="async" /></figure>
               </div>
             </section>
 
@@ -2114,13 +2165,14 @@
             <!-- 5 · Formación continua, en la práctica -->
             <section id="cap-formacion" class="hist-sec">
               <div class="hist-col hist-anim">
+                <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">06</span><span class="hist-hilo-l"></span></div>
                 <h2 class="hist-h2">Mediodía, por fin<br>un momento para el Dr. Óscar</h2>
                 <p class="hist-p mt-6 max-w-[34rem]">Ya no hay urgencia. Tiene veinte minutos de almuerzo, y quiere aprovecharlos en lo que más disfruta de su profesión: seguir aprendiendo. No le alcanza para leer un estudio completo, pero sí para un webinar corto con un experto, un microaprendizaje con certificado, o el resumen de lo nuevo en su especialidad.</p>
                 <p class="hist-p mt-4 max-w-[34rem]">También es el momento en que se entera de lo que hacen sus colegas: se conecta con otros médicos, participa en espacios académicos, y aporta lo que sabe.</p>
                 <p class="hist-pie mt-10 max-w-[34rem]">Abrió Lilly 360, vio un webinar de quince minutos sobre diabetes, y guardó dos piezas más para la noche. Se fue a almorzar tranquilo, sabiendo algo que antes no sabía.</p>
               </div>
               <div class="hist-media hist-anim">
-                <figure class="hist-foto hist-par"><img src="img/almuerzo-tablet.jpg" alt="Óscar en su pausa con una tablet" loading="lazy" decoding="async" style="object-position:center 15%" /></figure>
+                <figure class="hist-foto hist-par"><img src="img/webinar-vivo.jpg" alt="Doctora presentando un webinar en vivo para la comunidad médica" loading="lazy" decoding="async" /></figure>
               </div>
             </section>
 
@@ -2145,6 +2197,7 @@
             <!-- 7 · Por qué se lo proponemos a Lilly -->
             <section id="cap-momentos" class="hist-sec hist-sec--cierre">
               <div class="hist-col hist-anim">
+                <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">07</span><span class="hist-hilo-l"></span></div>
                 <h2 class="hist-h2">Para el Dr. Óscar,<br><span class="hist-marca hist-marca--grande"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[34px] w-[91px] shrink-0 object-contain" loading="eager" decoding="async" />360</span><br>es el aliado que<br>le faltaba</h2>
                 <p class="hist-p mt-7 max-w-[30rem] font-medium">En su día encontró las dos cosas que necesitaba: una respuesta que no podía esperar, y un espacio para seguir aprendiendo en el poco tiempo libre que tiene.</p>
                 <p class="hist-p mt-4 max-w-[30rem]">Por conocer así a los médicos es que DocRed le propone a Lilly un entorno que responde a sus necesidades reales como usuarios digitales. Eso es lo que genera adherencia, y lo que puede convertir a Lilly 360 en un sitio destino para miles de médicos en Colombia.</p>
@@ -2173,7 +2226,7 @@
             <!-- Todo lo que hay dentro, en una parrilla: cada celda entra a su pantalla -->
             <section id="cap-todo" class="hist-sec hist-sec--parrilla">
               <div class="hist-col hist-anim">
-                <h2 class="hist-h2">Todo esto ya está<br>navegable</h2>
+                <h2 class="hist-h2">Todo Lilly 360<br>ya está navegable</h2>
                 <p class="hist-p mt-5 max-w-[34rem]">No es una lámina: es el producto funcionando en los tres dispositivos. Entra por donde quieras.</p>
                 <div class="hist-cifras">
                 <template x-for="d in [['3', 'dispositivos, una sola experiencia'], ['4', 'momentos del día del médico'], ['25', 'pantallas navegables en el prototipo']]" :key="d[1]">
@@ -2196,7 +2249,7 @@
             <!-- 8 · Entrar al prototipo -->
             <section id="cap-final" class="hist-sec hist-sec--final">
               <p class="hist-kicker">Y esto es lo que construimos</p>
-              <h2 class="hist-h1 mt-3 text-center">Navéguenlo ustedes</h2>
+              <h2 class="hist-h1 mt-3 text-center">Naveguen Lilly 360 ustedes mismos</h2>
               <p class="hist-p mt-5 max-w-[34rem] text-center">El prototipo está completo y funciona en celular, tablet y computador: el registro, los cuatro momentos, el back office y la arquitectura que lo sostiene.</p>
               <div class="mt-10 flex flex-wrap items-center justify-center gap-3">
                 <button @click="irRaiz('inicio')" class="hist-btn">Entrar al prototipo</button>

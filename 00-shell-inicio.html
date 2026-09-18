@@ -406,6 +406,10 @@
     -webkit-mask-image: radial-gradient(75% 60% at 60% 80%, #000, transparent 75%);
     mask-image: radial-gradient(75% 60% at 60% 80%, #000, transparent 75%); filter: blur(1px); }
   .hist > section { position: relative; z-index: 1; }
+  /* cap-marca es un <div>, no un <section>: a propósito, para no correr en el conteo de
+     section:nth-of-type que alterna foto izquierda/derecha más abajo. Repone aquí lo que
+     ".hist > section" le da a los demás. */
+  #cap-marca { position: relative; z-index: 1; }
   .hist { padding: 0 clamp(20px, 5vw, 72px) clamp(40px, 8vh, 96px); }
   /* Un solo riel para toda la historia: el hero y las tarjetas empiezan y terminan en la misma línea.
      Antes el hero tenía su propio padding y quedaba 70px adentro respecto de las tarjetas. */
@@ -586,6 +590,32 @@
   .hist-cifrado .cifra { transition: color .2s; }
   .hist-cifrado .cifra.es-clara { color: #fff; }
   .hist-dia-pie { max-width: 34rem; font-size: 15px; line-height: 1.6; color: rgba(255,255,255,.55); }
+
+  /* Hilo conductor: un número por momento, con una línea corta a la derecha (junto al kicker) o
+     debajo (variante --centro, para cap-dia). Deliberadamente corto: ".hist-sec" ya recorta con
+     overflow:hidden, así que una línea larga cruzando entre tarjetas no se vería completa igual. */
+  .hist-hilo { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .hist-hilo-n { flex: none; position: relative; width: 28px; height: 28px; border-radius: 9999px;
+    border: 1px solid rgba(255,255,255,.26); display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; letter-spacing: .02em; color: rgba(255,255,255,.85); }
+  .hist-hilo-n::after { content: ''; position: absolute; top: 100%; left: 50%; width: 1px; height: 18px;
+    transform: translateX(-50%); background: linear-gradient(180deg, rgba(255,255,255,.35), transparent); }
+  .hist-hilo-l { flex: 1 1 auto; max-width: 96px; height: 1px; background: rgba(255,255,255,.16); }
+  .hist-hilo--centro { justify-content: center; margin-bottom: 18px; }
+
+  /* 0 · Quiénes somos (DocRed): mismo patrón de tarjeta que el resto, con un tratamiento tipográfico
+     propio (variedad de tamaño y peso) como excepción deliberada a la escala única de ui-historia.md,
+     porque este es el único momento que habla de DocRed y no de Lilly 360. */
+  .hist-sec--marca { background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(109,203,138,.035)); }
+  .cap-marca-logo { display: inline-flex; align-items: center; background: #fff; border-radius: 14px; padding: 12px 18px; }
+  .cap-marca-logo-img { height: 26px; width: auto; display: block; }
+  .cap-marca-lead { margin-top: 26px; max-width: 32rem; font-size: clamp(19px, 2vw, 24px); font-weight: 500;
+    line-height: 1.46; color: rgba(255,255,255,.86); text-wrap: pretty; }
+  .cap-marca-enfasis { font-weight: 700; color: #fff; }
+  .cap-marca-grande { margin-top: 20px; max-width: 34rem; font-size: clamp(28px, 3.4vw, 44px); font-weight: 600;
+    line-height: 1.16; letter-spacing: -.02em; text-wrap: balance; }
+  .cap-marca-subraya { color: #6DCB8A; text-decoration: underline; text-decoration-color: rgba(109,203,138,.45);
+    text-decoration-thickness: 2px; text-underline-offset: 4px; }
   @media (prefers-reduced-motion: reduce) { .hist-cifrado { color: #fff; } }
   .sin-animacion .hist-cifrado { color: #fff; }
 </style>

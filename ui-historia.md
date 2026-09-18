@@ -92,3 +92,15 @@ Auditoría y corrección aplicadas sobre `src/85-historia.html` y los bloques `.
   contenedor de scroll.
 - **La pantalla de cada lámina deja mucho negro a los lados** del teléfono. Llenarlo pedía otra
   composición, no acabado, así que no se tocó.
+
+## Excepción deliberada (18 de septiembre de 2026): «Quiénes somos» (`cap-marca`)
+La regla 5 de arriba («escala tipográfica única») **no aplica** a `.cap-marca-lead`, `.cap-marca-grande` y
+`.cap-marca-enfasis`, del nuevo primer momento de la historia (DocRed, antes de entrar a Lilly 360). Es a
+propósito: es el único tramo que habla de DocRed y no de Lilly 360, así que se le dio un tratamiento
+editorial propio (tamaños y pesos distintos dentro del mismo párrafo) para que se sienta como apertura,
+no como una tarjeta más. No es un patrón a replicar en el resto de la historia.
+
+También se agregó `.hist-hilo`: un número (01–07) con una línea corta, antes del kicker o titular de cada
+momento narrativo (no de las láminas «qué hizo»), a modo de hilo conductor. Es corto a propósito: `.hist-sec`
+recorta con `overflow:hidden`, así que una línea que intentara cruzar de una tarjeta a la siguiente se vería
+cortada a mitad de camino.
