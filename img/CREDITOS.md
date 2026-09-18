@@ -34,11 +34,21 @@ Descargadas el 17 de septiembre de 2026 a 1200 px de ancho, JPEG, menos de 200 K
   fotos. Igual que las anteriores, se dejaron en el repositorio sin referenciar.
 
 ## Fotos de «El entendimiento del reto», primera vuelta (18 de septiembre de 2026)
-`comite-clinico.jpg` sigue en uso. Las otras tres de esta vuelta quedaron sin usar (ver nota arriba).
+Las cuatro de esta vuelta quedaron sin usar: `comite-clinico.jpg` cubría la apertura «Quiénes somos»
+(`cap-marca`) hasta que Andrés pidió reemplazarla por una fotografía de comunidad médica en plataforma
+digital, más cercana al negocio real de DocRed que una junta clínica genérica (ver tabla siguiente).
+
+| Archivo | Escena | Dónde se usaba |
+|---|---|---|
+| `comite-clinico.jpg` | Junta médica: cinco personas revisando resonancias cerebrales en pantalla | Apertura «Quiénes somos» (`cap-marca`), hasta el 18 de septiembre de 2026, tercera vuelta |
+
+## Foto de «Quiénes somos» (DocRed), tercera vuelta (18 de septiembre de 2026)
+`docred_comunidad_medica.jpg` la aportó Andrés directamente para esta vuelta, junto con el resto del encargo
+de recomposición de la apertura. Se recortó a 1200 px de ancho, JPEG, igual que el resto.
 
 | Archivo | Escena | Dónde se usa |
 |---|---|---|
-| `comite-clinico.jpg` | Junta médica: cinco personas revisando resonancias cerebrales en pantalla | Apertura «Quiénes somos» (`cap-marca`) |
+| `docred_comunidad_medica.jpg` | Comunidad médica utilizando una plataforma de educación digital, en sala de juntas | Apertura «Quiénes somos» (`cap-marca`) |
 
 ## Fotos del Dr. Óscar Martínez, un solo actor (18 de septiembre de 2026, segunda vuelta)
 Las seis llegaron directamente de Andrés el mismo día, ya pensadas como continuidad de un solo personaje:
