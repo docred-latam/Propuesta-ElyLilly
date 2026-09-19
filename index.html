@@ -565,6 +565,36 @@
   .ios-navbar.is-velada { filter: blur(8px) opacity(.55); pointer-events: none; }
   .ios-navbar { transition: filter .35s cubic-bezier(.32,.72,0,1); }
 
+  /* ===== Apertura de «El día a día de un médico»: los dos momentos que DocRed entiende ===== */
+  .hist-sec--dos { display: block; border: 0; background: none; padding: clamp(84px, 11vh, 132px) 0 clamp(8px, 2vh, 24px); overflow: visible; }
+  .dos-cab { max-width: 48rem; }
+  .dos-cab .hist-p { margin-top: 18px; max-width: 40rem; }
+  .dos-grid { margin-top: clamp(30px, 4.4vw, 52px); display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  @media (min-width: 900px) { .dos-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; } }
+  .dos-card { position: relative; isolation: isolate; display: flex; flex-direction: column; justify-content: flex-end; gap: 12px;
+    min-height: clamp(380px, 56vh, 540px); padding: clamp(22px, 2.6vw, 34px); border-radius: 26px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,.14); box-shadow: 0 30px 70px -40px rgba(0,0,0,.9); }
+  .dos-card img.dos-foto { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; transition: transform 1.4s cubic-bezier(.32,.72,0,1); }
+  .dos-card:hover img.dos-foto { transform: scale(1.045); }
+  .dos-card::before { content: ''; position: absolute; inset: 0; z-index: -1;
+    background: linear-gradient(180deg, rgba(5,5,5,.30) 0%, rgba(5,5,5,.10) 30%, rgba(5,5,5,.80) 68%, rgba(5,5,5,.96) 100%); }
+  .dos-card::after { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--dos-acento, #D52B1E); }
+  .dos-top { position: absolute; top: 22px; left: clamp(22px, 2.6vw, 34px); right: clamp(22px, 2.6vw, 34px); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .dos-num { font-size: 13px; font-weight: 600; letter-spacing: .16em; color: rgba(255,255,255,.85); }
+  .dos-ico { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 9999px;
+    background: var(--dos-acento, #D52B1E); color: #fff; box-shadow: 0 10px 30px -10px var(--dos-acento, #D52B1E); }
+  .dos-tag { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; padding: 6px 13px; border-radius: 9999px; font-size: 12.5px; font-weight: 600;
+    letter-spacing: .02em; color: #fff; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.22); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  .dos-tag i { width: 7px; height: 7px; border-radius: 9999px; background: var(--dos-acento, #D52B1E); display: inline-block; }
+  .dos-t { font-size: clamp(25px, 2.7vw, 36px); font-weight: 600; line-height: 1.1; letter-spacing: -.02em; text-wrap: balance; }
+  .dos-d { max-width: 30rem; font-size: 15.5px; line-height: 1.55; color: rgba(255,255,255,.8); text-wrap: pretty; }
+  .dos-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .dos-chips span { padding: 5px 12px; border-radius: 9999px; font-size: 12.5px; color: rgba(255,255,255,.88); border: 1px solid rgba(255,255,255,.26); background: rgba(0,0,0,.28); }
+  .dos-puente { margin-top: clamp(30px, 4.6vw, 54px); display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+  .dos-puente-linea { width: 2px; height: 44px; border-radius: 2px; background: linear-gradient(180deg, transparent, #D52B1E); }
+  .dos-puente-t { max-width: 40rem; font-size: clamp(21px, 2.4vw, 30px); font-weight: 600; line-height: 1.22; letter-spacing: -.015em; text-wrap: balance; }
+  .dos-puente-s { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; color: rgba(255,255,255,.7); }
+
   /* ===== Hero y parrilla · lenguaje de Framer con la voz de Lilly ===== */
   /* El hero dura dos pantallas de scroll: el contenido queda fijo mientras el teléfono se endereza. */
   .hist-hero { height: 100vh; position: relative; }
@@ -1995,7 +2025,7 @@
             function narrativa() {
               return {
                 capitulos: [
-                  { id: 'cap-marca', n: 'DocRed' }, { id: 'cap-hero', n: 'Portada' }, { id: 'cap-dia', n: 'El entendimiento del reto' }, { id: 'cap-oscar', n: 'Dr. Óscar' },
+                  { id: 'cap-marca', n: 'DocRed' }, { id: 'cap-dos', n: 'Dos momentos' }, { id: 'cap-hero', n: 'Portada' }, { id: 'cap-dia', n: 'El entendimiento del reto' }, { id: 'cap-oscar', n: 'Dr. Óscar' },
                   { id: 'cap-necesidades', n: 'Dos necesidades' }, { id: 'cap-rapida', n: 'Consulta rápida' }, { id: 'cap-busqueda', n: 'Qué hizo: consulta' },
                   { id: 'cap-formacion', n: 'Formación continua' }, { id: 'cap-valor', n: 'Qué hizo: formación' },
                   { id: 'cap-noche', n: 'Continúa en la noche' }, { id: 'cap-colegas', n: 'Encuentro con colegas' },
@@ -2204,6 +2234,40 @@
                 <div class="cap-marca-cifra"><span class="cap-marca-cifra-n">+6</span><span class="cap-marca-cifra-d">Años de experiencia en educación médica digital</span></div>
               </div>
             </div>
+
+            <!-- Apertura · Los dos momentos que DocRed entiende de la formación continua del médico.
+                 Va antes de la portada y da paso al día a día del Dr. Óscar. -->
+            <section id="cap-dos" x-show="pantalla === 'historia'" class="hist-sec hist-sec--dos">
+              <div class="dos-cab hist-anim">
+                <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">01</span><span class="hist-hilo-l"></span></div>
+                <p class="hist-kicker">Lo que hemos comprendido</p>
+                <h2 class="hist-h1 mt-3">Dos momentos definen la formación continua del médico</h2>
+                <p class="hist-p">DocRed ha comprendido dos elementos fundamentales en la formación continua de los médicos. Una plataforma como Lilly 360 debe responder a los dos.</p>
+              </div>
+              <div class="dos-grid">
+                <article class="dos-card hist-anim" style="--dos-acento:#D52B1E">
+                  <img class="dos-foto" src="img/oscar_consulta_rapida_maria.jpg" alt="El Dr. Óscar Martínez consulta información en su celular durante la consulta, con la paciente en frente" loading="lazy" decoding="async" />
+                  <div class="dos-top"><span class="dos-num">01</span><span class="dos-ico"><i data-lucide="zap" class="h-5 w-5"></i></span></div>
+                  <span class="dos-tag"><i></i>En consulta</span>
+                  <h3 class="dos-t">Consultas y dudas al instante</h3>
+                  <p class="dos-d">La pregunta surge con el paciente en frente, y la respuesta tiene que llegar ahí mismo, no después.</p>
+                  <div class="dos-chips"><span>Búsqueda rápida</span><span>Algoritmos y tablas</span><span>Contenido aprobado</span></div>
+                </article>
+                <article class="dos-card hist-anim" style="--dos-acento:#1F5FA8">
+                  <img class="dos-foto" src="img/oscar_formacion_mediodia.jpg" alt="El Dr. Óscar Martínez aprovecha el almuerzo para ver un contenido de formación en su tablet" loading="lazy" decoding="async" />
+                  <div class="dos-top"><span class="dos-num">02</span><span class="dos-ico"><i data-lucide="graduation-cap" class="h-5 w-5"></i></span></div>
+                  <span class="dos-tag"><i></i>En sus tiempos libres</span>
+                  <h3 class="dos-t">Formación y actualización cuando tiene un momento</h3>
+                  <p class="dos-d">El almuerzo, una sala de espera o la noche en casa: veinte minutos para seguir aprendiendo.</p>
+                  <div class="dos-chips"><span>Webinars</span><span>Microaprendizajes</span><span>Certificación</span></div>
+                </article>
+              </div>
+              <div class="dos-puente hist-anim">
+                <span class="dos-puente-linea" aria-hidden="true"></span>
+                <p class="dos-puente-t">Una plataforma como <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[17px] w-[45px] shrink-0 object-contain inline-block" loading="eager" decoding="async" />360</span> debe responder a estos dos momentos.</p>
+                <p class="dos-puente-s">A continuación vemos cómo Lilly forma parte de su día a día<i data-lucide="arrow-down" class="h-4 w-4"></i></p>
+              </div>
+            </section>
 
             <!-- Hero: lo primero que ve Lilly. Titular a la izquierda y el producto dentro de una ventana, como Framer. -->
             <section id="cap-hero" x-show="pantalla === 'historia'" class="hist-hero">
@@ -2437,6 +2501,6 @@
           </div>
 </main>
 
-<script src="src/app.js?v=202609190226"></script>
+<script src="src/app.js?v=202609190236"></script>
 </body>
 </html>
