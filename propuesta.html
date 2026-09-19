@@ -32,6 +32,8 @@
   .logo img{display:block; height:26px; width:auto}
 .logo{background:#fff; color:#fff; padding:6px 10px; border-radius:6px; border:0; cursor:pointer; font-family:inherit}
   .logo i{font-style:normal; color:#6DCB8A}
+  .side .volver{align-self:flex-start; margin:0 0 14px; padding:6px 12px; border:1px solid var(--linea); border-radius:999px; font-size:12.5px; color:var(--t-2,#cfcfcf); text-decoration:none; transition:background .2s,color .2s}
+  .side .volver:hover{background:rgba(255,255,255,.08); color:#fff}
   .side .para{margin:6px 0 0; font-size:13px; color:var(--t-3)}
   .menu-tit{margin:32px 0 10px; font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--t-4)}
   .menu{list-style:none; margin:0; padding:0; display:grid; gap:2px}
@@ -275,6 +277,7 @@
 
 <!-- MENU LATERAL: cada enlace lleva a su seccion -->
 <aside class="side">
+  <a class="volver" href="index.html">← Volver al inicio</a>
   <button type="button" class="logo" data-go="resumen" aria-label="DocRed"><img src="img/docred-logo.png" alt="DocRed"></button>
   <p class="para">Propuesta para Lilly 360 Colombia</p>
   <p class="menu-tit">Contenido</p>
