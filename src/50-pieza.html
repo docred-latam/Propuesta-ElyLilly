@@ -4,25 +4,32 @@
                Al responder (M6) las opciones se bloquean, la correcta lleva check y la incorrecta ×; la hoja baja sola a los 2 s y el video sigue.
                `?pregunta=1` abre la hoja al cargar (solo para capturas). Responsivo con una sola grilla de 4 piezas (reproductor, título, pregunta, resumen). -->
           <div x-show="pantalla === 'pieza'" class="relative pb-32 @3xl:pb-16" x-data="{
-            reproduciendo: false, avance: 35, hoja: false, ficha: false, _t: null,
+            reproduciendo: false, avance: 35, hoja: false, ficha: false, _t: null, mr: [],
             init() {
               this.$watch('ficha', v => { if ('modal' in this) this.modal = v; });
-              this.$watch('pieza', () => { clearTimeout(this._t); this.reproduciendo = false; this.hoja = false; this.avance = pieza.progreso ?? 0; });
+              this.$watch('pieza', () => { clearTimeout(this._t); this.reproduciendo = false; this.hoja = false; this.mr = []; this.avance = pieza.progreso ?? 0; });
               // La hoja es modal: mientras está abierta el cascarón oculta la tab bar (estado global `modal`, defensivo por si aún no existe).
               this.$watch('hoja', v => { if ('modal' in this) this.modal = v; });
               this.$watch('pantalla', p => { if (p !== 'pieza') { this.ficha = false; if (this.hoja) { clearTimeout(this._t); this.hoja = false; this.reproduciendo = false; } } });
               // Parámetros de captura (van después de los watchers para que `modal` también se active): ?pregunta=1 abre la hoja, ?r=<i> responde.
               const q = new URLSearchParams(location.search); if (q.get('pregunta') === '1') { this.avance = 60; this.hoja = true; } if (q.get('r') !== null) this.$nextTick(() => { respuesta = +q.get('r'); }); if (q.get('ficha') === '1' && q.get('p') === 'pieza') this.ficha = true;
             },
+            mResp(q, i) { if (this.mr[q] !== undefined) return; this.mr = Object.assign([], this.mr, { [q]: i }); },
+            mEstado(q, i) { const r = this.mr[q]; if (r === undefined) return 'pendiente'; const c = pieza.preguntas[q].c; if (i === c) return 'correcta'; if (i === r) return 'incorrecta'; return 'otra'; },
+            get mTotal() { return (pieza.preguntas || []).length; },
+            get mHechas() { let n = 0; for (let k = 0; k < this.mTotal; k++) if (this.mr[k] !== undefined) n++; return n; },
+            get mAciertos() { let n = 0; for (let k = 0; k < this.mTotal; k++) if (this.mr[k] === pieza.preguntas[k].c) n++; return n; },
+            get sinResp() { return pieza.formato === 'micro' ? this.mHechas < this.mTotal : respuesta === null; },
             minutos(p) { return parseInt(p.duracion) || 15; },
             tiempos(p) {
-              if (p.formato === 'video') { const s = Math.round(this.minutos(p) * 60 * this.avance / 100); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0') + ' / ' + this.minutos(p) + ':00'; }
+              if (p.formato === 'video' || p.formato === 'micro') { const s = Math.round(this.minutos(p) * 60 * this.avance / 100); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0') + ' / ' + this.minutos(p) + ':00'; }
               if (p.formato === 'pdf') return 'Página ' + Math.max(1, Math.round((parseInt(p.duracion) || 16) * this.avance / 100)) + ' · ' + (p.duracion || '');
               if (p.formato === 'encuesta') return '3 preguntas · 2 min';
               return 'Infografía interactiva';
             },
             play() {
               if (this.hoja) return;
+              if (pieza.formato === 'micro') { this.reproduciendo = !this.reproduciendo; clearTimeout(this._t); if (this.reproduciendo) { this.avance = 100; this._t = setTimeout(() => { this.reproduciendo = false; }, 3000); } return; }
               this.reproduciendo = !this.reproduciendo; clearTimeout(this._t);
               if (!this.reproduciendo) return;
               if (respuesta === null) { this.avance = 60; this._t = setTimeout(() => { this.reproduciendo = false; this.hoja = true; }, 3000); }
@@ -76,7 +83,7 @@
               </div>
 
               <!-- Pregunta: tarjeta inline (sin asa). En iPhone es el registro de lo respondido; en @3xl+ es donde se responde y se ilumina al llegar al minuto 5 -->
-              <div class="glass-strong rounded-[28px] mt-6 p-4 @3xl:mt-6 @3xl:p-5 @3xl:col-start-2 @3xl:row-start-2 @3xl:row-span-2 @3xl:self-start @3xl:sticky @3xl:top-4 @6xl:mt-0 @6xl:row-start-1 @6xl:row-span-3 transition-shadow duration-300"
+              <div x-show="pieza.formato !== 'micro'" class="glass-strong rounded-[28px] mt-6 p-4 @3xl:mt-6 @3xl:p-5 @3xl:col-start-2 @3xl:row-start-2 @3xl:row-span-2 @3xl:self-start @3xl:sticky @3xl:top-4 @6xl:mt-0 @6xl:row-start-1 @6xl:row-span-3 transition-shadow duration-300"
                    :class="hoja && respuesta === null ? '@3xl:shadow-[0_0_0_1px_#D52B1E,0_12px_40px_rgba(213,43,30,.18)]' : ''" :aria-live="hoja ? 'polite' : 'off'">
                 <p class="text-[13px] font-medium" :class="respuesta === null ? 'text-ink-2' : (acierto ? 'text-ink' : 'text-lilly')"
                    x-text="respuesta === null ? 'Pregunta al minuto 5' : ('Respondida · ' + (acierto ? 'correcta' : 'incorrecta'))"></p>
@@ -101,8 +108,49 @@
                 </div>
               </div>
 
+              <!-- Microaprendizaje: 2 o 3 preguntas a la derecha del video y la infografía; cada una se responde y explica sola -->
+              <div x-show="pieza.formato === 'micro'" class="glass-strong rounded-[28px] mt-6 p-4 @3xl:mt-6 @3xl:p-5 @3xl:col-start-2 @3xl:row-start-2 @3xl:row-span-2 @3xl:self-start @3xl:sticky @3xl:top-4 @6xl:mt-0 @6xl:row-start-1 @6xl:row-span-3" aria-live="polite">
+                <p class="text-[13px] font-medium text-ink-2" x-text="'Preguntas del microaprendizaje · ' + mHechas + ' de ' + mTotal"></p>
+                <template x-for="(q, qi) in (pieza.preguntas || [])" :key="'mq' + pieza.titulo + qi">
+                  <div class="mt-4">
+                    <p class="text-[16px] @6xl:text-[17px] font-semibold leading-snug text-ink" x-text="(qi + 1) + '. ' + q.p"></p>
+                    <div class="ios-list mt-2 -mx-1" role="radiogroup">
+                      <template x-for="(o, i) in q.o" :key="'mo' + qi + i">
+                        <button @click="mResp(qi, i)" role="radio" :aria-checked="mr[qi] === i ? 'true' : 'false'" :aria-disabled="mr[qi] !== undefined ? 'true' : 'false'"
+                                class="ios-row press transition-opacity duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#1F5FA8]"
+                                :class="mEstado(qi, i) === 'otra' ? 'opacity-50' : ''">
+                          <span class="inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border-[1.5px] transition-all duration-200"
+                                :class="{ pendiente: 'border-ink-3 text-transparent', correcta: 'bg-ink border-ink text-white', incorrecta: 'bg-lilly-soft border-lilly text-lilly', otra: 'border-ink-3 text-transparent' }[mEstado(qi, i)]">
+                            <svg x-show="mEstado(qi, i) !== 'incorrecta'" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                            <svg x-show="mEstado(qi, i) === 'incorrecta'" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                          </span>
+                          <span class="text-[15px] leading-snug text-ink" x-text="o"></span>
+                        </button>
+                      </template>
+                    </div>
+                    <div x-show="mr[qi] !== undefined" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="mt-2 rounded-2xl bg-ink/[.05] px-4 py-3">
+                      <p class="text-[14px] leading-[1.5] text-ink" x-text="mr[qi] === undefined ? '' : (mr[qi] === q.c ? 'Correcto. ' : 'La respuesta correcta es la ' + String.fromCharCode(65 + q.c) + '. ') + q.e"></p>
+                    </div>
+                  </div>
+                </template>
+              </div>
+
               <!-- Resumen y la única acción del pie (M1): el certificado, con su caption (M6) -->
               <div class="mt-7 @3xl:mt-6 @3xl:col-start-1 @3xl:row-start-3 max-w-[640px]">
+                <!-- Infografía del microaprendizaje: el contenido que acompaña al video -->
+                <div x-show="pieza.formato === 'micro' && pieza.infografia" class="glass rounded-[24px] p-5 mb-7">
+                  <p class="text-[12px] font-semibold uppercase tracking-wide text-lilly">Infografía</p>
+                  <h2 class="mt-1 text-[17px] font-semibold text-ink" x-text="pieza.infografia ? pieza.infografia.titulo : ''"></h2>
+                  <ol class="mt-3 grid gap-3 @3xl:grid-cols-3">
+                    <template x-for="(s, k) in (pieza.infografia ? pieza.infografia.pasos : [])" :key="'ig' + k">
+                      <li class="rounded-2xl bg-ink/[.05] p-4">
+                        <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-lilly text-white text-[13px] font-semibold" x-text="k + 1"></span>
+                        <p class="mt-2 text-[15px] font-semibold leading-snug text-ink" x-text="s.t"></p>
+                        <p class="mt-1 text-[14px] leading-snug text-ink-2" x-text="s.d"></p>
+                      </li>
+                    </template>
+                  </ol>
+                </div>
                 <h2 class="text-[17px] font-semibold text-ink">Resumen</h2>
                 <p class="mt-1.5 text-[15px] @6xl:text-[16px] leading-[1.5] text-ink/90" x-text="pieza.resumen"></p>
                 <!-- Contenido comercial, separado del médico: abre la ficha de prescripción del producto del canal -->
@@ -114,8 +162,8 @@
                   </button>
                 </div>
                 <div class="mt-5 @3xl:flex @3xl:items-center @3xl:gap-4">
-                  <button class="ios-btn w-full @3xl:w-auto transition-opacity duration-300" :class="respuesta === null ? 'opacity-40 cursor-not-allowed' : ''" :disabled="respuesta === null" :aria-disabled="respuesta === null ? 'true' : 'false'"><i data-lucide="award" class="h-5 w-5"></i>Obtener certificado</button>
-                  <p class="mt-2.5 @3xl:mt-0 text-center @3xl:text-left text-[13px] text-ink-2 transition-opacity duration-300" x-text="respuesta === null ? 'Responde la pregunta para obtener el certificado' : '1 de 1 preguntas · lista para certificar'"></p>
+                  <button class="ios-btn w-full @3xl:w-auto transition-opacity duration-300" :class="sinResp ? 'opacity-40 cursor-not-allowed' : ''" :disabled="sinResp" :aria-disabled="sinResp ? 'true' : 'false'"><i data-lucide="award" class="h-5 w-5"></i>Obtener certificado</button>
+                  <p class="mt-2.5 @3xl:mt-0 text-center @3xl:text-left text-[13px] text-ink-2 transition-opacity duration-300" x-text="pieza.formato === 'micro' ? (sinResp ? 'Responde las ' + mTotal + ' preguntas para obtener el certificado' : mAciertos + ' de ' + mTotal + ' correctas · lista para certificar') : (respuesta === null ? 'Responde la pregunta para obtener el certificado' : '1 de 1 preguntas · lista para certificar')"></p>
                 </div>
               </div>
             </div>

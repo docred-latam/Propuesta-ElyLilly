@@ -715,11 +715,11 @@
     </div>
   </template>
   <nav class="ml-auto hidden md:flex items-center gap-1 text-[13px]">
-    <template x-for="s in atajos" :key="s.id || s.sep">
+    <template x-for="s in atajos" :key="s.k">
       <span>
         <span x-show="s.sep" class="mx-2 inline-block h-4 w-px align-middle bg-white/15"></span>
-        <button x-show="!s.sep" @click="s.href ? (window.location.href = s.href) : ir(s.id, s.extra)" class="px-3.5 py-1.5 rounded-full transition-colors duration-200"
-                :class="pantalla === s.id ? 'bg-white/12 text-white' : 'text-white/50 hover:text-white/80 hover:bg-white/5'" x-text="s.nombre"></button>
+        <button x-show="!s.sep" @click="irMenu(s)" class="rounded-full transition-colors duration-200"
+                :class="[s.sub ? 'px-2.5 py-1 text-[12px]' : 'px-3.5 py-1.5', s.on ? 'bg-white/12 text-white' : 'text-white/50 hover:text-white/80 hover:bg-white/5']" x-text="s.nombre"></button>
       </span>
     </template>
   </nav>

@@ -55,16 +55,39 @@ function app() {
       ],
     },
 
-    // El separador marca dónde se sale del app: lo de la derecha ocurre en otra plataforma.
-    atajos: [
-      { id: 'historia', nombre: 'La historia' },
-      { id: 'registro', nombre: 'Registro' },
-      { id: 'inicio', nombre: 'Home' },
-      { id: 'tema', nombre: 'Búsqueda rápida' },
-      { id: 'formacion', nombre: 'Formación ágil' },
-      { sep: true },
-      { href: 'propuesta.html', nombre: 'Propuesta' },
-    ],
+    // Menú superior: tres entradas (Por qué DocRed, El día a día de un médico, Lilly 360) y, dentro de Lilly 360, las pantallas del producto.
+    // El separador marca dónde se sale del app: lo de la derecha ocurre en otra página.
+    get atajos() {
+      const proto = ['registro', 'inicio', 'tema', 'detalle', 'formacion', 'pieza', 'guardados', 'perfil'];
+      const enProto = proto.includes(this.pantalla);
+      const micro = this.pantalla === 'pieza' && this.pieza.formato === 'micro';
+      const l = [
+        { k: 'docred', id: 'docred', nombre: 'Por qué DocRed', on: this.pantalla === 'docred' },
+        { k: 'historia', id: 'historia', nombre: 'El día a día de un médico', on: this.pantalla === 'historia' },
+        { k: 'lilly360', id: 'registro', nombre: 'Lilly 360', on: enProto },
+      ];
+      if (enProto) l.push(
+        { k: 's-registro', id: 'registro', nombre: 'Registro', sub: true, on: this.pantalla === 'registro' },
+        { k: 's-inicio', id: 'inicio', nombre: 'Home', sub: true, on: this.pantalla === 'inicio' },
+        { k: 's-tema', id: 'tema', nombre: 'Búsqueda rápida', sub: true, on: ['tema', 'detalle'].includes(this.pantalla) },
+        { k: 's-formacion', id: 'formacion', nombre: 'Formación ágil', sub: true, on: this.pantalla === 'formacion' || (this.pantalla === 'pieza' && !micro) },
+        { k: 's-micro', id: 'micro', nombre: 'Microaprendizaje', sub: true, on: micro },
+      );
+      l.push({ k: 'sep', sep: true }, { k: 'propuesta', href: 'propuesta.html', nombre: 'Propuesta' });
+      return l;
+    },
+    // Abre el primer microaprendizaje del canal (video + infografía + 2 o 3 preguntas a la derecha).
+    abrirMicro(enf) {
+      if (enf) this.enfermedad = enf;
+      const m = this.formacion[this.enfermedad].find(c => c.formato === 'micro');
+      if (!m) { this.ir('formacion'); return; }
+      this.pieza = m; this.respuesta = null; this.ir('pieza');
+    },
+    irMenu(s) {
+      if (s.href) { window.location.href = s.href; return; }
+      if (s.id === 'micro') { this.abrirMicro(); return; }
+      this.irRaiz(s.id);
+    },
     // Pantallas «de sistema» dentro del teléfono sin tab bar, hoja ni sidebar (registro es el momento 0). El back office ya no vive
     // en el teléfono: la <section> del marco se oculta entera y `dispositivo` no se altera.
     sinCascaron: ['registro'],
@@ -75,7 +98,7 @@ function app() {
     // Contrato compartido: `modal` en true oculta la tab bar (lo pone el agente de Pieza al subir su hoja de pregunta).
     modal: false,
     perfil: { notificaciones: true, envivo: true, intereses: ['diabetes', 'mama'] },
-    formatos: [ { id: 'todos', nombre: 'Todo', icono: 'layout-grid' }, { id: 'video', nombre: 'Video', icono: 'play-circle' }, { id: 'live', nombre: 'En vivo', icono: 'radio' }, { id: 'pdf', nombre: 'Estudio PDF', icono: 'file-text' }, { id: 'info', nombre: 'Infografía', icono: 'image' }, { id: 'encuesta', nombre: 'Encuesta', icono: 'list-checks' } ],
+    formatos: [ { id: 'todos', nombre: 'Todo', icono: 'layout-grid' }, { id: 'micro', nombre: 'Microaprendizaje', icono: 'graduation-cap' }, { id: 'video', nombre: 'Video', icono: 'play-circle' }, { id: 'live', nombre: 'En vivo', icono: 'radio' }, { id: 'pdf', nombre: 'Estudio PDF', icono: 'file-text' }, { id: 'info', nombre: 'Infografía', icono: 'image' }, { id: 'encuesta', nombre: 'Encuesta', icono: 'list-checks' } ],
 
     enfermedades: {
       diabetes: { nombre: 'Diabetes tipo 2', corto: 'Diabetes', area: 'Endocrinología', icono: 'droplet', portada: 'img/diabetes-portada.jpg', hero: 'img/webinar-endocrino.jpg', producto: 'Mounjaro', descripcion: 'Agonista dual GIP/GLP-1 en una sola inyección semanal para diabetes tipo 2 en adultos.', rayos: 'img/rayos-mounjaro.webp', logo: 'img/marca-mounjaro.png', logoAlto: 40, principio: 'tirzepatida',
@@ -173,7 +196,7 @@ function app() {
     formacion: {
       diabetes: [
         { formato: 'live', imagen: 'img/webinar-endocrino.jpg', titulo: 'Tirzepatida en la práctica: casos clínicos de la consulta real', autor: 'Dra. Ana Rojas · Endocrinóloga · Hoy 6:00 pm', fecha: 'Hoy', duracion: '60 min', pregunta: '¿Cuál es el primer paso ante un paciente con HbA1c de 9,2 % y obesidad?', opciones: ['Insulina basal de inmediato', 'Metformina más un agente con beneficio en peso', 'Solo cambios en el estilo de vida'], correcta: 1, explicacion: 'Con HbA1c 1,5 % por encima de meta se recomienda terapia dual desde el inicio.', resumen: 'Sesión en vivo con revisión de tres casos de consulta y espacio de preguntas con la experta.' },
-        { formato: 'video', imagen: 'img/oscar-tablet.jpg', titulo: 'Metas glucémicas: cómo individualizar en el adulto mayor', autor: 'Dr. Julián Mesa · Medicina interna', fecha: '10 sep 2026', duracion: '15 min', progreso: 35, pregunta: '¿Qué meta de HbA1c es razonable en un adulto mayor frágil con hipoglucemias previas?', opciones: ['< 6,5 %', '< 7 %', '< 8 %'], correcta: 2, explicacion: 'En pacientes frágiles se relaja la meta para reducir el riesgo de hipoglucemia.', resumen: 'Microaprendizaje de 15 minutos sobre cómo ajustar las metas de control según fragilidad, expectativa de vida y riesgo de hipoglucemia.' },
+        { formato: 'micro', imagen: 'img/oscar-tablet.jpg', titulo: 'Metas glucémicas: cómo individualizar en el adulto mayor', autor: 'Dr. Julián Mesa · Medicina interna', fecha: '10 sep 2026', duracion: '15 min', progreso: 35, pregunta: '¿Qué meta de HbA1c es razonable en un adulto mayor frágil con hipoglucemias previas?', opciones: ['< 6,5 %', '< 7 %', '< 8 %'], correcta: 2, explicacion: 'En pacientes frágiles se relaja la meta para reducir el riesgo de hipoglucemia.', preguntas: [{ p: '¿Qué meta de HbA1c es razonable en un adulto mayor frágil con hipoglucemias previas?', o: ['< 6,5 %', '< 7 %', '< 8 %'], c: 2, e: 'En pacientes frágiles se relaja la meta para reducir el riesgo de hipoglucemia.' }, { p: '¿Qué factor justifica una meta menos estricta?', o: ['Historia de hipoglucemias graves', 'Buen apego al tratamiento', 'Índice de masa corporal normal'], c: 0, e: 'Las hipoglucemias previas, la fragilidad y una expectativa de vida corta justifican una meta menos estricta.' }, { p: 'En un adulto mayor sano y funcional, ¿qué meta es razonable?', o: ['Entre 7,0 y 7,5 %', '< 6,0 %', '< 9 %'], c: 0, e: 'En adultos mayores sanos y funcionales suele mantenerse una meta cercana a 7 a 7,5 %.' }], infografia: { titulo: 'La meta de HbA1c depende del paciente', pasos: [{ t: 'Sano y funcional', d: 'Meta cercana a 7,0 a 7,5 %.' }, { t: 'Varias comorbilidades o frágil', d: 'Meta menos estricta, por debajo de 8 %.' }, { t: 'Muy compleja o final de vida', d: 'Prima evitar la hipoglucemia, sin meta numérica.' }] }, resumen: 'Microaprendizaje: un video corto, una infografía y, a la derecha, tres preguntas sobre lo que acabas de ver. Al responderlas obtienes tu certificado.' },
         { formato: 'pdf', imagen: 'img/estudio-pdf.jpg', titulo: 'SURPASS-2: tirzepatida frente a semaglutida en diabetes tipo 2', autor: 'Estudio clínico · NEJM 2021', fecha: '03 sep 2026', duracion: '18 pág.', pregunta: '¿Cuál fue el desenlace primario del estudio?', opciones: ['Cambio en HbA1c a la semana 40', 'Eventos cardiovasculares mayores', 'Cambio de peso a la semana 52'], correcta: 0, explicacion: 'El desenlace primario fue el cambio en HbA1c desde el inicio a la semana 40.', resumen: 'Resumen estructurado del estudio con tablas de eficacia, seguridad y aplicabilidad a la práctica en Colombia.' },
         { formato: 'info', imagen: 'img/diabetes-portada.jpg', titulo: 'Interpretación rápida del monitoreo continuo de glucosa', autor: 'Comité editorial Lilly', fecha: '28 ago 2026', pregunta: '¿Qué porcentaje de tiempo en rango se considera meta para la mayoría de adultos?', opciones: ['> 50 %', '> 70 %', '> 90 %'], correcta: 1, explicacion: 'La meta general es más del 70 % del tiempo entre 70 y 180 mg/dL.', resumen: 'Infografía interactiva con los indicadores del reporte de glucosa y su lectura clínica.' },
         { formato: 'encuesta', imagen: 'img/junta-medica.jpg', titulo: '¿Qué barreras encuentras para iniciar terapia inyectable?', autor: 'Encuesta a la comunidad · 2 min', fecha: '25 ago 2026', pregunta: '¿Cuál es la principal barrera en tu consulta?', opciones: ['Costo y acceso', 'Temor del paciente a la inyección', 'Falta de tiempo para educar'], correcta: 0, explicacion: 'Gracias por tu respuesta. Los resultados agregados se publican el próximo mes.', resumen: 'Encuesta breve para conocer las barreras reales en la práctica y orientar los próximos contenidos.' },
@@ -181,7 +204,7 @@ function app() {
         { formato: 'pdf', imagen: 'img/estudio-pdf.jpg', titulo: 'SURMOUNT-1: tirzepatida en obesidad sin diabetes', autor: 'Estudio clínico · NEJM 2022', fecha: '20 ago 2026', duracion: '14 pág.', pregunta: '¿Cuál fue la reducción media de peso a la semana 72 con la dosis más alta?', opciones: ['Cerca del 5 %', 'Cerca del 12 %', 'Cerca del 21 %'], correcta: 2, explicacion: 'La dosis de 15 mg alcanzó cerca del 21 % de reducción de peso.', resumen: 'Resumen estructurado con eficacia, seguridad y aplicabilidad a la práctica.' },
       ],
       mama: [
-        { formato: 'video', imagen: 'img/webinar-oncologo.jpg', titulo: 'monarchE a 5 años: qué cambia en el adyuvante de alto riesgo', autor: 'Dr. Camilo Peña · Oncólogo clínico', fecha: '08 sep 2026', duracion: '22 min', progreso: 60, pregunta: '¿Cuánto dura el tratamiento adyuvante con inhibidor de CDK4/6 en monarchE?', opciones: ['1 año', '2 años', '5 años'], correcta: 1, explicacion: 'El esquema adyuvante fue de dos años, sumado a la terapia endocrina.', resumen: 'Revisión de los resultados de seguimiento y su impacto en la selección de pacientes.' },
+        { formato: 'micro', imagen: 'img/webinar-oncologo.jpg', titulo: 'monarchE a 5 años: qué cambia en el adyuvante de alto riesgo', autor: 'Dr. Camilo Peña · Oncólogo clínico', fecha: '08 sep 2026', duracion: '22 min', progreso: 60, pregunta: '¿Cuánto dura el tratamiento adyuvante con inhibidor de CDK4/6 en monarchE?', opciones: ['1 año', '2 años', '5 años'], correcta: 1, explicacion: 'El esquema adyuvante fue de dos años, sumado a la terapia endocrina.', preguntas: [{ p: '¿Cuánto dura el tratamiento adyuvante con inhibidor de CDK4/6 en monarchE?', o: ['1 año', '2 años', '5 años'], c: 1, e: 'El esquema adyuvante fue de dos años, sumado a la terapia endocrina.' }, { p: '¿Qué población incluyó monarchE?', o: ['Cáncer de mama temprano RH positivo, HER2 negativo y alto riesgo', 'Cáncer de mama metastásico', 'Cáncer de mama HER2 positivo'], c: 0, e: 'monarchE incluyó pacientes con cáncer de mama temprano, RH positivo, HER2 negativo y alto riesgo de recaída.' }, { p: '¿Con qué se combinó el inhibidor de CDK4/6?', o: ['Terapia endocrina estándar', 'Quimioterapia sola', 'Radioterapia exclusiva'], c: 0, e: 'El inhibidor de CDK4/6 se administró junto con la terapia endocrina estándar.' }], infografia: { titulo: 'monarchE en tres datos', pasos: [{ t: 'A quién', d: 'Cáncer de mama temprano, RH positivo, HER2 negativo y alto riesgo.' }, { t: 'Cómo', d: 'Dos años de inhibidor de CDK4/6 sumado a terapia endocrina.' }, { t: 'Qué cambia', d: 'Seguimiento a 5 años para la selección de pacientes.' }] }, resumen: 'Microaprendizaje: un video corto, una infografía y, a la derecha, tres preguntas sobre lo que acabas de ver. Al responderlas obtienes tu certificado.' },
         { formato: 'live', imagen: 'img/junta-medica.jpg', titulo: 'Junta multidisciplinaria abierta: casos de alto riesgo', autor: 'Fundación Santa Fe · Jueves 7:00 pm', fecha: 'Jueves', duracion: '90 min', pregunta: '¿Qué criterio define alto riesgo en monarchE?', opciones: ['Cualquier ganglio positivo', '≥ 4 ganglios, o 1–3 con tumor ≥ 5 cm o grado 3', 'Solo Ki-67 elevado'], correcta: 1, explicacion: 'La cohorte 1 se definió por carga ganglionar, tamaño y grado.', resumen: 'Sesión en vivo con discusión de casos reales y votación interactiva.' },
         { formato: 'pdf', imagen: 'img/estudio-pdf.jpg', titulo: 'Manejo de la diarrea inducida por inhibidores de CDK4/6', autor: 'Guía de práctica · ESMO 2025', fecha: '30 ago 2026', duracion: '12 pág.', pregunta: '¿Cuándo se inicia loperamida?', opciones: ['Con el primer episodio de heces blandas', 'Solo en diarrea grado 3', 'Nunca de forma profiláctica'], correcta: 0, explicacion: 'El manejo temprano reduce la necesidad de ajustar la dosis.', resumen: 'Guía práctica con algoritmo de manejo por grado y recomendaciones para el paciente.' },
         { formato: 'info', imagen: 'img/mama-portada.jpg', titulo: 'Terapia endocrina: adherencia y efectos adversos frecuentes', autor: 'Comité editorial Lilly', fecha: '20 ago 2026', pregunta: '¿Qué porcentaje de pacientes abandona la terapia endocrina antes de 5 años?', opciones: ['Cerca del 10 %', 'Entre 30 y 50 %', 'Más del 80 %'], correcta: 1, explicacion: 'La no adherencia es frecuente y se asocia con peor supervivencia.', resumen: 'Infografía para la consulta con estrategias de apoyo a la adherencia.' },
@@ -189,7 +212,7 @@ function app() {
         { formato: 'encuesta', imagen: 'img/junta-medica.jpg', titulo: '¿Con qué frecuencia remites a junta multidisciplinaria?', autor: 'Encuesta a la comunidad · 1 min', fecha: '12 ago 2026', pregunta: '¿Cuándo remites a junta?', opciones: ['Siempre, antes de iniciar tratamiento', 'Solo en casos de alto riesgo', 'Casi nunca, por falta de acceso'], correcta: 0, explicacion: 'Gracias por tu respuesta. Los resultados agregados se publican el próximo mes.', resumen: 'Encuesta breve para orientar los próximos ateneos.' },
       ],
       derma: [
-        { formato: 'video', imagen: 'img/webinar-derma.jpg', titulo: 'Anti-IL-13 en dermatitis atópica: a quién y cuándo', autor: 'Dra. Laura Gómez · Dermatóloga', fecha: '09 sep 2026', duracion: '18 min', progreso: 20, pregunta: '¿Cuál es el criterio principal para escalar a terapia sistémica?', opciones: ['Cualquier brote', 'Falla a tópicos optimizados con impacto en calidad de vida', 'Solo si hay asma asociada'], correcta: 1, explicacion: 'Se escala cuando el tratamiento tópico bien hecho no controla la enfermedad.', resumen: 'Microaprendizaje con criterios de selección, monitoreo y expectativas de respuesta.' },
+        { formato: 'micro', imagen: 'img/webinar-derma.jpg', titulo: 'Anti-IL-13 en dermatitis atópica: a quién y cuándo', autor: 'Dra. Laura Gómez · Dermatóloga', fecha: '09 sep 2026', duracion: '18 min', progreso: 20, pregunta: '¿Cuál es el criterio principal para escalar a terapia sistémica?', opciones: ['Cualquier brote', 'Falla a tópicos optimizados con impacto en calidad de vida', 'Solo si hay asma asociada'], correcta: 1, explicacion: 'Se escala cuando el tratamiento tópico bien hecho no controla la enfermedad.', preguntas: [{ p: '¿Cuál es el criterio principal para escalar a terapia sistémica?', o: ['Cualquier brote', 'Falla a tópicos optimizados con impacto en calidad de vida', 'Solo si hay asma asociada'], c: 1, e: 'Se escala cuando el tratamiento tópico bien hecho no controla la enfermedad.' }, { p: '¿Qué se debe optimizar antes de escalar?', o: ['Adherencia y técnica del tratamiento tópico', 'Solo el antihistamínico', 'El uso de antibióticos orales'], c: 0, e: 'Antes de escalar se verifica que el tópico se use bien, con adherencia y técnica correctas.' }, { p: '¿Qué escala mide extensión y severidad en la consulta?', o: ['EASI', 'HbA1c', 'ECOG'], c: 0, e: 'EASI puntúa la extensión y la severidad de las lesiones.' }], infografia: { titulo: 'Cuándo escalar en dermatitis atópica', pasos: [{ t: 'Optimizar el tópico', d: 'Emolientes y corticoide bien usados, con buena adherencia.' }, { t: 'Medir', d: 'EASI y calidad de vida en la consulta.' }, { t: 'Escalar', d: 'Si no hay control, considerar terapia sistémica.' }] }, resumen: 'Microaprendizaje: un video corto, una infografía y, a la derecha, tres preguntas sobre lo que acabas de ver. Al responderlas obtienes tu certificado.' },
         { formato: 'pdf', imagen: 'img/estudio-pdf.jpg', titulo: 'ADvocate 1 y 2: lebrikizumab en dermatitis atópica moderada a severa', autor: 'Estudio clínico · NEJM 2023', fecha: '01 sep 2026', duracion: '16 pág.', pregunta: '¿Cuál fue el desenlace primario a la semana 16?', opciones: ['IGA 0/1 con reducción ≥ 2 puntos', 'Prurito NRS', 'SCORAD 50'], correcta: 0, explicacion: 'El desenlace primario fue IGA 0/1 con mejoría de al menos 2 puntos.', resumen: 'Resumen estructurado del estudio con tablas de eficacia y seguridad.' },
         { formato: 'live', imagen: 'img/noche-lectura.jpg', titulo: 'Podcast en vivo: piel, sueño y salud mental en el paciente con eccema', autor: 'Con la Dra. Gómez y un paciente invitado', fecha: 'Martes', duracion: '45 min', pregunta: '¿Qué escala mide el impacto en calidad de vida?', opciones: ['EASI', 'DLQI', 'IGA'], correcta: 1, explicacion: 'El DLQI mide el impacto dermatológico en la calidad de vida.', resumen: 'Conversación sobre el impacto del prurito en el sueño y el ánimo, con espacio de preguntas.' },
         { formato: 'info', imagen: 'img/derma-portada.jpg', titulo: 'Cómo aplicar terapia proactiva con corticoide tópico', autor: 'Comité editorial Lilly', fecha: '18 ago 2026', pregunta: '¿Con qué frecuencia se aplica en terapia proactiva?', opciones: ['Diario', '2 veces por semana en zonas de brote', 'Solo durante el brote'], correcta: 1, explicacion: 'La terapia proactiva mantiene el control con aplicación intermitente.', resumen: 'Infografía paso a paso para el paciente y su cuidador.' },
@@ -215,7 +238,7 @@ function app() {
     get algoritmo() { return this.algoritmos[this.enfermedad]; },
     get relacionados() { return this.contenido[this.enfermedad][this.tab].filter(c => c.titulo !== this.detalle.titulo).concat(this.contenido[this.enfermedad].infografias.slice(0, 1)).slice(0, 3); },
     get contenidoFormacion() { const l = this.formacion[this.enfermedad]; return this.formato === 'todos' ? l : l.filter(c => c.formato === this.formato); },
-    get guiaActual() { return this.guias[this.pantalla]; },
+    get guiaActual() { return this.guias[this.pantalla] || this.guias.historia; },
     // Encuadre de las fotos verticales (1200×1800): la cara queda arriba, así que el recorte se ancla cerca del borde superior.
     posFoto(src) { return { 'img/oscar-tablet.jpg': 'center 10%', 'img/almuerzo-tablet.jpg': 'center 15%', 'img/webinar-oncologo.jpg': 'center 40%', 'img/estudio-pdf.jpg': 'center 25%' }[src] || 'center 50%'; },
     // Estado del orbe grande de la consulta: cerrada → asleep; escuchando → listening; pensando → thinking; respuesta entrando (2,5 s) → speaking; si no, idle.
@@ -289,6 +312,7 @@ function app() {
     verEnProto(destino, enfermedad, cap) {
       this.capitulo = cap;
       if (enfermedad) this.enfermedad = enfermedad;
+      if (destino === 'pieza') { this.abrirMicro(enfermedad); return; }
       if (destino === 'consulta') { this.ir('tema'); this.$nextTick(() => this.ragAbrir()); return; }
       this.ir(destino);
     },
@@ -302,7 +326,7 @@ function app() {
         lucide.createIcons();
       })));
     },
-    get sinMarco() { return ['historia'].includes(this.pantalla); },
+    get sinMarco() { return ['historia', 'docred'].includes(this.pantalla); },
     get tituloNativo() { return { tema: 'Búsqueda rápida', detalle: this.detalle.titulo || 'Algoritmo', formacion: 'Formación ágil', pieza: this.pieza.titulo || this.nombreFormato(this.pieza.formato), guardados: 'Guardados', perfil: 'Perfil', registro: 'Registro', dashboard: 'Back office' }[this.pantalla] || ''; },
     get piezaActual() { return this.pantalla === 'pieza' ? this.pieza : this.detalle; },
     get tabActivo() { return ['guardados', 'perfil'].includes(this.pantalla) ? this.pantalla : 'inicio'; },
@@ -314,8 +338,8 @@ function app() {
     },
 
     iconoTipo(t) { return { Algoritmo: 'git-branch', Tabla: 'table', Guía: 'book-open', Infografía: 'image' }[t] || 'file'; },
-    iconoFormato(f) { return { video: 'play-circle', live: 'radio', pdf: 'file-text', info: 'image', encuesta: 'list-checks' }[f] || 'file'; },
-    nombreFormato(f) { return { video: 'Video on demand', live: 'En vivo', pdf: 'Estudio PDF', info: 'Infografía', encuesta: 'Encuesta' }[f] || ''; },
+    iconoFormato(f) { return { micro: 'graduation-cap', video: 'play-circle', live: 'radio', pdf: 'file-text', info: 'image', encuesta: 'list-checks' }[f] || 'file'; },
+    nombreFormato(f) { return { micro: 'Microaprendizaje', video: 'Video on demand', live: 'En vivo', pdf: 'Estudio PDF', info: 'Infografía', encuesta: 'Encuesta' }[f] || ''; },
 
     ir(p, extra) {
       if (p !== this.pantalla) this.historial.push(this.pantalla);
