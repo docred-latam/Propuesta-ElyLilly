@@ -198,18 +198,93 @@
                 <h2 class="cap-marca-grande">Conocemos el día del médico porque llevamos más de seis años construyendo para él</h2>
                 <p class="cap-marca-lead">DocRed combina comunidad médica, educación digital, contenido especializado y tecnología para acercar información relevante a los profesionales de la salud en Colombia y Latinoamérica.</p>
                 <p class="cap-marca-lead cap-marca-lead--enfasis">Ese conocimiento del médico, de sus tiempos y de sus necesidades digitales es el punto de partida de <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[15px] w-[40px] shrink-0 object-contain inline-block" loading="eager" decoding="async" />360</span>.</p>
-                <button @click="irRaiz('historia')" class="hist-btn mt-8">Ver el día a día de un médico</button>
               </div>
               <figure class="cap-marca-foto hist-anim hist-par">
                 <img src="img/docred_comunidad_medica.jpg" alt="Comunidad médica utilizando la plataforma de educación digital de DocRed" loading="eager" decoding="async" />
                 <figcaption class="cap-marca-ref">Imagen de referencia</figcaption>
               </figure>
               <div class="cap-marca-cifras hist-anim">
-                <div class="cap-marca-cifra"><span class="cap-marca-cifra-n">+100.000</span><span class="cap-marca-cifra-d">Profesionales de la salud verificados</span></div>
-                <div class="cap-marca-cifra"><span class="cap-marca-cifra-n">15</span><span class="cap-marca-cifra-d">Países de Latinoamérica</span></div>
-                <div class="cap-marca-cifra"><span class="cap-marca-cifra-n">+4.500</span><span class="cap-marca-cifra-d">Contenidos médicos producidos</span></div>
+                <div class="cap-marca-cifra"><span class="cap-marca-cifra-n">+70</span><span class="cap-marca-cifra-d">Especialidades médicas en la comunidad</span></div>
+                <div class="cap-marca-cifra"><span class="cap-marca-cifra-n">LATAM</span><span class="cap-marca-cifra-d">Colombia, México, Perú, Chile y otros países</span></div>
                 <div class="cap-marca-cifra"><span class="cap-marca-cifra-n">+6</span><span class="cap-marca-cifra-d">Años de experiencia en educación médica digital</span></div>
               </div>
+            </div>
+
+
+            <!-- Por qué DocRed · bloques de evidencia tras la portada. Son <div>, no <section>, por la misma razón
+                 que cap-marca (no correr el conteo de nth-of-type de la historia). Datos: Portafolio DocRed 2026. -->
+            <div class="dr-blk dr-blk--comunidad hist-anim" x-show="pantalla === 'docred'">
+              <p class="dr-et">Comunidad</p>
+              <h2 class="dr-tit">Una comunidad médica que ya está en Colombia</h2>
+              <p class="dr-lead">Lilly 360 no empieza desde cero para llegar a los médicos. La base de DocRed ya reúne especialistas y médicos generales, con presencia fuerte en Colombia y México.</p>
+              <div class="dr-dos">
+                <div>
+                  <p class="dr-sub">Dónde está la comunidad</p>
+                  <div class="dr-pais"><span class="dr-pais-n">Colombia</span><span class="dr-pais-t"><i style="width:46%"></i></span><span class="dr-pais-v">46%</span></div>
+                  <div class="dr-pais"><span class="dr-pais-n">México</span><span class="dr-pais-t"><i style="width:40%"></i></span><span class="dr-pais-v">40%</span></div>
+                  <div class="dr-pais"><span class="dr-pais-n">Perú, Chile y otros</span><span class="dr-pais-t"><i style="width:14%"></i></span><span class="dr-pais-v">14%</span></div>
+                  <p class="dr-nota">Más de 70 especialidades. En Colombia, el 70% son médicos generales y el 30% especialistas.</p>
+                </div>
+                <div>
+                  <p class="dr-sub">Principales perfiles en Colombia</p>
+                  <div class="dr-bar"><span class="dr-bar-n">Medicina general</span><span class="dr-bar-t"><i style="width:100.0%"></i></span><span class="dr-bar-v">22.532</span></div><div class="dr-bar"><span class="dr-bar-n">Medicina interna</span><span class="dr-bar-t"><i style="width:19.5%"></i></span><span class="dr-bar-v">4.397</span></div><div class="dr-bar"><span class="dr-bar-n">Pediatría</span><span class="dr-bar-t"><i style="width:4.2%"></i></span><span class="dr-bar-v">952</span></div><div class="dr-bar"><span class="dr-bar-n">Ginecología</span><span class="dr-bar-t"><i style="width:3.6%"></i></span><span class="dr-bar-v">821</span></div><div class="dr-bar"><span class="dr-bar-n">Medicina familiar</span><span class="dr-bar-t"><i style="width:3.5%"></i></span><span class="dr-bar-v">795</span></div><div class="dr-bar"><span class="dr-bar-n">Anestesiología</span><span class="dr-bar-t"><i style="width:2.5%"></i></span><span class="dr-bar-v">540</span></div>
+                  <p class="dr-nota">Médicos registrados por especialidad, según la base actual de DocRed.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="dr-blk dr-blk--activa hist-anim" x-show="pantalla === 'docred'">
+              <p class="dr-et">Participación</p>
+              <h2 class="dr-tit">Una comunidad que abre, lee y vuelve</h2>
+              <div class="dr-cifras dr-cifras--2">
+                <div class="dr-cifra"><span class="dr-cifra-n">7 M</span><span class="dr-cifra-d">interacciones al año con el contenido de la plataforma</span></div>
+                <div class="dr-cifra"><span class="dr-cifra-n">+100</span><span class="dr-cifra-d">nuevos médicos registrados cada día</span></div>
+              </div>
+              <p class="dr-nota">Datos de DocRed, portafolio de servicios 2026.</p>
+            </div>
+
+            <div class="dr-blk dr-blk--casos hist-anim" x-show="pantalla === 'docred'">
+              <p class="dr-et">Casos</p>
+              <h2 class="dr-tit">Ya lo hicimos con otras compañías farmacéuticas</h2>
+              <div class="dr-casos">
+                <article class="dr-caso">
+                  <p class="dr-caso-marca">Pfizer · AprenGo</p>
+                  <p class="dr-caso-l">Situación</p><p class="dr-caso-t">Apoyar el diagnóstico temprano de migraña y otras patologías en médicos de atención primaria de Colombia y Chile.</p>
+                  <p class="dr-caso-l">Qué hicimos</p><p class="dr-caso-t">Un esquema de educación dentro de DocRed con formatos de fácil consumo, microlearning y gamificación.</p>
+                  <p class="dr-caso-l">Resultado</p><p class="dr-caso-t">Más de 30.000 médicos alcanzados, con más de 80% de consumo e interacción con los contenidos.</p>
+                </article>
+                <article class="dr-caso">
+                  <p class="dr-caso-marca">AstraZeneca y Fundación IMSS · México</p>
+                  <p class="dr-caso-l">Situación</p><p class="dr-caso-t">Llegar a médicos de atención primaria con un curso de diagnóstico temprano de cáncer de pulmón.</p>
+                  <p class="dr-caso-l">Qué hicimos</p><p class="dr-caso-t">Un curso abierto por seis meses, con sesiones en vivo quincenales y acompañamiento por correo.</p>
+                  <p class="dr-caso-l">Resultado</p><p class="dr-caso-t">Más de 12.500 médicos participaron, conectados con líderes de opinión para resolver dudas.</p>
+                </article>
+              </div>
+              <p class="dr-nota">Lilly 360 usa los mismos ingredientes: microaprendizaje, formatos cortos, expertos y seguimiento por médico.</p>
+            </div>
+
+            <div class="dr-blk dr-blk--aliados hist-anim" x-show="pantalla === 'docred'">
+              <p class="dr-et">Confianza</p>
+              <h2 class="dr-tit">Con quién hemos trabajado</h2>
+              <div class="dr-chips">
+                <span>AstraZeneca</span><span>Pfizer</span><span>Novo Nordisk</span><span>GSK</span><span>Sanofi</span>
+              </div>
+              <p class="dr-sub" style="margin-top:18px">Alianzas con sociedades y asociaciones médicas</p>
+              <div class="dr-chips dr-chips--suave">
+                <span>Colegio Médico Colombiano</span><span>Fundación IMSS</span><span>CONAMEGE</span><span>Federación Mexicana de Diabetes</span><span>Asociación Mexicana de Pediatría</span><span>SOCOMEG</span><span>Federación Argentina de Cardiología</span>
+              </div>
+            </div>
+
+            <div class="dr-blk dr-blk--aporta hist-anim" x-show="pantalla === 'docred'">
+              <p class="dr-et">Para Lilly 360</p>
+              <h2 class="dr-tit">Lo que DocRed pone en la mesa</h2>
+              <div class="dr-grid4">
+                <div class="dr-card"><h3>Plataforma</h3><p>Construimos y operamos un entorno exclusivo para médicos, con acceso verificado y seguimiento por cada uno.</p></div>
+                <div class="dr-card"><h3>Contenido</h3><p>Un equipo editorial que trabaja de la mano con Marketing y Medical Affairs, con guías, video, webinars y microaprendizaje.</p></div>
+                <div class="dr-card"><h3>Llegada</h3><p>Campañas de correo y presencia dentro de la comunidad DocRed para llevar médicos al hub desde el primer día.</p></div>
+                <div class="dr-card"><h3>Datos</h3><p>Tablero interactivo con el comportamiento de los médicos, para decidir con datos y no con supuestos.</p></div>
+              </div>
+              <button @click="irRaiz('historia')" class="hist-btn mt-8">Ver el día a día de un médico</button>
             </div>
 
             <!-- Apertura · Los dos momentos que DocRed entiende de la formación continua del médico.

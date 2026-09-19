@@ -725,6 +725,46 @@
     .cap-marca-cifra { flex: 1 1 11rem; padding: 0 22px; border-left: 1px solid rgba(255,255,255,.16); }
     .cap-marca-cifra:first-child { padding-left: 0; border-left: 0; }
   }
+  /* ===== Por qué DocRed: bloques de evidencia (marino y menta, nunca rojo Lilly) ===== */
+  .dr-blk { position: relative; z-index: 1; width: min(100%, 1240px); margin: clamp(28px, 5vh, 56px) auto 0; padding: clamp(28px, 4.4vw, 56px);
+    background: #0a0c22; border: 1px solid rgba(255,255,255,.08); border-radius: 24px; color: #fff; }
+  .dr-et { font-size: 12.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #6DCB8A; }
+  .dr-tit { margin-top: 10px; max-width: 34rem; font-size: clamp(26px, 3vw, 40px); font-weight: 600; line-height: 1.15; letter-spacing: -.02em; text-wrap: balance; }
+  .dr-lead { margin-top: 14px; max-width: 36rem; font-size: 16.5px; line-height: 1.6; color: rgba(255,255,255,.78); }
+  .dr-sub { font-size: 13.5px; font-weight: 600; color: rgba(255,255,255,.92); margin-bottom: 14px; }
+  .dr-nota { margin-top: 16px; max-width: 34rem; font-size: 13px; line-height: 1.5; color: rgba(255,255,255,.56); }
+  .dr-dos { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; margin-top: 32px; }
+  @media (min-width: 900px) { .dr-dos { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 56px; } }
+  .dr-pais, .dr-bar { display: grid; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .dr-pais { grid-template-columns: 9.5rem minmax(0, 1fr) 3rem; }
+  .dr-bar { grid-template-columns: 9.5rem minmax(0, 1fr) 3.6rem; }
+  .dr-pais-n, .dr-bar-n { font-size: 14px; color: rgba(255,255,255,.86); }
+  .dr-pais-v, .dr-bar-v { font-size: 14px; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+  .dr-pais-t, .dr-bar-t { height: 10px; border-radius: 999px; background: rgba(255,255,255,.08); overflow: hidden; }
+  .dr-pais-t i, .dr-bar-t i { display: block; height: 100%; border-radius: 999px; background: #6DCB8A; }
+  .dr-cifras { display: grid; grid-template-columns: minmax(0, 1fr); gap: 26px; margin-top: 28px; }
+  @media (min-width: 900px) { .dr-cifras { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; } .dr-cifra { padding: 0 28px; border-left: 1px solid rgba(255,255,255,.14); } .dr-cifra:first-child { padding-left: 0; border-left: 0; } }
+  .dr-cifra { display: flex; flex-direction: column; gap: 8px; }
+  @media (min-width: 900px) { .dr-cifras--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 44rem; } }
+  .dr-cifra-n { font-size: clamp(36px, 4.4vw, 58px); font-weight: 700; letter-spacing: -.02em; color: #6DCB8A; line-height: 1; }
+  .dr-cifra-d { font-size: 14.5px; line-height: 1.45; color: rgba(255,255,255,.74); max-width: 17rem; }
+  .dr-casos { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; margin-top: 28px; }
+  @media (min-width: 900px) { .dr-casos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; } }
+  .dr-caso { padding: 24px; border-radius: 18px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); }
+  .dr-caso-marca { font-size: 17px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+  .dr-caso-l { margin-top: 14px; font-size: 11.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #6DCB8A; }
+  .dr-caso-t { margin-top: 4px; font-size: 15px; line-height: 1.5; color: rgba(255,255,255,.82); }
+  .dr-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  .dr-chips span { padding: 10px 18px; border-radius: 999px; font-size: 15px; font-weight: 600; background: rgba(109,203,138,.14); border: 1px solid rgba(109,203,138,.4); color: #fff; }
+  .dr-chips--suave { margin-top: 0; }
+  .dr-chips--suave span { font-size: 13.5px; font-weight: 500; padding: 8px 14px; background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.14); color: rgba(255,255,255,.82); }
+  .dr-grid4 { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; margin-top: 28px; }
+  @media (min-width: 700px) { .dr-grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1100px) { .dr-grid4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .dr-card { padding: 22px; border-radius: 18px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); }
+  .dr-card h3 { font-size: 18px; font-weight: 600; color: #6DCB8A; }
+  .dr-card p { margin-top: 8px; font-size: 14.5px; line-height: 1.5; color: rgba(255,255,255,.78); }
+  @media (max-width: 520px) { .dr-pais, .dr-bar { grid-template-columns: 7.5rem minmax(0, 1fr) 3.2rem; } }
   @media (prefers-reduced-motion: reduce) { .hist-cifrado { color: #fff; } }
   .sin-animacion .hist-cifrado { color: #fff; }
 </style>
