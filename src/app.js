@@ -11,7 +11,7 @@ function app() {
     solo: false, // con ?solo=1 queda solo el teléfono sobre negro
     dispositivo: 'iphone', // 'iphone' | 'ipad' | 'desktop' — el marco del prototipo; el contenido se adapta con container queries (@3xl tablet, @6xl escritorio)
     // La presentación arranca por la historia; con ?p=inicio se entra directo al app.
-    pantalla: 'historia', enfermedad: 'diabetes', tab: 'diagnostico', formato: 'todos',
+    pantalla: 'docred', enfermedad: 'diabetes', tab: 'diagnostico', formato: 'todos',
     detalle: {}, pieza: {}, respuesta: null, historial: [], guia: true,
     // Cascarón iOS: dirección de la transición, contador que la re-dispara, texto de la Dynamic Island y si el contenido está desplazado.
     direccion: 'adelante', transicion: 0, island: '', scrolled: false,

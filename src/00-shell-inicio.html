@@ -708,7 +708,7 @@
     <span class="flex items-baseline gap-1.5 font-semibold text-[15px] tracking-tight"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[17px] w-[45px] shrink-0 object-contain" loading="eager" decoding="async" />360</span>
     <span x-show="!sinMarco" class="text-white/35 text-[13px]">prototipo navegable</span>
   </div>
-  <template x-if="sinMarco && pantalla !== 'historia'">
+  <template x-if="sinMarco && !['historia', 'docred'].includes(pantalla)">
     <div class="ml-3 flex shrink-0 items-center gap-2 whitespace-nowrap">
       <span class="inline-flex h-7 items-center gap-1.5 rounded-full bg-white/8 px-3 text-[12px] text-white/70"><span class="h-1.5 w-1.5 rounded-full bg-lillyblue"></span><span x-text="'Fuera del app · lámina de la propuesta'"></span></span>
       <button @click="irRaiz('inicio')" class="inline-flex h-7 shrink-0 items-center whitespace-nowrap rounded-full bg-white px-3 text-[12px] font-semibold text-black hover:bg-white/90 transition-colors">Volver al prototipo</button>
@@ -718,7 +718,7 @@
     <template x-for="s in atajos" :key="s.k">
       <span>
         <span x-show="s.sep" class="mx-2 inline-block h-4 w-px align-middle bg-white/15"></span>
-        <button x-show="!s.sep" @click="irMenu(s)" class="rounded-full transition-colors duration-200"
+        <button x-show="!s.sep" @click="irMenu(s)" class="rounded-full whitespace-nowrap transition-colors duration-200"
                 :class="[s.sub ? 'px-2.5 py-1 text-[12px]' : 'px-3.5 py-1.5', s.on ? 'bg-white/12 text-white' : 'text-white/50 hover:text-white/80 hover:bg-white/5']" x-text="s.nombre"></button>
       </span>
     </template>
@@ -729,11 +729,11 @@
 
   <!-- Panel de guía (la narrativa de Óscar; es del prototipo, no del app) -->
   <!-- Con el panel plegado queda su manija, para poder volver a abrirlo -->
-  <button x-show="!guia && pantalla !== 'historia'" @click="guia = true" title="Mostrar guía" aria-label="Mostrar guía"
+  <button x-show="!guia && !['historia', 'docred'].includes(pantalla)" @click="guia = true" title="Mostrar guía" aria-label="Mostrar guía"
           class="fade-in hidden lg:flex fixed left-4 top-[72px] z-20 h-9 w-9 items-center justify-center rounded-full bg-white/8 text-white/60 hover:bg-white/12 hover:text-white transition-colors">
     <i data-lucide="panel-left-open" class="h-4 w-4"></i>
   </button>
-  <aside x-show="guia && pantalla !== 'historia'"  class="proto-panel fade-in hidden lg:flex w-[380px] shrink-0 flex-col p-7 gap-5 overflow-y-auto">
+  <aside x-show="guia && !['historia', 'docred'].includes(pantalla)"  class="proto-panel fade-in hidden lg:flex w-[380px] shrink-0 flex-col p-7 gap-5 overflow-y-auto">
     <div class="flex items-center justify-between -mb-1">
       <span class="text-[11px] uppercase tracking-[.16em] text-white/30 font-semibold">La historia</span>
       <button @click="irHistoria()" class="mr-auto ml-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] text-white/45 hover:bg-white/8 hover:text-white transition-colors" title="Volver a la historia">
