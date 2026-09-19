@@ -715,11 +715,11 @@
     </div>
   </template>
   <nav class="ml-auto hidden md:flex items-center gap-1 text-[13px]">
-    <template x-for="s in atajos" :key="s.id || s.sep">
+    <template x-for="s in atajos" :key="s.k">
       <span>
         <span x-show="s.sep" class="mx-2 inline-block h-4 w-px align-middle bg-white/15"></span>
-        <button x-show="!s.sep" @click="s.href ? (window.location.href = s.href) : ir(s.id, s.extra)" class="px-3.5 py-1.5 rounded-full transition-colors duration-200"
-                :class="pantalla === s.id ? 'bg-white/12 text-white' : 'text-white/50 hover:text-white/80 hover:bg-white/5'" x-text="s.nombre"></button>
+        <button x-show="!s.sep" @click="irMenu(s)" class="rounded-full transition-colors duration-200"
+                :class="[s.sub ? 'px-2.5 py-1 text-[12px]' : 'px-3.5 py-1.5', s.on ? 'bg-white/12 text-white' : 'text-white/50 hover:text-white/80 hover:bg-white/5']" x-text="s.nombre"></button>
       </span>
     </template>
   </nav>
@@ -1291,25 +1291,32 @@
                Al responder (M6) las opciones se bloquean, la correcta lleva check y la incorrecta ×; la hoja baja sola a los 2 s y el video sigue.
                `?pregunta=1` abre la hoja al cargar (solo para capturas). Responsivo con una sola grilla de 4 piezas (reproductor, título, pregunta, resumen). -->
           <div x-show="pantalla === 'pieza'" class="relative pb-32 @3xl:pb-16" x-data="{
-            reproduciendo: false, avance: 35, hoja: false, ficha: false, _t: null,
+            reproduciendo: false, avance: 35, hoja: false, ficha: false, _t: null, mr: [],
             init() {
               this.$watch('ficha', v => { if ('modal' in this) this.modal = v; });
-              this.$watch('pieza', () => { clearTimeout(this._t); this.reproduciendo = false; this.hoja = false; this.avance = pieza.progreso ?? 0; });
+              this.$watch('pieza', () => { clearTimeout(this._t); this.reproduciendo = false; this.hoja = false; this.mr = []; this.avance = pieza.progreso ?? 0; });
               // La hoja es modal: mientras está abierta el cascarón oculta la tab bar (estado global `modal`, defensivo por si aún no existe).
               this.$watch('hoja', v => { if ('modal' in this) this.modal = v; });
               this.$watch('pantalla', p => { if (p !== 'pieza') { this.ficha = false; if (this.hoja) { clearTimeout(this._t); this.hoja = false; this.reproduciendo = false; } } });
               // Parámetros de captura (van después de los watchers para que `modal` también se active): ?pregunta=1 abre la hoja, ?r=<i> responde.
               const q = new URLSearchParams(location.search); if (q.get('pregunta') === '1') { this.avance = 60; this.hoja = true; } if (q.get('r') !== null) this.$nextTick(() => { respuesta = +q.get('r'); }); if (q.get('ficha') === '1' && q.get('p') === 'pieza') this.ficha = true;
             },
+            mResp(q, i) { if (this.mr[q] !== undefined) return; this.mr = Object.assign([], this.mr, { [q]: i }); },
+            mEstado(q, i) { const r = this.mr[q]; if (r === undefined) return 'pendiente'; const c = pieza.preguntas[q].c; if (i === c) return 'correcta'; if (i === r) return 'incorrecta'; return 'otra'; },
+            get mTotal() { return (pieza.preguntas || []).length; },
+            get mHechas() { let n = 0; for (let k = 0; k < this.mTotal; k++) if (this.mr[k] !== undefined) n++; return n; },
+            get mAciertos() { let n = 0; for (let k = 0; k < this.mTotal; k++) if (this.mr[k] === pieza.preguntas[k].c) n++; return n; },
+            get sinResp() { return pieza.formato === 'micro' ? this.mHechas < this.mTotal : respuesta === null; },
             minutos(p) { return parseInt(p.duracion) || 15; },
             tiempos(p) {
-              if (p.formato === 'video') { const s = Math.round(this.minutos(p) * 60 * this.avance / 100); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0') + ' / ' + this.minutos(p) + ':00'; }
+              if (p.formato === 'video' || p.formato === 'micro') { const s = Math.round(this.minutos(p) * 60 * this.avance / 100); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0') + ' / ' + this.minutos(p) + ':00'; }
               if (p.formato === 'pdf') return 'Página ' + Math.max(1, Math.round((parseInt(p.duracion) || 16) * this.avance / 100)) + ' · ' + (p.duracion || '');
               if (p.formato === 'encuesta') return '3 preguntas · 2 min';
               return 'Infografía interactiva';
             },
             play() {
               if (this.hoja) return;
+              if (pieza.formato === 'micro') { this.reproduciendo = !this.reproduciendo; clearTimeout(this._t); if (this.reproduciendo) { this.avance = 100; this._t = setTimeout(() => { this.reproduciendo = false; }, 3000); } return; }
               this.reproduciendo = !this.reproduciendo; clearTimeout(this._t);
               if (!this.reproduciendo) return;
               if (respuesta === null) { this.avance = 60; this._t = setTimeout(() => { this.reproduciendo = false; this.hoja = true; }, 3000); }
@@ -1363,7 +1370,7 @@
               </div>
 
               <!-- Pregunta: tarjeta inline (sin asa). En iPhone es el registro de lo respondido; en @3xl+ es donde se responde y se ilumina al llegar al minuto 5 -->
-              <div class="glass-strong rounded-[28px] mt-6 p-4 @3xl:mt-6 @3xl:p-5 @3xl:col-start-2 @3xl:row-start-2 @3xl:row-span-2 @3xl:self-start @3xl:sticky @3xl:top-4 @6xl:mt-0 @6xl:row-start-1 @6xl:row-span-3 transition-shadow duration-300"
+              <div x-show="pieza.formato !== 'micro'" class="glass-strong rounded-[28px] mt-6 p-4 @3xl:mt-6 @3xl:p-5 @3xl:col-start-2 @3xl:row-start-2 @3xl:row-span-2 @3xl:self-start @3xl:sticky @3xl:top-4 @6xl:mt-0 @6xl:row-start-1 @6xl:row-span-3 transition-shadow duration-300"
                    :class="hoja && respuesta === null ? '@3xl:shadow-[0_0_0_1px_#D52B1E,0_12px_40px_rgba(213,43,30,.18)]' : ''" :aria-live="hoja ? 'polite' : 'off'">
                 <p class="text-[13px] font-medium" :class="respuesta === null ? 'text-ink-2' : (acierto ? 'text-ink' : 'text-lilly')"
                    x-text="respuesta === null ? 'Pregunta al minuto 5' : ('Respondida · ' + (acierto ? 'correcta' : 'incorrecta'))"></p>
@@ -1388,8 +1395,49 @@
                 </div>
               </div>
 
+              <!-- Microaprendizaje: 2 o 3 preguntas a la derecha del video y la infografía; cada una se responde y explica sola -->
+              <div x-show="pieza.formato === 'micro'" class="glass-strong rounded-[28px] mt-6 p-4 @3xl:mt-6 @3xl:p-5 @3xl:col-start-2 @3xl:row-start-2 @3xl:row-span-2 @3xl:self-start @3xl:sticky @3xl:top-4 @6xl:mt-0 @6xl:row-start-1 @6xl:row-span-3" aria-live="polite">
+                <p class="text-[13px] font-medium text-ink-2" x-text="'Preguntas del microaprendizaje · ' + mHechas + ' de ' + mTotal"></p>
+                <template x-for="(q, qi) in (pieza.preguntas || [])" :key="'mq' + pieza.titulo + qi">
+                  <div class="mt-4">
+                    <p class="text-[16px] @6xl:text-[17px] font-semibold leading-snug text-ink" x-text="(qi + 1) + '. ' + q.p"></p>
+                    <div class="ios-list mt-2 -mx-1" role="radiogroup">
+                      <template x-for="(o, i) in q.o" :key="'mo' + qi + i">
+                        <button @click="mResp(qi, i)" role="radio" :aria-checked="mr[qi] === i ? 'true' : 'false'" :aria-disabled="mr[qi] !== undefined ? 'true' : 'false'"
+                                class="ios-row press transition-opacity duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#1F5FA8]"
+                                :class="mEstado(qi, i) === 'otra' ? 'opacity-50' : ''">
+                          <span class="inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border-[1.5px] transition-all duration-200"
+                                :class="{ pendiente: 'border-ink-3 text-transparent', correcta: 'bg-ink border-ink text-white', incorrecta: 'bg-lilly-soft border-lilly text-lilly', otra: 'border-ink-3 text-transparent' }[mEstado(qi, i)]">
+                            <svg x-show="mEstado(qi, i) !== 'incorrecta'" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                            <svg x-show="mEstado(qi, i) === 'incorrecta'" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                          </span>
+                          <span class="text-[15px] leading-snug text-ink" x-text="o"></span>
+                        </button>
+                      </template>
+                    </div>
+                    <div x-show="mr[qi] !== undefined" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="mt-2 rounded-2xl bg-ink/[.05] px-4 py-3">
+                      <p class="text-[14px] leading-[1.5] text-ink" x-text="mr[qi] === undefined ? '' : (mr[qi] === q.c ? 'Correcto. ' : 'La respuesta correcta es la ' + String.fromCharCode(65 + q.c) + '. ') + q.e"></p>
+                    </div>
+                  </div>
+                </template>
+              </div>
+
               <!-- Resumen y la única acción del pie (M1): el certificado, con su caption (M6) -->
               <div class="mt-7 @3xl:mt-6 @3xl:col-start-1 @3xl:row-start-3 max-w-[640px]">
+                <!-- Infografía del microaprendizaje: el contenido que acompaña al video -->
+                <div x-show="pieza.formato === 'micro' && pieza.infografia" class="glass rounded-[24px] p-5 mb-7">
+                  <p class="text-[12px] font-semibold uppercase tracking-wide text-lilly">Infografía</p>
+                  <h2 class="mt-1 text-[17px] font-semibold text-ink" x-text="pieza.infografia ? pieza.infografia.titulo : ''"></h2>
+                  <ol class="mt-3 grid gap-3 @3xl:grid-cols-3">
+                    <template x-for="(s, k) in (pieza.infografia ? pieza.infografia.pasos : [])" :key="'ig' + k">
+                      <li class="rounded-2xl bg-ink/[.05] p-4">
+                        <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-lilly text-white text-[13px] font-semibold" x-text="k + 1"></span>
+                        <p class="mt-2 text-[15px] font-semibold leading-snug text-ink" x-text="s.t"></p>
+                        <p class="mt-1 text-[14px] leading-snug text-ink-2" x-text="s.d"></p>
+                      </li>
+                    </template>
+                  </ol>
+                </div>
                 <h2 class="text-[17px] font-semibold text-ink">Resumen</h2>
                 <p class="mt-1.5 text-[15px] @6xl:text-[16px] leading-[1.5] text-ink/90" x-text="pieza.resumen"></p>
                 <!-- Contenido comercial, separado del médico: abre la ficha de prescripción del producto del canal -->
@@ -1401,8 +1449,8 @@
                   </button>
                 </div>
                 <div class="mt-5 @3xl:flex @3xl:items-center @3xl:gap-4">
-                  <button class="ios-btn w-full @3xl:w-auto transition-opacity duration-300" :class="respuesta === null ? 'opacity-40 cursor-not-allowed' : ''" :disabled="respuesta === null" :aria-disabled="respuesta === null ? 'true' : 'false'"><i data-lucide="award" class="h-5 w-5"></i>Obtener certificado</button>
-                  <p class="mt-2.5 @3xl:mt-0 text-center @3xl:text-left text-[13px] text-ink-2 transition-opacity duration-300" x-text="respuesta === null ? 'Responde la pregunta para obtener el certificado' : '1 de 1 preguntas · lista para certificar'"></p>
+                  <button class="ios-btn w-full @3xl:w-auto transition-opacity duration-300" :class="sinResp ? 'opacity-40 cursor-not-allowed' : ''" :disabled="sinResp" :aria-disabled="sinResp ? 'true' : 'false'"><i data-lucide="award" class="h-5 w-5"></i>Obtener certificado</button>
+                  <p class="mt-2.5 @3xl:mt-0 text-center @3xl:text-left text-[13px] text-ink-2 transition-opacity duration-300" x-text="pieza.formato === 'micro' ? (sinResp ? 'Responde las ' + mTotal + ' preguntas para obtener el certificado' : mAciertos + ' de ' + mTotal + ' correctas · lista para certificar') : (respuesta === null ? 'Responde la pregunta para obtener el certificado' : '1 de 1 preguntas · lista para certificar')"></p>
                 </div>
               </div>
             </div>
@@ -1959,7 +2007,7 @@
                   { t: 'Búsqueda rápida', d: 'Diagnóstico, tratamiento e infografías', i: 'zap', p: 'tema', e: 'diabetes' },
                   { t: 'Algoritmo de decisión', d: 'La pieza que se lee en consulta', i: 'git-branch', p: 'detalle', e: 'diabetes' },
                   { t: 'Formación ágil', d: 'El canal de cada enfermedad', i: 'refresh-cw', p: 'formacion', e: 'mama' },
-                  { t: 'Microaprendizaje', d: 'El video que pregunta de vuelta', i: 'circle-play', p: 'pieza', e: 'diabetes' },
+                  { t: 'Microaprendizaje', d: 'Video, infografía y 2 o 3 preguntas', i: 'circle-play', p: 'pieza', e: 'diabetes' },
                   { t: 'Consulta a Lilly 360', d: 'Solo con estudios aprobados · fase 2', i: 'sparkles', p: 'consulta', e: 'diabetes' },
                 ],
                 // Tarjeta que se inclina siguiendo el puntero, con un destello que lo persigue (referencia: comet-card).
@@ -2118,12 +2166,12 @@
                con muesca y, en los momentos «qué hizo Lilly 360», capturas del propio prototipo
                (img/proto-*.png, generadas con ?solo=1) rodeadas de las decisiones de diseño que las
                explican. Cierra entrando al prototipo. -->
-          <div x-show="pantalla === 'historia'" x-data="narrativa()" x-init="montar()" x-ref="scroll"
+          <div x-show="['docred', 'historia'].includes(pantalla)" x-data="narrativa()" x-init="montar()" x-ref="scroll" x-effect="pantalla; $refs.scroll && ($refs.scroll.scrollTop = 0)"
                class="hist flex-1 min-w-0 h-screen overflow-y-auto scroll-hide">
             <div class="hist-luz" aria-hidden="true"></div>
 
             <!-- Índice lateral -->
-            <nav class="hist-indice hidden xl:flex" aria-label="Capítulos">
+            <nav x-show="pantalla === 'historia'" class="hist-indice hidden xl:flex" aria-label="Capítulos">
               <template x-for="c in capitulos" :key="c.id">
                 <a :href="'#' + c.id" class="hist-punto" :title="c.n"><span x-text="c.n"></span></a>
               </template>
@@ -2136,13 +2184,14 @@
                  Apertura de credenciales, no escena ni intervención: foto a página completa con velo azul
                  marino a la izquierda (nada de rojo Lilly aquí), y DocRed desaparece como protagonista en
                  cuanto termina — de ahí en adelante el centro es Óscar. -->
-            <div id="cap-marca" class="hist-sec hist-sec--marca">
+            <div id="cap-marca" x-show="pantalla === 'docred'" class="hist-sec hist-sec--marca">
               <div class="cap-marca-col hist-anim">
                 <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">01</span><span class="hist-hilo-l"></span></div>
                 <span class="cap-marca-logo"><img src="img/docred-logo.png" alt="DocRed" class="cap-marca-logo-img" loading="eager" decoding="async" /></span>
                 <h2 class="cap-marca-grande">Conocemos el día del médico porque llevamos más de seis años construyendo para él</h2>
                 <p class="cap-marca-lead">DocRed combina comunidad médica, educación digital, contenido especializado y tecnología para acercar información relevante a los profesionales de la salud en Colombia y Latinoamérica.</p>
                 <p class="cap-marca-lead cap-marca-lead--enfasis">Ese conocimiento del médico, de sus tiempos y de sus necesidades digitales es el punto de partida de <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[15px] w-[40px] shrink-0 object-contain inline-block" loading="eager" decoding="async" />360</span>.</p>
+                <button @click="irRaiz('historia')" class="hist-btn mt-8">Ver el día a día de un médico</button>
               </div>
               <figure class="cap-marca-foto hist-anim hist-par">
                 <img src="img/docred_comunidad_medica.jpg" alt="Comunidad médica utilizando la plataforma de educación digital de DocRed" loading="eager" decoding="async" />
@@ -2157,7 +2206,7 @@
             </div>
 
             <!-- Hero: lo primero que ve Lilly. Titular a la izquierda y el producto dentro de una ventana, como Framer. -->
-            <section id="cap-hero" class="hist-hero">
+            <section id="cap-hero" x-show="pantalla === 'historia'" class="hist-hero">
               <div class="hist-hero-fijo">
               <div class="hist-hero-col hist-anim">
                                 <h1 class="hist-hero-h1">La información que el médico<br class="hidden md:block" /> necesita, en el minuto<br class="hidden md:block" /> en que la necesita</h1>
@@ -2180,7 +2229,7 @@
 
             <!-- Puente entre DocRed y Óscar: la frase se descifra al entrar, como el efecto encrypted-text.
                  Cierra la apertura de credenciales y anuncia a Óscar sin empezar todavía su historia. -->
-            <section id="cap-dia" class="hist-dia">
+            <section id="cap-dia" x-show="pantalla === 'historia'" class="hist-dia">
               <div class="hist-hilo hist-hilo--centro hist-anim" aria-hidden="true"><span class="hist-hilo-n">02</span></div>
               <p class="hist-kicker hist-anim">El entendimiento del reto</p>
               <p class="hist-cifrado hist-anim" data-cifrar>Pero entender el reto no comienza con una plataforma. Comienza entendiendo el día de un médico.</p>
@@ -2188,7 +2237,7 @@
             </section>
 
             <!-- 1 · Quién es el médico -->
-            <section id="cap-oscar" class="hist-sec hist-sec--humana">
+            <section id="cap-oscar" x-show="pantalla === 'historia'" class="hist-sec hist-sec--humana">
               <div class="hist-col hist-anim">
                 <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">03</span><span class="hist-hilo-l"></span></div>
                 <p class="hist-hora">Inicio de la jornada</p>
@@ -2203,7 +2252,7 @@
             </section>
 
             <!-- 2 · Las dos necesidades que identificamos -->
-            <section id="cap-necesidades" class="hist-sec hist-sec--humana">
+            <section id="cap-necesidades" x-show="pantalla === 'historia'" class="hist-sec hist-sec--humana">
               <div class="hist-col hist-anim">
                 <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">04</span><span class="hist-hilo-l"></span></div>
                 <p class="hist-kicker">Lo que identificamos</p>
@@ -2219,7 +2268,7 @@
 
             <!-- 3 · Consulta rápida, en la práctica. Termina en la necesidad, no en la solución:
                  lo que Lilly 360 resuelve se cuenta en cap-busqueda, no aquí. -->
-            <section id="cap-rapida" class="hist-sec hist-sec--humana">
+            <section id="cap-rapida" x-show="pantalla === 'historia'" class="hist-sec hist-sec--humana">
               <div class="hist-col hist-anim">
                 <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">05</span><span class="hist-hilo-l"></span></div>
                 <p class="hist-hora">9:00 a. m.</p>
@@ -2239,7 +2288,7 @@
 
             <!-- 4 · Qué hizo · consulta rápida. Lenguaje distinto a la escena humana: sin la tarjeta
                  redonda ni el ritmo simétrico, con la señal roja y la frase puente por delante. -->
-            <section id="cap-busqueda" class="hist-sec hist-sec--proto hist-sec--intervencion">
+            <section id="cap-busqueda" x-show="pantalla === 'historia'" class="hist-sec hist-sec--proto hist-sec--intervencion">
               <p class="hist-puente hist-anim"><span class="hist-puente-punto" aria-hidden="true"></span>En ese momento, <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[15px] w-[40px] shrink-0 object-contain inline-block" loading="eager" decoding="async" />360</span> entra en su día.</p>
               <p class="hist-titulo-proto hist-anim">Qué hizo <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[19px] w-[51px] shrink-0 object-contain block" loading="eager" decoding="async" />360</span> para que la consulta rápida no le quitara ni un minuto</p>
               <div class="hist-proto hist-anim">
@@ -2259,7 +2308,7 @@
 
             <!-- 5 · Formación continua, en la práctica. Termina en el deseo de aprender, no en la
                  solución: eso se cuenta en cap-valor. -->
-            <section id="cap-formacion" class="hist-sec hist-sec--humana">
+            <section id="cap-formacion" x-show="pantalla === 'historia'" class="hist-sec hist-sec--humana">
               <div class="hist-col hist-anim">
                 <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">06</span><span class="hist-hilo-l"></span></div>
                 <p class="hist-hora">Mediodía</p>
@@ -2273,7 +2322,7 @@
             </section>
 
             <!-- 6 · Qué hizo · formación continua -->
-            <section id="cap-valor" class="hist-sec hist-sec--proto hist-sec--intervencion">
+            <section id="cap-valor" x-show="pantalla === 'historia'" class="hist-sec hist-sec--proto hist-sec--intervencion">
               <p class="hist-puente hist-anim"><span class="hist-puente-punto" aria-hidden="true"></span>En ese momento, <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[15px] w-[40px] shrink-0 object-contain inline-block" loading="eager" decoding="async" />360</span> entra en su día.</p>
               <p class="hist-titulo-proto hist-anim">Qué hizo <span class="hist-marca"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[19px] w-[51px] shrink-0 object-contain block" loading="eager" decoding="async" />360</span> para que la formación continua no se sintiera como una tarea más</p>
               <div class="hist-proto hist-anim">
@@ -2283,18 +2332,20 @@
                 <div class="hist-notas hist-notas--anotacion">
                   <p class="hist-nota hist-nota--anotacion"><span class="hist-nota-n">1</span>Video, audio, estudio o infografía</p>
                   <p class="hist-nota hist-nota--anotacion"><span class="hist-nota-n">2</span>Webinars cortos y sesiones grabadas</p>
-                  <p class="hist-nota hist-nota--anotacion"><span class="hist-nota-n">3</span>Microaprendizajes que evalúan y certifican</p>
+                  <p class="hist-nota hist-nota--anotacion"><span class="hist-nota-n">3</span>Microaprendizajes: video, infografía y 2 o 3 preguntas que certifican</p>
                   <p class="hist-nota hist-nota--anotacion"><span class="hist-nota-n">4</span>Biblioteca para guardar y priorizar</p>
                   <p class="hist-nota hist-nota--anotacion"><span class="hist-nota-n">5</span>Continúa entre momentos y dispositivos</p>
                   <p class="hist-nota hist-nota--anotacion"><span class="hist-nota-n">6</span>Lo comercial, separado de lo médico</p>
                 </div>
               </div>
+              <p class="hist-p hist-anim mt-2 max-w-[40rem]"><b>El microaprendizaje:</b> un contenido corto que combina video e infografía y que, a la derecha, le hace dos o tres preguntas sobre lo que acaba de ver. Al responderlas, Óscar obtiene su certificado.</p>
+              <button @click="verEnProto('pieza', 'diabetes', 'cap-valor')" class="hist-ver" aria-label="Ver un microaprendizaje en el prototipo"><span>Ver un microaprendizaje</span><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
               <p class="hist-resultado hist-anim"><span class="hist-resultado-tag">Resultado</span>Óscar se fue a almorzar sabiendo algo que antes no sabía.</p>
               <button @click="verEnProto('formacion', 'diabetes', 'cap-valor')" class="hist-ver" aria-label="Ver la formación continua en el prototipo"><span>Ver la formación continua</span><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
             </section>
 
             <!-- 7 · Cierra el arco de la formación: lo guardado al mediodía, retomado en la noche -->
-            <section id="cap-noche" class="hist-sec hist-sec--humana">
+            <section id="cap-noche" x-show="pantalla === 'historia'" class="hist-sec hist-sec--humana">
               <div class="hist-col hist-anim">
                 <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">07</span><span class="hist-hilo-l"></span></div>
                 <p class="hist-hora">Al final del día</p>
@@ -2308,7 +2359,7 @@
             </section>
 
             <!-- 8 · Comunidad y eventos digitales -->
-            <section id="cap-colegas" class="hist-sec hist-sec--humana">
+            <section id="cap-colegas" x-show="pantalla === 'historia'" class="hist-sec hist-sec--humana">
               <div class="hist-col hist-anim">
                 <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">08</span><span class="hist-hilo-l"></span></div>
                 <h2 class="hist-h2">Y también encuentra<br>a sus colegas</h2>
@@ -2321,7 +2372,7 @@
             </section>
 
             <!-- 9 · Por qué se lo proponemos a Lilly -->
-            <section id="cap-momentos" class="hist-sec hist-sec--cierre">
+            <section id="cap-momentos" x-show="pantalla === 'historia'" class="hist-sec hist-sec--cierre">
               <div class="hist-col hist-anim">
                 <div class="hist-hilo" aria-hidden="true"><span class="hist-hilo-n">09</span><span class="hist-hilo-l"></span></div>
                 <h2 class="hist-h2">Para el Dr. Óscar,<br><span class="hist-marca hist-marca--grande"><img src="img/lilly-firma-blanca.png" alt="Lilly" class="h-[34px] w-[91px] shrink-0 object-contain" loading="eager" decoding="async" />360</span><br>es el aliado que<br>le faltaba</h2>
@@ -2350,7 +2401,7 @@
 
 
             <!-- Todo lo que hay dentro, en una parrilla: cada celda entra a su pantalla -->
-            <section id="cap-todo" class="hist-sec hist-sec--parrilla">
+            <section id="cap-todo" x-show="pantalla === 'historia'" class="hist-sec hist-sec--parrilla">
               <div class="hist-col hist-anim">
                 <h2 class="hist-h2">Todo Lilly 360<br>ya está navegable</h2>
                 <p class="hist-p mt-5 max-w-[34rem]">No es una lámina: es el producto funcionando en los tres dispositivos. Entra por donde quieras.</p>
@@ -2373,7 +2424,7 @@
             </section>
 
             <!-- 8 · Entrar al prototipo -->
-            <section id="cap-final" class="hist-sec hist-sec--final">
+            <section id="cap-final" x-show="pantalla === 'historia'" class="hist-sec hist-sec--final">
               <p class="hist-kicker">Y esto es lo que construimos</p>
               <h2 class="hist-h1 mt-3 text-center">Naveguen Lilly 360 ustedes mismos</h2>
               <p class="hist-p mt-5 max-w-[34rem] text-center">El prototipo está completo y funciona en celular, tablet y computador: el registro, los cuatro momentos, y la experiencia completa del médico.</p>
