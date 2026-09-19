@@ -178,6 +178,8 @@
   .panel.on{display:block}
   .panel h3.ph{max-width:none; margin:0 0 6px; font-size:20px; font-weight:600}
   .panel p.lead{margin:0 0 16px; color:var(--t-2); font-size:16px; line-height:1.5; max-width:70ch}
+  table.tnum th:not(:first-child),table.tnum td:not(:first-child){text-align:right; white-space:nowrap}
+  table.tnum td:not(:first-child){font-variant-numeric:tabular-nums}
   .tt2 table{font-size:15px}
   .tt2 th,.tt2 td{vertical-align:top; padding:12px 10px}
   .tt2 td:first-child{font-weight:600; white-space:nowrap}
@@ -283,15 +285,16 @@
   <p class="menu-tit">Contenido</p>
   <ul class="menu" id="menu">
     <li><button type="button" data-s="resumen" data-go="resumen"><span class="n">01</span>Resumen</button></li>
-    <li><button type="button" data-s="alcance" data-go="alcance"><span class="n">02</span>Alcance</button></li>
-    <li><button type="button" data-s="validacion" data-go="validacion"><span class="n">03</span>Investigación con médicos</button></li>
-    <li><button type="button" data-s="arquitectura" data-go="arquitectura"><span class="n">04</span>Arquitectura</button></li>
-    <li><button type="button" data-s="datos" data-go="datos"><span class="n">05</span>Datos y seguimiento</button></li>
-    <li><button type="button" data-s="operacion" data-go="operacion"><span class="n">06</span>Operación</button></li>
-    <li><button type="button" data-s="equipo" data-go="equipo"><span class="n">07</span>Equipo</button></li>
-    <li><button type="button" data-s="cronograma" data-go="cronograma"><span class="n">08</span>Cronograma</button></li>
-    <li><button type="button" data-s="inversion" data-go="inversion"><span class="n">09</span>Inversión</button></li>
-    <li><button type="button" data-s="pasos" data-go="pasos"><span class="n">10</span>Próximos pasos</button></li>
+    <li><button type="button" data-s="referente" data-go="referente"><span class="n">02</span>Lilly 360 en México y Brasil</button></li>
+    <li><button type="button" data-s="alcance" data-go="alcance"><span class="n">03</span>Alcance</button></li>
+    <li><button type="button" data-s="validacion" data-go="validacion"><span class="n">04</span>Investigación con médicos</button></li>
+    <li><button type="button" data-s="arquitectura" data-go="arquitectura"><span class="n">05</span>Arquitectura</button></li>
+    <li><button type="button" data-s="datos" data-go="datos"><span class="n">06</span>Datos y seguimiento</button></li>
+    <li><button type="button" data-s="operacion" data-go="operacion"><span class="n">07</span>Operación</button></li>
+    <li><button type="button" data-s="equipo" data-go="equipo"><span class="n">08</span>Equipo</button></li>
+    <li><button type="button" data-s="cronograma" data-go="cronograma"><span class="n">09</span>Cronograma</button></li>
+    <li><button type="button" data-s="inversion" data-go="inversion"><span class="n">10</span>Inversión</button></li>
+    <li><button type="button" data-s="pasos" data-go="pasos"><span class="n">11</span>Próximos pasos</button></li>
   </ul>
   <p class="pie-side">Valores en pesos colombianos, antes de IVA. Propuesta con vigencia de 30 días.</p>
 </aside>
@@ -306,14 +309,14 @@
     <div class="hero">
       <div>
         <h1>DocRed, el aliado estratégico para lanzar Lilly 360 en Colombia</h1>
-        <p class="sub">Entendemos, desarrollamos y operamos de la mano con Lilly, con el conocimiento de la comunidad médica que DocRed lleva seis años construyendo: más de 100.000 médicos verificados en Latinoamérica.</p>
+        <p class="sub">Entendemos, desarrollamos y operamos de la mano con Lilly, con el conocimiento de la comunidad médica que DocRed lleva seis años construyendo en Colombia, México y otros países de Latinoamérica.</p>
       </div>
       <img class="hero-logo" alt="Lilly 360" src="data:image/png;base64,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" />
     </div>
     <div class="grid g3">
       <div class="card rojo"><p class="et">Lanzamiento</p><p class="big">15 dic<small>2026, con portal, guías, búsqueda y métricas</small></p></div>
       <div class="card"><p class="et">Entrega final</p><p class="big">10 feb<small>2027, con todo el alcance aceptado</small></p></div>
-      <div class="card"><p class="et">Inversión</p><p class="big" style="font-size:clamp(26px,2.6vw,34px)">$380 a $425<small>millones, antes de IVA. Aparte: honorarios de médicos y operación mensual</small></p></div>
+      <div class="card"><p class="et">Inversión</p><p class="big" style="font-size:clamp(26px,2.6vw,34px)">$550<small>millones sin IA, $640 con IA opcional, antes de IVA. Aparte: honorarios de médicos y operación mensual</small></p></div>
     </div>
     <h3 class="sub-tit">Cómo está organizado</h3>
     <div class="grid g3" style="margin-top:16px">
@@ -321,6 +324,30 @@
       <div class="card"><p class="et">Paso 2</p><h3 style="margin-top:6px">Desarrollamos</h3><p class="d">19 semanas, con una demostración cada viernes junto al equipo de Lilly.</p></div>
       <div class="card"><p class="et">Paso 3</p><h3 style="margin-top:6px">Operamos</h3><p class="d">Desde febrero de 2027, con una cuota mensual y un reporte por médico.</p></div>
     </div>
+    <button type="button" class="btn-sig" data-go="referente">Siguiente: Lilly 360 en México y Brasil</button>
+  </div>
+</section>
+
+<!-- 01b REFERENTE -->
+<section class="hoja" id="referente">
+  <div class="in">
+    <span class="num-sec">02</span>
+    <h2>Lilly 360 ya funciona en México y Brasil</h2>
+    <p class="sub">Colombia se suma a una plataforma que Lilly ya conoce. Esto no es un sitio web de contenido: es una plataforma de acceso verificado, medición por médico y operación continua.</p>
+    <div class="grid g3" style="margin-top:clamp(24px,3vh,36px)">
+      <div class="card"><p class="et">México, primer trimestre</p><p class="big" style="font-size:clamp(24px,2.6vw,32px)">28.243<small>médicos registrados, en 90 especialidades</small></p></div>
+      <div class="card"><p class="et">Contenido</p><p class="big" style="font-size:clamp(24px,2.6vw,32px)">247<small>episodios de audio y video activos, en web y aplicación móvil</small></p></div>
+      <div class="card"><p class="et">Brasil</p><p class="big" style="font-size:clamp(24px,2.6vw,32px)">Replicada<small>la misma estrategia se llevó a Brasil en el tercer trimestre</small></p></div>
+    </div>
+    <h3 class="sub-tit">Qué la diferencia de un sitio web común</h3>
+    <div class="tw tt2" style="margin-top:12px"><table class="izq"><thead><tr><th class="l">Tema</th><th class="l">Un sitio web común</th><th class="l">Lilly 360 Colombia con DocRed</th></tr></thead><tbody>
+      <tr><td>Acceso</td><td>Abierto a cualquiera</td><td>Solo médicos verificados, con Lilly Passport</td></tr>
+      <tr><td>Medición</td><td>Visitas en total</td><td>Vistas, tiempo, clics y video de cada médico, cruzados con OCE</td></tr>
+      <tr><td>Contenido</td><td>Un solo editor</td><td>Medical Affairs y Comercial separados, cada uno con sus permisos y aprobaciones</td></tr>
+      <tr><td>Operación</td><td>Sin compromiso de servicio</td><td>Tres ambientes, monitoreo, respaldos y tiempos de respuesta definidos</td></tr>
+      <tr><td>Autonomía de Lilly</td><td>Depende del proveedor</td><td>Su equipo publica contenido sin pedir un despliegue</td></tr>
+    </tbody></table></div>
+    <p class="nota">Las cifras de México son del primer trimestre y vienen del caso de éxito publicado de Lilly 360 México. DocRed no participó en esa plataforma.</p>
     <button type="button" class="btn-sig" data-go="alcance">Siguiente: Alcance</button>
   </div>
 </section>
@@ -328,7 +355,7 @@
 <!-- 02 ALCANCE -->
 <section class="hoja" id="alcance">
   <div class="in">
-    <span class="num-sec">02</span>
+    <span class="num-sec">03</span>
     <h2>Qué se construye</h2>
     <p class="sub">Un hub donde los médicos acceden, consumen contenido y dejan trazabilidad.</p>
     <div class="grid g3">
@@ -341,7 +368,7 @@
     </div>
     <div class="grid g2" style="margin-top:16px">
       <div class="card"><h3>Base técnica</h3><p class="d">Ambientes de desarrollo, pruebas y producción. Accesibilidad según el estándar WCAG 2.1 AA.</p></div>
-      <div class="card"><h3>Opcional</h3><p class="d">Consulta rápida con IA sobre el contenido aprobado. Sin ella el precio queda cerca de $380 millones; con ella, cerca de $425.</p></div>
+      <div class="card"><h3>Opcional</h3><p class="d">Consulta rápida con IA sobre el contenido aprobado. Sin ella la inversión es de $550 millones; con ella, $640.</p></div>
     </div>
     <button type="button" class="btn-sig" data-go="validacion">Siguiente: Investigación con médicos</button>
   </div>
@@ -350,7 +377,7 @@
 <!-- 03 VALIDACION -->
 <section class="hoja" id="validacion">
   <div class="in">
-    <span class="num-sec">03</span>
+    <span class="num-sec">04</span>
     <h2>Investigamos con médicos antes de construir</h2>
     <p class="sub">Hablamos con 20 médicos en las semanas 1 y 2 para confirmar qué quieren y si la propuesta les sirve.</p>
     <div class="grid g3">
@@ -376,7 +403,7 @@
 <!-- 04 ARQUITECTURA -->
 <section class="hoja" id="arquitectura">
   <div class="in" style="width:min(100%,1080px)">
-    <span class="num-sec">04</span>
+    <span class="num-sec">05</span>
     <h2>Arquitectura técnica de la plataforma</h2>
     <p class="sub" style="max-width:52ch">Cómo está diseñada, dónde corre y qué pasa cuando algo falla. Elija un tema.</p>
 
@@ -548,7 +575,7 @@
 <!-- DATOS -->
 <section class="hoja" id="datos">
   <div class="in" style="width:min(100%,1080px)">
-    <span class="num-sec">05</span>
+    <span class="num-sec">06</span>
     <h2>Datos y seguimiento de cada médico</h2>
     <p class="sub" style="max-width:52ch">Lilly deja de ver solo cuántos entran y pasa a ver qué hace cada médico, con qué contenido y desde qué campaña.</p>
 
@@ -598,38 +625,44 @@
 <!-- 05 OPERACION -->
 <section class="hoja" id="operacion">
   <div class="in">
-    <span class="num-sec">06</span>
+    <span class="num-sec">07</span>
     <h2>Operación después del lanzamiento</h2>
-    <p class="sub">Es un servicio distinto del desarrollo, con cobro mensual y dos componentes separados.</p>
+    <p class="sub">Es un servicio distinto del desarrollo, con cobro mensual, en tres conceptos.</p>
 
     <div class="grid g2" style="margin-top:clamp(24px,3vh,36px)">
       <div class="card"><p class="et">Desarrollo</p><h3 style="margin-top:4px">1 de octubre de 2026 al 10 de febrero de 2027</h3><p class="d">Se construye la plataforma. Se paga una sola vez, en tres cuotas (30, 40 y 30%).</p></div>
-      <div class="card rojo"><p class="et">Operación</p><h3 style="margin-top:4px">Desde febrero de 2027</h3><p class="d">Se mantiene y se mejora el hub. Se paga cada mes: servicios por consumo más el equipo de DocRed.</p></div>
+      <div class="card rojo"><p class="et">Operación</p><h3 style="margin-top:4px">Desde febrero de 2027</h3><p class="d">Se mantiene y se mejora el hub. Se paga cada mes: servicios digitales, gestión de esos servicios y la cuota fija de administración.</p></div>
     </div>
 
     <h3 class="sub-tit">Qué se paga cada mes</h3>
-    <p class="sub" style="margin-top:8px">Estimado mensual, todo más IVA.</p>
+    <p class="sub" style="margin-top:8px">Tres conceptos. Cifras en millones de pesos por mes, más IVA.</p>
+    <div class="tw" style="margin-top:16px"><table class="tnum">
+      <thead><tr><th class="l">Concepto</th><th>Consumo bajo</th><th>Consumo medio</th><th>Consumo alto</th></tr></thead>
+      <tbody>
+        <tr><td class="l">1. Servicios digitales<br><small style="color:var(--t-3)">Hosting, video, búsqueda, métricas y correo. Cambian con el uso</small></td><td>$15</td><td>$20</td><td>$25</td></tr>
+        <tr><td class="l">2. Gestión y pago a proveedores, 20%<br><small style="color:var(--t-3)">Sobre el valor de los servicios digitales</small></td><td>$3</td><td>$4</td><td>$5</td></tr>
+        <tr><td class="l">3. Administración del sitio y equipo DocRed<br><small style="color:var(--t-3)">Cuota fija, no cambia con el consumo</small></td><td>$25</td><td>$25</td><td>$25</td></tr>
+        <tr><td class="l"><b>Total por mes</b></td><td class="v">$43</td><td class="v">$49</td><td class="v">$55</td></tr>
+      </tbody>
+    </table></div>
+
     <div class="grid g2" style="margin-top:16px">
       <div class="card">
-        <p class="et">1. Servicios por consumo mensual</p><h3 style="margin-top:4px">La infraestructura y los servicios digitales</h3>
-        <div class="tw"><table style="margin-top:10px">
-          <thead><tr><th>Consumo del mes</th><th>Por mes, rango</th></tr></thead>
-          <tbody>
-            <tr><td>Bajo</td><td class="v">Cerca de $15 millones</td></tr>
-            <tr><td>Medio</td><td class="v">Cerca de $20 millones</td></tr>
-            <tr><td>Alto</td><td class="v">Cerca de $25 millones</td></tr>
-          </tbody>
-        </table></div>
-        <ul class="pts"><li>Hosting en AWS, video y webinars, búsqueda, métricas y correo</li><li>Cambia con el uso; cada mes se reporta el detalle por servicio</li><li>Lilly puede pagarlos directo a cada proveedor</li></ul>
+        <h3>Qué incluye la cuota de $25 millones</h3>
+        <ul class="pts"><li>Administración del sitio: operación diaria, monitoreo y disponibilidad</li><li>Equipo de cuenta: atención y seguimiento de Lilly</li><li>Mantenimiento: parches, respaldos y actualizaciones</li><li>Ajustes y mejoras menores, hasta 100 horas al mes</li><li>Subida de contenidos</li><li>Reporte mensual de vistas, tiempo, clics y video por médico</li></ul>
       </div>
       <div class="card">
-        <p class="et">2. Equipo DocRed a disposición de Lilly</p><h3 style="margin-top:4px">Un equipo con cuota mensual fija</h3>
-        <p class="rango">$18 a $22 millones<small>por mes, más IVA</small></p>
-        <ul class="pts"><li>Cuentas: atención y seguimiento de Lilly</li><li>Mantenimiento: monitoreo, parches y respaldos</li><li>Desarrollo de ajustes y mejoras menores</li><li>Subida de contenidos</li><li>Reporte mensual de vistas, tiempo, clics y video por médico</li></ul>
+        <h3>Cómo se cobran los servicios digitales</h3>
+        <ul class="pts"><li>DocRed los contrata y paga a cada proveedor, y los factura a Lilly con el 20% de gestión, que cubre también el plazo de pago de 45 días</li><li>Cada mes se reporta el detalle por servicio</li><li>Si Lilly prefiere pagarlos directo a cada proveedor, no aplica el 20%</li></ul>
       </div>
     </div>
-    <div class="total" style="margin-top:16px"><div class="a">Estimado mensual total, más IVA</div><div class="b">$33 a $47 millones</div></div>
-    <p class="nota">Son rangos de referencia. Los valores exactos se calculan y quedan fijos una vez Lilly apruebe el alcance, Passport y el nivel de servicio. Trabajo fuera de la cuota se cotiza antes de empezar, con una hora adicional de $180.000. La creación de contenido nuevo se cotiza por hora.</p>
+
+    <h3 class="sub-tit">Condiciones</h3>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card"><p class="et">Facturación</p><h3 style="margin-top:6px">Mensual, pago a 45 días</h3></div>
+      <div class="card"><p class="et">Permanencia</p><h3 style="margin-top:6px">Mínimo 24 meses</h3></div>
+      <div class="card"><p class="et">Fuera de la cuota</p><h3 style="margin-top:6px">Hora adicional de $230.000</h3><p class="d">La creación de contenido nuevo se cotiza por hora, antes de empezar.</p></div>
+    </div>
 
     <h3 class="sub-tit">Cuánto tardamos en responder a un problema</h3>
     <div class="sla">
@@ -646,7 +679,7 @@
 <!-- 06 EQUIPO -->
 <section class="hoja" id="equipo">
   <div class="in">
-    <span class="num-sec">07</span>
+    <span class="num-sec">08</span>
     <h2>El equipo de la fase de desarrollo</h2>
     <p class="sub">Más desarrolladores mientras se construye, menos cuando ya está en producción.</p>
     <div class="tw"><table class="izq" style="margin-top:24px">
@@ -671,7 +704,7 @@
 <!-- 07 CRONOGRAMA -->
 <section class="hoja" id="cronograma">
   <div class="in" style="width:min(100%,1080px)">
-    <span class="num-sec">08</span>
+    <span class="num-sec">09</span>
     <h2>Del 1 de octubre al 10 de febrero</h2>
     <p class="sub">19 semanas. Cada semana termina con una demostración el viernes. Fase 0 es la investigación; las fases 1 a 3 son la construcción.</p>
 
@@ -742,36 +775,42 @@
 <!-- 08 INVERSION -->
 <section class="hoja" id="inversion">
   <div class="in">
-    <span class="num-sec">09</span>
+    <span class="num-sec">10</span>
     <h2>Inversión total del proyecto</h2>
-    <p class="sub">Un rango que se convierte en precio fijo cuando Lilly aprueba el alcance.</p>
+    <p class="sub">Precio fijo por el alcance descrito. Los cambios de alcance se cotizan por escrito antes de empezar.</p>
 
-    <div class="total" style="margin-top:clamp(30px,4vh,44px)"><div class="a">Investigación y desarrollo, antes de IVA</div><div class="b">$380 a $425 millones</div></div>
-
-    <div class="grid g2" style="margin-top:16px">
-      <div class="card"><p class="et">Investigación con médicos</p><p class="big" style="font-size:clamp(24px,2.6vw,32px)">$25 millones<small>Valor fijo dentro del proyecto completo. Semanas 1 y 2, 20 médicos.</small></p></div>
-      <div class="card rojo"><p class="et">Desarrollo</p><p class="big" style="font-size:clamp(24px,2.6vw,32px)">$355 a $400 millones<small>19 semanas, del 1 de octubre al 10 de febrero. Lanzamiento el 15 de diciembre.</small></p></div>
-    </div>
-
-    <div class="grid g2" style="margin-top:16px">
-      <div class="card"><h3>Incluido</h3><ul class="pts"><li>Investigación con 20 médicos y su informe (solo dentro del proyecto completo)</li><li>Diseño, desarrollo, pruebas y puesta en producción</li><li>30 días de acompañamiento reforzado tras el lanzamiento</li></ul></div>
-      <div class="card"><h3>Se cobra aparte</h3><ul class="pts"><li>Honorarios de los médicos: $2 a $3 millones</li><li>Operación mensual: $33 a $47 millones más IVA, con hosting incluido</li><li>Creación de contenido nuevo</li></ul></div>
-    </div>
-
-    <h3 class="sub-tit">Qué define dónde queda el precio</h3>
-    <div class="grid g3" style="margin-top:16px">
-      <div class="card"><h3>Lilly Passport</h3><p class="d">Qué tan compleja resulte la integración de acceso y consentimientos.</p></div>
-      <div class="card"><h3>Alcance que acepte Lilly</h3><p class="d">Qué partes de la propuesta se incluyen después de conocer los resultados de la investigación.</p></div>
-      <div class="card"><h3>Consulta rápida con IA</h3><p class="d">Es opcional. Sin ella el precio queda cerca del extremo bajo; con ella, cerca del alto.</p></div>
-    </div>
+    <p class="sub" style="margin-top:20px">Cifras en millones de pesos, antes de IVA.</p>
+    <div class="tw" style="margin-top:12px"><table class="tnum">
+      <thead><tr><th class="l">Concepto</th><th>Base, sin IA</th><th>Con consulta rápida con IA</th></tr></thead>
+      <tbody>
+        <tr><td class="l">Investigación con 20 médicos<br><small style="color:var(--t-3)">Semanas 1 y 2. Solo dentro del proyecto completo</small></td><td>$35</td><td>$35</td></tr>
+        <tr><td class="l">Diseño, desarrollo, pruebas y puesta en producción<br><small style="color:var(--t-3)">19 semanas, del 1 de octubre al 10 de febrero. Lanzamiento el 15 de diciembre</small></td><td>$515</td><td>$515</td></tr>
+        <tr><td class="l">Consulta rápida con IA<br><small style="color:var(--t-3)">Opcional, sobre el contenido aprobado</small></td><td>No incluida</td><td>$90</td></tr>
+        <tr><td class="l"><b>Total</b></td><td class="v">$550</td><td class="v">$640</td></tr>
+      </tbody>
+    </table></div>
 
     <h3 class="sub-tit">Cómo se paga</h3>
-    <div class="grid g3" style="margin-top:16px">
-      <div class="card rojo"><p class="et">Al firmar</p><p class="big">30%<small>de anticipo, de $114 a $128 millones</small></p></div>
-      <div class="card"><p class="et">15 de diciembre</p><p class="big">40%<small>al lanzamiento, de $152 a $170 millones</small></p></div>
-      <div class="card"><p class="et">Contra entrega</p><p class="big">30%<small>en la entrega final, de $114 a $128 millones</small></p></div>
+    <div class="tw" style="margin-top:12px"><table class="tnum">
+      <thead><tr><th class="l">Cuándo</th><th>Parte</th><th>Base, sin IA</th><th>Con IA</th></tr></thead>
+      <tbody>
+        <tr><td class="l">Al firmar</td><td>30%</td><td>$165</td><td>$192</td></tr>
+        <tr><td class="l">15 de diciembre, al lanzamiento</td><td>40%</td><td>$220</td><td>$256</td></tr>
+        <tr><td class="l">10 de febrero, contra entrega final</td><td>30%</td><td>$165</td><td>$192</td></tr>
+      </tbody>
+    </table></div>
+
+        <div class="grid g2" style="margin-top:16px">
+      <div class="card"><h3>Incluido</h3><ul class="pts"><li>Investigación con 20 médicos y su informe (solo dentro del proyecto completo)</li><li>Diseño, desarrollo, pruebas y puesta en producción</li><li>30 días de acompañamiento reforzado tras el lanzamiento</li><li>Entrega a Lilly del código propio de Lilly 360 con el pago final. Los componentes previos de DocRed y las librerías de terceros se entregan con su licencia de uso</li></ul></div>
+      <div class="card"><h3>Se cobra aparte</h3><ul class="pts"><li>Honorarios de los médicos: $2 a $3 millones</li><li>Operación mensual: $43 a $55 millones más IVA</li><li>Creación de contenido nuevo</li></ul></div>
     </div>
-    <div class="prop" aria-hidden="true"><div style="width:30%; background:var(--lilly)"></div><div style="width:40%; background:rgba(255,255,255,.5)"></div><div style="width:30%; background:rgba(255,255,255,.22)"></div></div>
+
+    <h3 class="sub-tit">Qué podría cambiar el precio</h3>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card"><h3>Lilly Passport</h3><p class="d">Si la integración de acceso y consentimientos exige más de lo descrito, se cotiza el cambio por escrito antes de hacerlo.</p></div>
+      <div class="card"><h3>Alcance que acepte Lilly</h3><p class="d">Si tras la investigación con médicos Lilly agrega o quita partes, el precio se ajusta por escrito.</p></div>
+      <div class="card"><h3>Consulta rápida con IA</h3><p class="d">Es opcional. Sin ella la inversión es de $550 millones; con ella, $640 (módulo de $90 millones).</p></div>
+    </div>
 
     <p class="nota">Valores en pesos colombianos, antes de IVA. Cambios fuera del alcance se cotizan por escrito antes de empezar. Propuesta con vigencia de 30 días.</p>
     <button type="button" class="btn-sig" data-go="pasos">Siguiente: Próximos pasos</button>
@@ -781,7 +820,7 @@
 <!-- 09 PASOS -->
 <section class="hoja" id="pasos">
   <div class="in">
-    <span class="num-sec">10</span>
+    <span class="num-sec">11</span>
     <h2>Lo que sigue y lo que necesitamos</h2>
     <div class="grid g2">
       <div class="card">
