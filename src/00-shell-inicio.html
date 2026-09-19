@@ -742,6 +742,14 @@
   .dr-pais-v, .dr-bar-v { font-size: 14px; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
   .dr-pais-t, .dr-bar-t { height: 10px; border-radius: 999px; background: rgba(255,255,255,.08); overflow: hidden; }
   .dr-pais-t i, .dr-bar-t i { display: block; height: 100%; border-radius: 999px; background: #6DCB8A; }
+  @media (min-width: 900px) { .dr-dos--mapa { grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); align-items: center; } }
+  .dr-dos--mapa { align-items: center; }
+  .dr-mapa-caja { max-width: 20rem; }
+  .dr-mapa { display: block; width: 100%; height: auto; }
+  .dr-mapa-base path { fill: rgba(255,255,255,.10); stroke: #0a0c22; stroke-width: .8; }
+  .dr-mapa-alto path { fill: #6DCB8A; stroke: #0a0c22; stroke-width: .8; }
+  .dr-leyenda { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 13px; color: rgba(255,255,255,.66); }
+  .dr-leyenda i { width: 10px; height: 10px; border-radius: 50%; background: #6DCB8A; flex: none; }
   .dr-cifras { display: grid; grid-template-columns: minmax(0, 1fr); gap: 26px; margin-top: 28px; }
   @media (min-width: 900px) { .dr-cifras { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; } .dr-cifra { padding: 0 28px; border-left: 1px solid rgba(255,255,255,.14); } .dr-cifra:first-child { padding-left: 0; border-left: 0; } }
   .dr-cifra { display: flex; flex-direction: column; gap: 8px; }
