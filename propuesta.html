@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lilly 360 Colombia · Propuesta de DocRed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#050505; --panel:#0C0C0C;
+    --lilly:#D52B1E; --rojo-txt:#F0958C;
+    --azul:#1F5FA8; --verde:#0F7C7C; --ambar:#F2B84B;
+    --t-1:rgba(255,255,255,.96); --t-2:rgba(255,255,255,.78); --t-3:rgba(255,255,255,.6); --t-4:rgba(255,255,255,.4);
+    --linea:rgba(255,255,255,.12); --linea-2:rgba(255,255,255,.06);
+    --side:264px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+  body{margin:0; background:var(--ink); color:#fff; font-family:Inter,-apple-system,system-ui,sans-serif; -webkit-font-smoothing:antialiased; font-variant-numeric:tabular-nums; overflow-x:hidden}
+  a{color:inherit}
+  button{font:inherit; color:inherit; background:none; border:0; padding:0; cursor:pointer; text-align:left}
+  .luz{position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.6;
+    background:repeating-linear-gradient(90deg, rgba(213,43,30,0) 0 42px, rgba(213,43,30,.2) 42px 64px, rgba(213,43,30,0) 64px 106px),
+               radial-gradient(60% 55% at 70% 100%, rgba(213,43,30,.5), transparent 70%);
+    -webkit-mask-image:radial-gradient(75% 55% at 65% 100%, #000, transparent 75%); mask-image:radial-gradient(75% 55% at 65% 100%, #000, transparent 75%); filter:blur(1px)}
+
+  /* ===== MENU LATERAL ===== */
+  .side{position:fixed; z-index:30; left:0; top:0; bottom:0; width:var(--side); background:#080808; border-right:1px solid var(--linea); padding:28px 20px; display:flex; flex-direction:column}
+  .logo{font-size:24px; font-weight:700; letter-spacing:-.02em; text-decoration:none}
+  .logo img{display:block; height:26px; width:auto}
+.logo{background:#fff; color:#fff; padding:6px 10px; border-radius:6px; border:0; cursor:pointer; font-family:inherit}
+  .logo i{font-style:normal; color:#6DCB8A}
+  .side .para{margin:6px 0 0; font-size:13px; color:var(--t-3)}
+  .menu-tit{margin:32px 0 10px; font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--t-4)}
+  .menu{list-style:none; margin:0; padding:0; display:grid; gap:2px}
+  .menu button{width:100%; display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:10px; text-decoration:none; font-size:15px; color:var(--t-2); border-left:3px solid transparent}
+  .menu button .n{font-size:12px; color:var(--t-4); width:20px}
+  .menu button:hover{background:rgba(255,255,255,.05); color:#fff}
+  .menu button.on{background:rgba(213,43,30,.16); color:#fff; border-left-color:var(--lilly)}
+  .menu button.on .n{color:var(--rojo-txt)}
+  .side .pie-side{margin-top:auto; font-size:12px; line-height:1.5; color:var(--t-4)}
+
+  /* ===== CONTENIDO ===== */
+  main{position:relative; z-index:1; margin-left:var(--side)}
+  .miga{position:sticky; top:0; z-index:20; background:rgba(5,5,5,.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--linea); padding:14px clamp(20px,5vw,64px); font-size:14px; color:var(--t-3)}
+  .miga .lnk{color:var(--t-2)}
+  .miga .lnk:hover{color:#fff}
+  .miga .sep{margin:0 10px; color:var(--t-4)}
+  .miga #miga-act{color:#fff}
+
+  section.hoja{min-height:100vh; padding:clamp(56px,10vh,110px) clamp(20px,5vw,64px); border-bottom:1px solid var(--linea); scroll-margin-top:0}
+  .in{width:min(100%,1000px)}
+  .num-sec{font-size:15px; font-weight:600; color:var(--lilly); letter-spacing:.06em}
+  h1,h2{margin:14px 0 0; font-weight:600; letter-spacing:-.03em; line-height:1.06; text-wrap:balance}
+  h1{font-size:clamp(38px,5.6vw,64px); max-width:15ch}
+  h2{font-size:clamp(32px,4.4vw,52px); max-width:18ch}
+  .sub{margin:22px 0 0; font-size:clamp(18px,2vw,22px); line-height:1.45; color:var(--t-2); max-width:34ch}
+
+  .grid{display:grid; gap:16px; margin-top:clamp(34px,5vh,52px)}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr))}
+  .card{border:1px solid var(--linea); border-radius:20px; padding:26px 28px; background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.012))}
+  .card.rojo{border-color:rgba(213,43,30,.6); background:rgba(213,43,30,.1)}
+  .card .et{font-size:14px; color:var(--t-3); margin:0}
+  .card .big{font-size:clamp(32px,3.6vw,44px); font-weight:600; letter-spacing:-.025em; line-height:1.08; margin:10px 0 0}
+  .card .big small{display:block; font-size:15px; font-weight:400; color:var(--t-2); letter-spacing:0; margin-top:8px}
+  .card h3{margin:0; font-size:21px; font-weight:600; letter-spacing:-.01em}
+  .card p.d{margin:12px 0 0; font-size:16px; line-height:1.5; color:var(--t-2)}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:10px}
+  .btn-sig{display:inline-block; border:0; margin-top:clamp(38px,6vh,60px); padding:13px 26px; border-radius:999px; background:var(--lilly); color:#fff; text-decoration:none; font-size:15px}
+  .btn-sig:hover{background:#e6382a}
+  .nota{margin:24px 0 0; font-size:14px; line-height:1.5; color:var(--t-3); max-width:60ch}
+
+  /* ===== GANTT ===== */
+  .gantt{margin-top:clamp(30px,4vh,44px); border:1px solid var(--linea); border-radius:20px; background:var(--panel); overflow:hidden}
+  .gantt-scroll{overflow-x:auto}
+  .gt{min-width:800px; display:grid; grid-template-columns:200px minmax(0,1fr)}
+  .gt-cab{height:88px; border-bottom:1px solid var(--linea)}
+  .gt-top{height:88px; border-bottom:1px solid var(--linea); border-left:1px solid var(--linea-2); display:grid; grid-template-rows:28px 1fr}
+  .gt-f{display:grid; grid-template-columns:repeat(19,minmax(0,1fr))}
+  .gt-f div{font-size:11.5px; font-weight:600; padding:0 10px; display:flex; align-items:center; white-space:nowrap; overflow:hidden; color:#fff}
+  .gt-m{display:grid; grid-template-columns:repeat(19,minmax(0,1fr))}
+  .gt-m div{border-left:1px solid var(--linea-2); padding:8px 8px 0; font-size:12px; font-weight:600; color:var(--t-2); display:flex; flex-direction:column}
+  .gt-m div:first-child{border-left:0}
+  .gt-m .n{display:grid; grid-template-columns:repeat(var(--n),1fr); margin-top:auto; font-size:10.5px; font-weight:500; color:var(--t-4); text-align:center}
+  .gt-e{height:48px; display:flex; align-items:center; padding:0 16px; font-size:14px; color:var(--t-1); border-bottom:1px solid var(--linea-2)}
+  .gt-e:last-child{border-bottom:0}
+  .gt-p{position:relative; border-left:1px solid var(--linea-2)}
+  .gt-c{position:absolute; inset:0; display:grid; grid-template-columns:repeat(19,minmax(0,1fr)); pointer-events:none}
+  .gt-c div{border-left:1px solid var(--linea-2)}
+  .gt-c div:first-child{border-left:0}
+  .gt-c .lan{background:rgba(213,43,30,.18); border-left:1px solid rgba(213,43,30,.75); border-right:1px solid rgba(213,43,30,.75)}
+  .gt-r{position:relative; z-index:1; height:48px; display:grid; grid-template-columns:repeat(19,minmax(0,1fr)); align-items:center; border-bottom:1px solid var(--linea-2)}
+  .gt-r:last-child{border-bottom:0}
+  .bar{height:23px; border-radius:5px; margin:0 2px; padding:0 4px; display:flex; align-items:center; justify-content:center; font-size:10.5px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden}
+  .f0{background:var(--ambar); color:#111 !important}
+  .f1{background:var(--lilly)}
+  .f2{background:var(--azul)}
+  .f3{background:var(--verde)}
+  .opc{background:transparent; border:1px dashed rgba(255,255,255,.5); color:var(--t-2)}
+  .estab{background:transparent; border:1px dashed var(--ambar); color:var(--ambar)}
+  .leyenda{display:flex; flex-wrap:wrap; gap:8px 22px; padding:15px 20px; border-top:1px solid var(--linea); font-size:13px; color:var(--t-3)}
+  .leyenda span{display:inline-flex; align-items:center; gap:8px}
+  .pt{width:13px; height:10px; border-radius:3px; display:inline-block}
+  .hitos{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr)); gap:18px; margin-top:30px}
+  .hito{border-left:3px solid var(--lilly); padding:2px 0 2px 16px}
+  .hito .s{font-size:13px; color:var(--rojo-txt); margin:0}
+  .hito .t{font-size:17px; margin:5px 0 0; line-height:1.3}
+  .hito .f{font-size:13.5px; color:var(--t-3); margin:4px 0 0; line-height:1.4}
+
+  /* ===== INVERSION Y OPERACION ===== */
+  .rango{white-space:nowrap; font-size:clamp(22px,2.3vw,30px); font-weight:600; letter-spacing:-.025em; margin:14px 0 0; line-height:1.08}
+  .rango small{display:block; font-size:14px; font-weight:400; color:var(--t-3); letter-spacing:0; margin-top:8px}
+  .fase-h{display:flex; align-items:center; font-size:14px; color:var(--t-2); margin:0}
+  .prop{margin-top:26px; height:14px; border-radius:7px; overflow:hidden; display:flex; background:var(--linea-2)}
+  .prop div{height:100%}
+  .total{margin-top:16px; border:1px solid rgba(213,43,30,.6); background:rgba(213,43,30,.1); border-radius:20px; padding:26px 30px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px}
+  .total .a{font-size:17px; color:var(--t-2)}
+  .total .b{font-size:clamp(30px,4vw,46px); font-weight:600; letter-spacing:-.025em}
+  ul.pts{list-style:none; margin:16px 0 0; padding:0; display:grid; gap:11px}
+  ul.pts li{position:relative; padding-left:20px; font-size:16px; line-height:1.45; color:var(--t-2)}
+  ul.pts li::before{content:''; position:absolute; left:0; top:.55em; width:7px; height:7px; border-radius:50%; background:var(--lilly)}
+  table{width:100%; border-collapse:collapse; font-size:16px}
+  th,td{text-align:left; padding:14px 6px; border-bottom:1px solid var(--linea-2)}
+  th{font-size:13px; font-weight:600; color:var(--t-4)}
+  td:last-child,th:last-child{text-align:right}
+  td.v{font-weight:600}
+  tr:last-child td{border-bottom:0}
+  table.izq td:last-child,table.izq th:last-child{text-align:left}
+  .sub-tit{margin:42px 0 0; font-size:22px; font-weight:600; letter-spacing:-.01em}
+  .sla{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr)); gap:14px; margin-top:16px}
+  .sla div{border:1px solid var(--linea); border-radius:16px; padding:18px 20px}
+  .sla .p{font-size:13px; color:var(--rojo-txt); margin:0}
+  .sla .r{font-size:26px; font-weight:600; margin:6px 0 0}
+  .sla .m{font-size:14px; color:var(--t-3); margin:4px 0 0}
+  .paso{display:grid; grid-template-columns:48px 1fr; gap:16px; align-items:start; padding:18px 0; border-bottom:1px solid var(--linea-2)}
+  .paso:last-child{border-bottom:0}
+  .num{width:40px; height:40px; border-radius:50%; border:1px solid rgba(213,43,30,.75); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:600}
+  .paso .t{font-size:18px; margin:0}
+  .paso .d{font-size:15px; color:var(--t-3); margin:5px 0 0}
+
+
+  /* ===== ARQUITECTURA ===== */
+  .arq{display:grid; gap:8px; margin-top:clamp(28px,4vh,40px)}
+  .capa{border:1px solid var(--linea); border-radius:18px; padding:18px 20px; background:rgba(255,255,255,.02)}
+  .capa .tt{margin:0 0 12px; font-size:13px; color:var(--t-3)}
+  .nodos{display:flex; flex-wrap:wrap; gap:10px}
+  .nodo{border-radius:12px; padding:11px 16px; font-size:15px; border:1px solid; line-height:1.3}
+  .nodo small{display:block; font-size:12.5px; color:var(--t-3); margin-top:3px}
+  .n-doc{background:rgba(213,43,30,.16); border-color:rgba(213,43,30,.65)}
+  .n-ter{background:rgba(31,95,168,.2); border-color:rgba(31,95,168,.9)}
+  .n-lil{background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.32)}
+  .n-opc{border-style:dashed}
+  .flecha{text-align:center; color:var(--t-4); font-size:18px; line-height:1}
+  .capa.hub{border-color:rgba(213,43,30,.55); background:rgba(213,43,30,.06)}
+  .ar-cols{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr)); gap:12px}
+  .ar-col{border:1px dashed rgba(213,43,30,.45); border-radius:14px; padding:12px 12px 14px}
+  .ar-col h4{margin:0 0 10px; font-size:12.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--rojo-txt)}
+  .ar-col .nodo{display:block; margin-top:8px}
+  .ar-col .nodo:first-of-type{margin-top:0}
+  .ar-int{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); gap:12px}
+  .ar-int h4{margin:0 0 10px; font-size:12.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--t-3)}
+  .flecha b{font-weight:500; font-size:12px; color:var(--t-4); margin-left:8px; letter-spacing:.02em}
+  .env{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+  .env div{border:1px solid var(--linea); border-radius:12px; padding:10px 14px; font-size:14px; background:rgba(255,255,255,.03)}
+  .env div small{display:block; color:var(--t-3); font-size:12.5px; margin-top:2px}
+  @media (max-width:600px){ .env{grid-template-columns:1fr} }
+  .tabs{display:flex; gap:6px; flex-wrap:wrap; margin-top:clamp(24px,3vh,34px); border-bottom:1px solid var(--linea); padding-bottom:0}
+  .tabs button{padding:11px 16px; border-radius:10px 10px 0 0; font-size:15px; color:var(--t-3); border:1px solid transparent; border-bottom:0; margin-bottom:-1px}
+  .tabs button:hover{color:#fff}
+  .tabs button.on{color:#fff; background:rgba(213,43,30,.14); border-color:var(--linea); box-shadow:inset 0 -2px 0 var(--lilly)}
+  .panel{display:none; padding-top:22px}
+  .panel.on{display:block}
+  .panel h3.ph{max-width:none; margin:0 0 6px; font-size:20px; font-weight:600}
+  .panel p.lead{margin:0 0 16px; color:var(--t-2); font-size:16px; line-height:1.5; max-width:70ch}
+  .tt2 table{font-size:15px}
+  .tt2 th,.tt2 td{vertical-align:top; padding:12px 10px}
+  .tt2 td:first-child{font-weight:600; white-space:nowrap}
+  .tt2 td:last-child,.tt2 th:last-child{text-align:left}
+  .tt2 td:first-child{color:#fff}
+  .tt2 td{color:var(--t-2)}
+  .prin{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); gap:12px; margin-top:8px}
+  .prin div{border:1px solid var(--linea); border-radius:14px; padding:14px 16px; background:rgba(255,255,255,.02); font-size:15px; color:var(--t-2); line-height:1.45}
+  .prin b{display:block; color:#fff; font-weight:600; margin-bottom:4px}
+  .prin i{font-style:normal; color:var(--lilly); font-weight:600; margin-right:6px}
+  .topo{border:1px solid var(--linea); border-radius:18px; padding:16px; display:grid; gap:10px; background:rgba(255,255,255,.02)}
+  .topo .z{border:1px dashed rgba(255,255,255,.28); border-radius:14px; padding:12px 14px}
+  .topo .z.app{border-color:rgba(213,43,30,.6); background:rgba(213,43,30,.06)}
+  .topo .z.dat{border-color:rgba(31,95,168,.8); background:rgba(31,95,168,.08)}
+  .topo .z p{margin:0 0 8px; font-size:12.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--t-3)}
+  @media print{ .panel{display:block!important} .tabs{display:none} .tt2 td,.tt2 td:first-child{color:#111} }
+  .flujo{display:grid; grid-template-columns:1fr auto 1fr auto 1fr auto 1fr; gap:10px; align-items:stretch}
+  .flujo .fl{border:1px solid var(--linea); border-radius:16px; padding:16px 18px; background:rgba(255,255,255,.03)}
+  .flujo .fl.rojo{border-color:rgba(213,43,30,.7); background:rgba(213,43,30,.1)}
+  .flujo .fl .et{margin:0 0 6px; font-size:13px; color:var(--t-3)}
+  .flujo .fl .d{margin:0; font-size:15px; line-height:1.4; color:var(--t-2)}
+  .flujo .fa{align-self:center; color:var(--t-4); font-size:22px}
+  @media (max-width:900px){ .flujo{grid-template-columns:1fr} .flujo .fa{transform:rotate(90deg); justify-self:center} }
+  .mock{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); gap:12px; margin-top:12px; padding:16px; border:1px solid var(--linea); border-radius:18px; background:rgba(255,255,255,.02)}
+  .tile{border:1px solid var(--linea-2); border-radius:14px; padding:14px 16px; background:rgba(255,255,255,.03)}
+  .tile p{margin:0 0 12px; font-size:13.5px; color:var(--t-2)}
+  .tile .bar{display:flex; align-items:flex-end; gap:6px; height:64px}
+  .tile .bar i{flex:1; background:rgba(213,43,30,.55); border-radius:4px 4px 0 0}
+  .tile .line{height:64px; color:var(--rojo-txt)} .tile .line svg{width:100%; height:100%}
+  .tile .nm{height:64px; display:flex; align-items:center; font-size:40px; color:var(--t-4)} .tile .nm b{font-weight:600}
+  .dash{margin-top:12px; border:1px solid var(--linea); border-radius:18px; background:#0a0a0a; overflow:hidden}
+  .d-top{display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid var(--linea); background:#0e0e0e}
+  .d-dots{display:flex; gap:6px} .d-dots i{width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,.18)}
+  .d-ttl{margin:0; font-size:14px; color:var(--t-2); flex:1}
+  .d-ej{font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ambar); border:1px solid rgba(242,184,75,.5); border-radius:999px; padding:3px 10px}
+  .d-bar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; padding:12px 16px}
+  .d-seg{display:inline-flex; border:1px solid var(--linea); border-radius:10px; overflow:hidden}
+  .d-seg button{padding:8px 16px; font-size:14px; color:var(--t-3)} .d-seg button.on{background:var(--lilly); color:#fff}
+  .d-chips{display:flex; flex-wrap:wrap; gap:8px} .d-chips span{font-size:12.5px; color:var(--t-3); border:1px solid var(--linea); border-radius:999px; padding:5px 12px}
+  .d-kpis{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; padding:0 16px}
+  @media (max-width:900px){ .d-kpis{grid-template-columns:repeat(2,1fr)} }
+  .d-k{border:1px solid var(--linea-2); border-radius:14px; padding:12px 14px; background:rgba(255,255,255,.03)}
+  .d-k p{margin:0; font-size:12.5px; color:var(--t-3)} .d-k b{display:block; font-size:26px; font-weight:600; letter-spacing:-.02em; margin:4px 0 2px}
+  .d-k em{font-style:normal; font-size:12.5px; color:#66D19E} .d-k svg{width:100%; height:26px; margin-top:6px; color:var(--rojo-txt)}
+  .d-grid{display:grid; grid-template-columns:repeat(12,1fr); gap:10px; padding:10px 16px 16px}
+  .d-c{border:1px solid var(--linea-2); border-radius:14px; padding:14px 16px; background:rgba(255,255,255,.03); min-width:0}
+  .d-c h4{margin:0 0 10px; font-size:14px; font-weight:600}
+  .c8{grid-column:span 8} .c4{grid-column:span 4} .c5{grid-column:span 5} .c7{grid-column:span 7} .c12{grid-column:span 12}
+  @media (max-width:900px){ .c8,.c4,.c5,.c7{grid-column:span 12} }
+  .d-c svg.ln{width:100%; height:auto; display:block}
+  .d-leg{display:flex; gap:14px; font-size:12.5px; color:var(--t-3); margin-top:8px} .d-leg i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:6px}
+  .hb{display:grid; grid-template-columns:96px 1fr 50px; gap:10px; align-items:center; font-size:13.5px; margin:9px 0; color:var(--t-2)}
+  .hb .tr{height:12px; border-radius:6px; background:rgba(255,255,255,.07); overflow:hidden} .hb .tr i{display:block; height:100%; border-radius:6px}
+  .hb span:last-child{text-align:right; color:#fff; font-variant-numeric:tabular-nums}
+  .dn{display:flex; align-items:center; gap:16px; flex-wrap:wrap} .dn svg{width:120px; height:120px; flex:none}
+  .dn ul{list-style:none; margin:0; padding:0; font-size:13px; color:var(--t-2)} .dn li{margin:5px 0} .dn li i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:8px}
+  .d-t{width:100%; border-collapse:collapse; font-size:13.5px} .d-t th{font-size:12px; color:var(--t-3); font-weight:500; text-align:left; padding:8px 8px; border-bottom:1px solid var(--linea)} .d-t td{padding:9px 8px; border-bottom:1px solid var(--linea-2); color:var(--t-2)} .d-t td:first-child{color:#fff}
+  .d-t td:last-child,.d-t th:last-child{text-align:left}
+  .d-pill{display:inline-block; border-radius:999px; padding:2px 10px; font-size:12px; border:1px solid var(--linea)}
+  .cols2{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); gap:8px}
+
+  .tw{overflow-x:auto; -webkit-overflow-scrolling:touch}
+  .hero{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:clamp(24px,4vw,56px); align-items:center}
+  .hero h1{font-size:clamp(34px,4.6vw,56px); max-width:18ch}
+  .hero .sub{max-width:38ch}
+  .hero-logo{width:clamp(150px,20vw,260px); height:auto; border-radius:18px; display:block; box-shadow:0 20px 60px rgba(213,43,30,.35)}
+  @media (max-width:900px){ .hero{grid-template-columns:1fr} .hero-logo{width:150px; order:-1} }
+
+  /* ===== MOVIL: el menu pasa arriba ===== */
+  @media (max-width:900px){
+    :root{--side:0px}
+    .side{position:sticky; top:0; bottom:auto; width:100%; padding:12px 16px 0; flex-direction:column; border-right:0; border-bottom:1px solid var(--linea)}
+    .side .para,.menu-tit,.pie-side{display:none}
+    .side .logo{font-size:20px}
+    .menu{display:flex; gap:4px; overflow-x:auto; margin-top:8px; scrollbar-width:none}
+    .menu::-webkit-scrollbar{display:none}
+    .menu button{flex:none; border-left:0; border-bottom:3px solid transparent; border-radius:0; padding:10px 12px; font-size:14px}
+    .menu button.on{background:none; border-bottom-color:var(--lilly)}
+    .menu button .n{display:none}
+    .miga{position:static; display:none}
+    main{margin-left:0}
+    section.hoja{scroll-margin-top:100px; min-height:0}
+  }
+
+  @media print{
+    body{background:#fff; color:#111} .luz,.side,.miga,.btn-sig{display:none}
+    main{margin-left:0}
+    section.hoja{min-height:0; break-after:page; border-color:#ccc}
+    .card,.gantt,.total,.sla div{background:#fff; border-color:#ccc}
+    h1,h2,h3,.card .big,.rango,.total .b,.gt-e,td,.hito .t,.sla .r,.paso .t{color:#111}
+    .sub,ul.pts li,.card p.d,.card .et,.total .a,.nota{color:#444}
+  }
+</style>
+</head>
+<body>
+<div class="luz" aria-hidden="true"></div>
+
+<!-- MENU LATERAL: cada enlace lleva a su seccion -->
+<aside class="side">
+  <button type="button" class="logo" data-go="resumen" aria-label="DocRed"><img src="img/docred-logo.png" alt="DocRed"></button>
+  <p class="para">Propuesta para Lilly 360 Colombia</p>
+  <p class="menu-tit">Contenido</p>
+  <ul class="menu" id="menu">
+    <li><button type="button" data-s="resumen" data-go="resumen"><span class="n">01</span>Resumen</button></li>
+    <li><button type="button" data-s="alcance" data-go="alcance"><span class="n">02</span>Alcance</button></li>
+    <li><button type="button" data-s="validacion" data-go="validacion"><span class="n">03</span>Investigación con médicos</button></li>
+    <li><button type="button" data-s="arquitectura" data-go="arquitectura"><span class="n">04</span>Arquitectura</button></li>
+    <li><button type="button" data-s="datos" data-go="datos"><span class="n">05</span>Datos y seguimiento</button></li>
+    <li><button type="button" data-s="operacion" data-go="operacion"><span class="n">06</span>Operación</button></li>
+    <li><button type="button" data-s="equipo" data-go="equipo"><span class="n">07</span>Equipo</button></li>
+    <li><button type="button" data-s="cronograma" data-go="cronograma"><span class="n">08</span>Cronograma</button></li>
+    <li><button type="button" data-s="inversion" data-go="inversion"><span class="n">09</span>Inversión</button></li>
+    <li><button type="button" data-s="pasos" data-go="pasos"><span class="n">10</span>Próximos pasos</button></li>
+  </ul>
+  <p class="pie-side">Valores en pesos colombianos, antes de IVA. Propuesta con vigencia de 30 días.</p>
+</aside>
+
+<main>
+<div class="miga" aria-label="Ubicación"><button type="button" class="lnk" data-go="resumen">Lilly 360 Colombia</button><span class="sep">/</span><span id="miga-act">Resumen</span></div>
+
+<!-- 01 RESUMEN -->
+<section class="hoja" id="resumen">
+  <div class="in">
+    <span class="num-sec">01</span>
+    <div class="hero">
+      <div>
+        <h1>DocRed, el aliado estratégico para lanzar Lilly 360 en Colombia</h1>
+        <p class="sub">Entendemos, desarrollamos y operamos de la mano con Lilly, con el conocimiento de la comunidad médica que DocRed lleva seis años construyendo: más de 100.000 médicos verificados en Latinoamérica.</p>
+      </div>
+      <img class="hero-logo" alt="Lilly 360" src="data:image/png;base64,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" />
+    </div>
+    <div class="grid g3">
+      <div class="card rojo"><p class="et">Lanzamiento</p><p class="big">15 dic<small>2026, con portal, guías, búsqueda y métricas</small></p></div>
+      <div class="card"><p class="et">Entrega final</p><p class="big">10 feb<small>2027, con todo el alcance aceptado</small></p></div>
+      <div class="card"><p class="et">Inversión</p><p class="big" style="font-size:clamp(26px,2.6vw,34px)">$380 a $425<small>millones, antes de IVA. Aparte: honorarios de médicos y operación mensual</small></p></div>
+    </div>
+    <h3 class="sub-tit">Cómo está organizado</h3>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card"><p class="et">Paso 1</p><h3 style="margin-top:6px">Entendemos</h3><p class="d">Entrevistamos a 20 médicos para confirmar qué necesitan. Semanas 1 y 2.</p></div>
+      <div class="card"><p class="et">Paso 2</p><h3 style="margin-top:6px">Desarrollamos</h3><p class="d">19 semanas, con una demostración cada viernes junto al equipo de Lilly.</p></div>
+      <div class="card"><p class="et">Paso 3</p><h3 style="margin-top:6px">Operamos</h3><p class="d">Desde febrero de 2027, con una cuota mensual y un reporte por médico.</p></div>
+    </div>
+    <button type="button" class="btn-sig" data-go="alcance">Siguiente: Alcance</button>
+  </div>
+</section>
+
+<!-- 02 ALCANCE -->
+<section class="hoja" id="alcance">
+  <div class="in">
+    <span class="num-sec">02</span>
+    <h2>Qué se construye</h2>
+    <p class="sub">Un hub donde los médicos acceden, consumen contenido y dejan trazabilidad.</p>
+    <div class="grid g3">
+      <div class="card"><h3>Acceso verificado</h3><p class="d">Ingreso con Lilly Passport (la cuenta única de Lilly), registro y consentimientos.</p></div>
+      <div class="card"><h3>Contenido</h3><p class="d">Guías, infografías, video con encuestas, webinars y microlearnings (lecciones cortas).</p></div>
+      <div class="card"><h3>Búsqueda y perfil</h3><p class="d">Búsqueda rápida, home del médico y contenidos guardados.</p></div>
+      <div class="card"><h3>Tres productos</h3><p class="d">Mounjaro, Verzenio y Ebglyss, con una plantilla para nuevos.</p></div>
+      <div class="card"><h3>Medical Affairs</h3><p class="d">Sección separada de la comercial, con permisos y aprobaciones propias.</p></div>
+      <div class="card"><h3>Métricas por médico</h3><p class="d">Vistas, tiempo, clics y video, con enlaces directos (deeplinks) desde OCE, la plataforma de Lilly para su relación con médicos.</p></div>
+    </div>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card"><h3>Base técnica</h3><p class="d">Ambientes de desarrollo, pruebas y producción. Accesibilidad según el estándar WCAG 2.1 AA.</p></div>
+      <div class="card"><h3>Opcional</h3><p class="d">Consulta rápida con IA sobre el contenido aprobado. Sin ella el precio queda cerca de $380 millones; con ella, cerca de $425.</p></div>
+    </div>
+    <button type="button" class="btn-sig" data-go="validacion">Siguiente: Investigación con médicos</button>
+  </div>
+</section>
+
+<!-- 03 VALIDACION -->
+<section class="hoja" id="validacion">
+  <div class="in">
+    <span class="num-sec">03</span>
+    <h2>Investigamos con médicos antes de construir</h2>
+    <p class="sub">Hablamos con 20 médicos en las semanas 1 y 2 para confirmar qué quieren y si la propuesta les sirve.</p>
+    <div class="grid g3">
+      <div class="card rojo"><p class="et">Paso 1</p><h3 style="margin-top:6px">Entrevistamos</h3><p class="d">20 médicos, una hora cada uno, en las primeras 2 semanas.</p></div>
+      <div class="card"><p class="et">Paso 2</p><h3 style="margin-top:6px">Analizamos</h3><p class="d">Si el hub les resulta útil, qué contenido buscan y qué falta.</p></div>
+      <div class="card"><p class="et">Paso 3</p><h3 style="margin-top:6px">Ajustamos</h3><p class="d">Con los resultados afinamos el alcance con Lilly antes de construir las pantallas.</p></div>
+    </div>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card">
+        <h3>Qué le preguntamos al médico</h3>
+        <ul class="pts"><li>Qué información busca de Lilly y cómo la busca</li><li>Si usaría un hub como este y por qué volvería</li><li>Qué formatos prefiere: guía, video, webinar o microlearning</li></ul>
+      </div>
+      <div class="card">
+        <h3>Qué recibe Lilly</h3>
+        <ul class="pts"><li>Un informe con los hallazgos</li><li>Un veredicto claro: qué de la propuesta funciona y qué cambiar</li><li>Ajustes recomendados al alcance</li></ul>
+      </div>
+    </div>
+    <p class="nota">Este valor de $25 millones aplica solo dentro del proyecto completo. Si Lilly quisiera únicamente la investigación, se cotiza por separado. Los honorarios de los médicos, de $100.000 a $150.000 por entrevista de una hora ($2 a $3 millones en total), se pagan aparte, a costo y sin recargo.</p>
+    <button type="button" class="btn-sig" data-go="arquitectura">Siguiente: Arquitectura</button>
+  </div>
+</section>
+
+<!-- 04 ARQUITECTURA -->
+<section class="hoja" id="arquitectura">
+  <div class="in" style="width:min(100%,1080px)">
+    <span class="num-sec">04</span>
+    <h2>Arquitectura técnica de la plataforma</h2>
+    <p class="sub" style="max-width:52ch">Cómo está diseñada, dónde corre y qué pasa cuando algo falla. Elija un tema.</p>
+
+    <div class="tabs" id="tabs" role="tablist">
+      <button type="button" data-tab="t1" class="on">Contexto</button>
+      <button type="button" data-tab="t2">Capas</button>
+      <button type="button" data-tab="t3">Despliegue</button>
+      <button type="button" data-tab="t4">Tecnología</button>
+      <button type="button" data-tab="t5">Continuidad y seguridad</button>
+      <button type="button" data-tab="t6">Cuándo se construye</button>
+    </div>
+
+    <div class="panel on" id="t1">
+      <h3 class="ph">Quién participa y qué principios guían el diseño</h3>
+      <p class="lead">El hub se ubica entre los equipos de Lilly, los médicos y un conjunto de servicios digitales. DocRed lo construye y lo opera.</p>
+      <div class="tw tt2"><table class="izq"><thead><tr><th class="l">Actor</th><th class="l">Responsabilidad</th><th class="l">Qué puede hacer en el sistema</th></tr></thead><tbody><tr><td>Médico</td><td>Consume contenido y da su consentimiento</td><td>Ver contenido, guardar, buscar y gestionar su perfil</td></tr><tr><td>Marketing y OCE de Lilly</td><td>Pide, prioriza y aprueba contenido comercial</td><td>Solicitar cargas y ver reportes por médico</td></tr><tr><td>Medical Affairs de Lilly</td><td>Responde por el contenido científico</td><td>Aprobar y administrar su sección, con permisos propios</td></tr><tr><td>Seguridad y TI de Lilly</td><td>Define Passport, accesos y revisión de seguridad</td><td>Autorizar accesos y auditar la plataforma</td></tr><tr><td>Equipo DocRed</td><td>Construye, opera, carga contenido y reporta</td><td>Desplegar, monitorear y administrar la infraestructura</td></tr></tbody></table></div>
+      <h3 class="sub-tit" style="margin-top:28px">Seis principios de diseño</h3>
+      <div class="prin">
+  <div><b><i>1</i>Una sola puerta de identidad</b>El acceso y los consentimientos viven en Lilly Passport. El hub no crea un login propio.</div>
+  <div><b><i>2</i>Medical y Comercial, separados</b>Navegación, permisos y analítica independientes desde el diseño, no por configuración.</div>
+  <div><b><i>3</i>Un tercero caído no tumba el hub</b>Si falla búsqueda, video o métricas, se degrada esa función y el resto sigue funcionando.</div>
+  <div><b><i>4</i>Contenido sin desplegar código</b>Lilly y DocRed publican desde el gestor de contenido, sin esperar un ciclo de desarrollo.</div>
+  <div><b><i>5</i>Todo medido y auditable</b>Cada visita y cada cambio queda registrado, con reporte mensual por médico.</div>
+  <div><b><i>6</i>Nuevo producto es configuración</b>Una plantilla maestra de producto evita rediseñar cada vez que Lilly suma una marca.</div>
+</div>
+    </div>
+
+    <div class="panel" id="t2">
+      <h3 class="ph">Capas y componentes</h3>
+      <p class="lead">De los usuarios a la infraestructura. En rojo, lo que construye y opera DocRed.</p>
+    <div class="arq">
+      <div class="capa">
+        <p class="tt">Usuarios</p>
+        <div class="nodos">
+          <div class="nodo n-lil">Médicos de Colombia<small>Web y móvil</small></div>
+          <div class="nodo n-lil">Marketing y OCE de Lilly<small>Carga y priorización de contenido</small></div>
+          <div class="nodo n-lil">Medical Affairs<small>Sección con permisos propios</small></div>
+        </div>
+      </div>
+      <div class="flecha" aria-hidden="true">&#8595;<b>HTTPS</b></div>
+      <div class="capa">
+        <p class="tt">Borde y seguridad</p>
+        <div class="nodos">
+          <div class="nodo n-ter">Dominio .com.co<small>Titular: Lilly</small></div>
+          <div class="nodo n-ter">CDN</div>
+          <div class="nodo n-ter">Firewall de aplicaciones</div>
+          <div class="nodo n-ter">Certificados</div>
+        </div>
+      </div>
+      <div class="flecha" aria-hidden="true">&#8595;</div>
+      <div class="capa hub">
+        <p class="tt">Aplicación Lilly 360 · la construye y opera DocRed · contenedores en AWS</p>
+        <div class="ar-cols">
+          <div class="ar-col"><h4>Presentación</h4>
+            <div class="nodo n-doc">Portal web responsive<small>Accesibilidad WCAG 2.1 AA</small></div>
+            <div class="nodo n-doc">Home público y home del médico</div>
+            <div class="nodo n-doc">Páginas de producto<small>Plantilla maestra: Mounjaro, Verzenio, Ebglyss</small></div>
+            <div class="nodo n-doc">Sección Medical Affairs<small>Navegación independiente</small></div>
+          </div>
+          <div class="ar-col"><h4>Lógica</h4>
+            <div class="nodo n-doc">API<small>Perfil, guardados, consentimientos</small></div>
+            <div class="nodo n-doc">Gestor de contenido<small>Publicar sin nuevo despliegue</small></div>
+            <div class="nodo n-doc">Deeplinks y trazabilidad<small>Origen, producto y fecha</small></div>
+            <div class="nodo n-doc">Métricas por médico<small>Analítica Medical y Comercial separada</small></div>
+          </div>
+          <div class="ar-col"><h4>Datos</h4>
+            <div class="nodo n-doc">Base de datos PostgreSQL<small>Gestionada, alta disponibilidad</small></div>
+            <div class="nodo n-doc">Almacenamiento de archivos<small>Guías, infografías y video</small></div>
+            <div class="nodo n-doc">Bitácoras y auditoría</div>
+          </div>
+        </div>
+      </div>
+      <div class="flecha" aria-hidden="true">&#8597;<b>APIs e integraciones</b></div>
+      <div class="capa">
+        <p class="tt">Integraciones</p>
+        <div class="ar-int">
+          <div><h4>Sistemas de Lilly</h4>
+            <div class="nodos">
+              <div class="nodo n-lil">Lilly Passport<small>Login y consentimientos</small></div>
+              <div class="nodo n-lil">OCE<small>Presentaciones y tableros por médico</small></div>
+            </div>
+          </div>
+          <div><h4>Servicios digitales</h4>
+            <div class="nodos">
+              <div class="nodo n-ter">Cincopa<small>Webinars y video</small></div>
+              <div class="nodo n-ter">Algolia<small>Búsqueda</small></div>
+              <div class="nodo n-ter">PostHog<small>Métricas de uso</small></div>
+              <div class="nodo n-ter">Correo<small>Notificaciones</small></div>
+              <div class="nodo n-ter n-opc">IA<small>Consulta rápida, opcional</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flecha" aria-hidden="true">&#8595;</div>
+      <div class="capa">
+        <p class="tt">Infraestructura en AWS · 3 ambientes con despliegue automatizado</p>
+        <div class="env">
+          <div>Desarrollo<small>Pruebas del equipo</small></div>
+          <div>Pruebas (UAT)<small>Revisión de Lilly desde la semana 3</small></div>
+          <div>Producción<small>Médicos reales</small></div>
+        </div>
+        <div class="nodos" style="margin-top:10px">
+          <div class="nodo n-ter">Integración y despliegue continuos</div>
+          <div class="nodo n-ter">Monitoreo y disponibilidad</div>
+          <div class="nodo n-ter">Gestión de secretos</div>
+          <div class="nodo n-ter">Respaldo y recuperación ante desastres</div>
+        </div>
+      </div>
+    </div>
+    <div class="leyenda" style="border:0; padding:14px 0 0">
+      <span><i class="pt" style="background:rgba(213,43,30,.5)"></i> Lo construye y opera DocRed</span>
+      <span><i class="pt" style="background:rgba(31,95,168,.7)"></i> Servicios digitales</span>
+      <span><i class="pt" style="background:rgba(255,255,255,.3)"></i> De Lilly</span>
+    </div>
+
+    </div>
+
+    <div class="panel" id="t3">
+      <h3 class="ph">Dónde corre y cómo se despliega</h3>
+      <p class="lead">Una cuenta de AWS del proyecto, administrada por DocRed, con acceso acotado para Lilly. El dominio .com.co queda a nombre de Lilly.</p>
+      <div class="topo">
+  <div class="z"><p>Borde público</p><div class="nodos"><div class="nodo n-ter">CDN</div><div class="nodo n-ter">Firewall de aplicaciones</div><div class="nodo n-ter">Balanceador y certificados</div></div></div>
+  <div class="z app"><p>Red privada de aplicación · contenedores</p><div class="nodos"><div class="nodo n-doc">Portal web</div><div class="nodo n-doc">API</div><div class="nodo n-doc">Gestor de contenido</div><div class="nodo n-doc">Deeplinks y métricas</div></div></div>
+  <div class="z dat"><p>Red privada de datos</p><div class="nodos"><div class="nodo n-ter">PostgreSQL con alta disponibilidad</div><div class="nodo n-ter">Almacenamiento de archivos</div><div class="nodo n-ter">Gestor de secretos</div><div class="nodo n-ter">Bitácoras</div></div></div>
+  <div class="z"><p>Salida controlada, solo hacia servicios autorizados</p><div class="nodos"><div class="nodo n-lil">Lilly Passport</div><div class="nodo n-lil">OCE</div><div class="nodo n-ter">Cincopa</div><div class="nodo n-ter">Algolia</div><div class="nodo n-ter">PostHog</div><div class="nodo n-ter">Correo</div></div></div>
+</div>
+      <h3 class="sub-tit" style="margin-top:28px">Tres ambientes</h3>
+      <div class="tw tt2"><table class="izq"><thead><tr><th class="l">Ambiente</th><th class="l">Para qué sirve</th><th class="l">Datos</th><th class="l">Quién entra</th></tr></thead><tbody><tr><td>Desarrollo</td><td>Construcción y pruebas del equipo</td><td>De prueba</td><td>Equipo DocRed</td></tr><tr><td>Pruebas (UAT)</td><td>Demostración de cada viernes y revisión de Lilly, desde la semana 3</td><td>De prueba</td><td>DocRed y Lilly</td></tr><tr><td>Producción</td><td>Médicos reales</td><td>Reales</td><td>Despliegue automatizado, con reversión a la versión anterior</td></tr></tbody></table></div>
+    </div>
+
+    <div class="panel" id="t4">
+      <h3 class="ph">Qué tecnología usamos y por qué</h3>
+      <p class="lead">Propuesta de partida. El Tech lead la confirma en la semana 1, junto con Lilly.</p>
+      <div class="tw tt2"><table class="izq"><thead><tr><th class="l">Componente</th><th class="l">Selección</th><th class="l">Por qué</th></tr></thead><tbody><tr><td>Identidad y consentimientos</td><td>Lilly Passport, por redirección estándar</td><td>Un solo punto de identidad y consentimientos, sin duplicar datos del médico</td></tr><tr><td>Base de datos</td><td>PostgreSQL gestionada, con alta disponibilidad en producción</td><td>Integridad de datos y permisos separados por sección</td></tr><tr><td>Contenido</td><td>Gestor de contenido propio del hub</td><td>Publicar y ubicar contenido sin un despliegue</td></tr><tr><td>Archivos</td><td>Almacenamiento con CDN</td><td>Entrega rápida en móvil de guías, infografías y video</td></tr><tr><td>Video y webinars</td><td>Cincopa</td><td>Servicio especializado, sin operar video propio</td></tr><tr><td>Búsqueda</td><td>Algolia</td><td>Búsqueda rápida sin construir un motor propio</td></tr><tr><td>Métricas</td><td>PostHog y reporte mensual por médico</td><td>Eventos por médico, con analítica Medical y Comercial separada</td></tr><tr><td>Infraestructura</td><td>AWS con contenedores, infraestructura como código y despliegue continuo</td><td>Tres ambientes reproducibles y reversión rápida</td></tr></tbody></table></div>
+      <h3 class="sub-tit" style="margin-top:28px">Decisiones que se cierran con Lilly en la semana 1</h3>
+<div class="prin">
+  <div><b>Mecanismo de Passport</b>Protocolo de integración (OIDC o SAML) y datos que entrega.</div>
+  <div><b>ID de médico para OCE</b>Cómo se cruza el médico de Passport con el registro de OCE.</div>
+  <div><b>Objetivo de disponibilidad</b>Porcentaje y horario que Lilly espera.</div>
+  <div><b>Alcance de la comunidad</b>Si el tercer momento de uso entra en la fase 1.</div>
+</div>
+    </div>
+
+    <div class="panel" id="t5">
+      <h3 class="ph">Qué pasa cuando algo falla</h3>
+      <p class="lead">La plataforma se degrada de forma definida, no falla completa. Cada caso tiene detección, comportamiento y recuperación.</p>
+      <div class="tw tt2"><table class="izq"><thead><tr><th class="l">Si falla</th><th class="l">Cómo lo detectamos</th><th class="l">Qué pasa</th><th class="l">Recuperación</th></tr></thead><tbody><tr><td>Lilly Passport</td><td>Alerta de errores en el inicio de sesión</td><td>Nadie nuevo puede ingresar. El contenido público sigue visible</td><td>Automática al restablecerse. Se avisa a Lilly</td></tr><tr><td>Búsqueda (Algolia)</td><td>Alerta de errores y latencia</td><td>La búsqueda se oculta. La navegación por menús sigue</td><td>Automática al restablecerse</td></tr><tr><td>Video (Cincopa)</td><td>Alerta de disponibilidad</td><td>Guías e infografías siguen. Video y webinar no cargan</td><td>Automática al restablecerse</td></tr><tr><td>Métricas (PostHog)</td><td>Alerta de envío de eventos</td><td>El hub funciona. Los eventos se reintentan</td><td>Se completan al volver el servicio</td></tr><tr><td>Un despliegue con error</td><td>Pruebas automáticas y monitoreo tras publicar</td><td>Se detiene la publicación</td><td>Reversión a la versión anterior</td></tr><tr><td>Consumo pasa a otra escala</td><td>Seguimiento del consumo mensual</td><td>El hub sigue en línea</td><td>Se avisa a Lilly antes de cambiar de escala</td></tr><tr><td>Base de datos</td><td>Monitoreo de disponibilidad</td><td>Conmutación a la réplica</td><td>Respaldo restaurable y plan de recuperación ante desastres</td></tr></tbody></table></div>
+      <h3 class="sub-tit" style="margin-top:28px">Seguridad y cumplimiento</h3>
+      <div class="prin">
+  <div><b>Datos personales</b>Consentimientos gestionados en Passport, con tratamiento conforme a la Ley 1581 de 2012.</div>
+  <div><b>Separación regulatoria</b>Analítica y permisos de Medical y Comercial no se mezclan.</div>
+  <div><b>Secretos y accesos</b>Credenciales en un gestor de secretos, con permisos mínimos por función.</div>
+  <div><b>Acceso a producción</b>Temporal, autorizado por persona y registrado.</div>
+  <div><b>Auditoría</b>Cada acceso, cambio y publicación queda en una bitácora que Lilly puede consultar.</div>
+  <div><b>Red</b>Base de datos y aplicación en redes privadas, con salida solo a servicios autorizados.</div>
+</div>
+    </div>
+
+    <div class="panel" id="t6">
+      <h3 class="ph">Cuándo se construye cada pieza</h3>
+      <p class="lead">Cada etapa termina en algo que Lilly puede revisar en el ambiente de pruebas.</p>
+      <div class="tw tt2"><table class="izq"><thead><tr><th class="l">Pieza</th><th class="l">Cuándo</th><th class="l">Qué queda listo</th></tr></thead><tbody><tr><td>Plataforma y nube</td><td>Semanas 1 a 4</td><td>Tres ambientes, despliegue automatizado y gestor de contenido</td></tr><tr><td>Acceso y registro</td><td>Semanas 4 a 6</td><td>Un médico entra con Passport y da su consentimiento</td></tr><tr><td>Portal del médico y búsqueda</td><td>Semanas 6 a 11</td><td>Home, páginas de producto, guías y búsqueda</td></tr><tr><td>Métricas por médico</td><td>Semanas 9 a 11, y ampliación en 16 y 17</td><td>Medición básica al lanzamiento y tablero completo después</td></tr><tr><td>Video y webinars</td><td>Semanas 11 a 13</td><td>Video con encuestas y webinar en vivo</td></tr><tr><td>Microlearnings y certificados</td><td>Semanas 14 a 16</td><td>Lecciones cortas y certificados</td></tr><tr><td>Deeplinks y OCE</td><td>Semana 16</td><td>Enlaces trazables y conexión con OCE</td></tr><tr><td>Cierre y aceptación</td><td>Semanas 17 a 19</td><td>Endurecimiento, pruebas de aceptación y traspaso</td></tr><tr><td>Consulta rápida con IA (opcional)</td><td>Semanas 17 a 19</td><td>Respuestas sobre el contenido aprobado, con fuentes</td></tr></tbody></table></div>
+    </div>
+
+    <button type="button" class="btn-sig" data-go="datos">Siguiente: Datos y seguimiento</button>
+  </div>
+</section>
+
+<!-- DATOS -->
+<section class="hoja" id="datos">
+  <div class="in" style="width:min(100%,1080px)">
+    <span class="num-sec">05</span>
+    <h2>Datos y seguimiento de cada médico</h2>
+    <p class="sub" style="max-width:52ch">Lilly deja de ver solo cuántos entran y pasa a ver qué hace cada médico, con qué contenido y desde qué campaña.</p>
+
+    <div style="margin-top:clamp(24px,3vh,34px)"><div class="flujo">
+  <div class="fl"><p class="et">1. El médico actúa</p><p class="d">Lee, ve video, busca, descarga o llega desde un enlace de campaña.</p></div>
+  <div class="fa" aria-hidden="true">&#8594;</div>
+  <div class="fl"><p class="et">2. Se registra</p><p class="d">Cada acción queda ligada al médico identificado por Passport, con su consentimiento.</p></div>
+  <div class="fa" aria-hidden="true">&#8594;</div>
+  <div class="fl"><p class="et">3. Se organiza</p><p class="d">Analítica Comercial y analítica Medical, en tableros separados.</p></div>
+  <div class="fa" aria-hidden="true">&#8594;</div>
+  <div class="fl rojo"><p class="et">4. Lilly decide</p><p class="d">Tablero en línea, reporte mensual y cruce con OCE.</p></div>
+</div></div>
+
+    <h3 class="sub-tit">Qué medimos por médico</h3>
+    <div class="tw tt2"><table class="izq"><thead><tr><th class="l">Qué registramos</th><th class="l">Detalle</th><th class="l">Para qué sirve</th></tr></thead><tbody><tr><td>Vistas</td><td>Páginas y contenidos que abre cada médico</td><td>Saber qué producto y qué tema le interesan</td></tr><tr><td>Tiempo</td><td>Permanencia en cada contenido</td><td>Distinguir una visita real de un clic rápido</td></tr><tr><td>Clics y descargas</td><td>Botones, enlaces y guías descargadas</td><td>Medir la intención de cada médico</td></tr><tr><td>Video y webinars</td><td>Reproducción, avance y respuestas a encuestas embebidas</td><td>Saber cuánto y qué ve cada médico</td></tr><tr><td>Búsquedas</td><td>Qué busca y si encuentra</td><td>Detectar contenido que falta</td></tr><tr><td>Deeplinks</td><td>Origen de campaña, producto y fecha de cada enlace</td><td>Relacionar cada visita con una acción de Lilly</td></tr><tr><td>Microlearnings</td><td>Avance y finalización de cada lección</td><td>Medir formación y certificados</td></tr></tbody></table></div>
+
+    <h3 class="sub-tit">Los tableros de Lilly</h3>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card rojo"><p class="et">Comercial</p><h3 style="margin-top:4px">Marketing y OCE</h3><p class="d">Consumo por producto, especialidad y campaña. Efectividad de cada deeplink.</p></div>
+      <div class="card"><p class="et">Medical</p><h3 style="margin-top:4px">Medical Affairs</h3><p class="d">Consumo del contenido científico, en un tablero aparte y sin mezclarse con el comercial.</p></div>
+      <div class="card"><p class="et">Contenido</p><h3 style="margin-top:4px">Solicitudes de carga</h3><p class="d">Marketing y OCE piden, priorizan y siguen el estado de cada contenido nuevo.</p></div>
+    </div>
+
+    <h3 class="sub-tit">Cómo se ve el tablero</h3>
+    <p class="nota" style="margin-top:8px">Vista de ejemplo con datos ilustrativos, sin cifras reales. Alterne entre el tablero Comercial y el de Medical Affairs.</p>
+    <div class="dash" id="dash">
+      <div class="d-top">
+        <div class="d-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+        <p class="d-ttl">Lilly 360 Colombia · Tablero de desempeño</p>
+        <span class="d-ej">Datos de ejemplo</span>
+      </div>
+      <div class="d-bar">
+        <div class="d-seg" id="dseg" role="tablist"><button type="button" data-d="com" class="on">Comercial</button><button type="button" data-d="med">Medical Affairs</button></div>
+        <div class="d-chips"><span>Últimos 90 días</span><span>Todos los productos</span><span>Por médico y agregado</span></div>
+      </div>
+      <div id="dbody"></div>
+    </div>
+
+    <div class="grid g2" style="margin-top:20px">
+      <div class="card"><h3>Cómo llega a Lilly</h3><ul class="pts"><li>Tablero en línea, siempre disponible</li><li>Reporte mensual de desempeño</li><li>Cruce con OCE por el ID de cada médico</li><li>Medición básica desde el lanzamiento, tablero completo en las semanas 16 y 17</li></ul></div>
+      <div class="card"><h3>Cómo se protege</h3><ul class="pts"><li>Solo se mide con el consentimiento que se captura en Passport</li><li>Tratamiento conforme a la Ley 1581 de 2012</li><li>Analítica de Medical y Comercial separada por diseño</li><li>Cada acceso al dato queda en una bitácora auditable</li></ul></div>
+    </div>
+    <button type="button" class="btn-sig" data-go="operacion">Siguiente: Operación</button>
+  </div>
+</section>
+
+<!-- 05 OPERACION -->
+<section class="hoja" id="operacion">
+  <div class="in">
+    <span class="num-sec">06</span>
+    <h2>Operación después del lanzamiento</h2>
+    <p class="sub">Es un servicio distinto del desarrollo, con cobro mensual y dos componentes separados.</p>
+
+    <div class="grid g2" style="margin-top:clamp(24px,3vh,36px)">
+      <div class="card"><p class="et">Desarrollo</p><h3 style="margin-top:4px">1 de octubre de 2026 al 10 de febrero de 2027</h3><p class="d">Se construye la plataforma. Se paga una sola vez, en tres cuotas (30, 40 y 30%).</p></div>
+      <div class="card rojo"><p class="et">Operación</p><h3 style="margin-top:4px">Desde febrero de 2027</h3><p class="d">Se mantiene y se mejora el hub. Se paga cada mes: servicios por consumo más el equipo de DocRed.</p></div>
+    </div>
+
+    <h3 class="sub-tit">Qué se paga cada mes</h3>
+    <p class="sub" style="margin-top:8px">Estimado mensual, todo más IVA.</p>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card">
+        <p class="et">1. Servicios por consumo mensual</p><h3 style="margin-top:4px">La infraestructura y los servicios digitales</h3>
+        <div class="tw"><table style="margin-top:10px">
+          <thead><tr><th>Consumo del mes</th><th>Por mes, rango</th></tr></thead>
+          <tbody>
+            <tr><td>Bajo</td><td class="v">Cerca de $15 millones</td></tr>
+            <tr><td>Medio</td><td class="v">Cerca de $20 millones</td></tr>
+            <tr><td>Alto</td><td class="v">Cerca de $25 millones</td></tr>
+          </tbody>
+        </table></div>
+        <ul class="pts"><li>Hosting en AWS, video y webinars, búsqueda, métricas y correo</li><li>Cambia con el uso; cada mes se reporta el detalle por servicio</li><li>Lilly puede pagarlos directo a cada proveedor</li></ul>
+      </div>
+      <div class="card">
+        <p class="et">2. Equipo DocRed a disposición de Lilly</p><h3 style="margin-top:4px">Un equipo con cuota mensual fija</h3>
+        <p class="rango">$18 a $22 millones<small>por mes, más IVA</small></p>
+        <ul class="pts"><li>Cuentas: atención y seguimiento de Lilly</li><li>Mantenimiento: monitoreo, parches y respaldos</li><li>Desarrollo de ajustes y mejoras menores</li><li>Subida de contenidos</li><li>Reporte mensual de vistas, tiempo, clics y video por médico</li></ul>
+      </div>
+    </div>
+    <div class="total" style="margin-top:16px"><div class="a">Estimado mensual total, más IVA</div><div class="b">$33 a $47 millones</div></div>
+    <p class="nota">Son rangos de referencia. Los valores exactos se calculan y quedan fijos una vez Lilly apruebe el alcance, Passport y el nivel de servicio. Trabajo fuera de la cuota se cotiza antes de empezar, con una hora adicional de $180.000. La creación de contenido nuevo se cotiza por hora.</p>
+
+    <h3 class="sub-tit">Cuánto tardamos en responder a un problema</h3>
+    <div class="sla">
+      <div><p class="p">P1 Crítica</p><p class="r">2 horas</p><p class="m">Plataforma caída</p></div>
+      <div><p class="p">P2 Alta</p><p class="r">4 horas</p><p class="m">Función principal degradada</p></div>
+      <div><p class="p">P3 Media</p><p class="r">1 día</p><p class="m">Falla menor</p></div>
+      <div><p class="p">P4 Baja</p><p class="r">2 días</p><p class="m">Ajuste menor</p></div>
+    </div>
+    <p class="nota">Horas y días hábiles. Los primeros 30 días después del lanzamiento tienen acompañamiento reforzado, incluido en el precio.</p>
+    <button type="button" class="btn-sig" data-go="equipo">Siguiente: Equipo</button>
+  </div>
+</section>
+
+<!-- 06 EQUIPO -->
+<section class="hoja" id="equipo">
+  <div class="in">
+    <span class="num-sec">07</span>
+    <h2>El equipo de la fase de desarrollo</h2>
+    <p class="sub">Más desarrolladores mientras se construye, menos cuando ya está en producción.</p>
+    <div class="tw"><table class="izq" style="margin-top:24px">
+      <thead><tr><th class="l">Rol</th><th class="l">Qué hace</th><th class="l">Personas</th><th class="l">% del tiempo</th><th class="l">Sprints</th></tr></thead>
+      <tbody>
+        <tr><td>Desarrollador front</td><td>Pantallas del portal</td><td>2</td><td>100%</td><td>1 a 11</td></tr>
+        <tr><td>Desarrollador front</td><td>Pantallas del portal</td><td>1</td><td>100%</td><td>12 a 19</td></tr>
+        <tr><td>Desarrollador back</td><td>Lógica, datos e integraciones</td><td>2</td><td>100%</td><td>1 a 13</td></tr>
+        <tr><td>Desarrollador back</td><td>Lógica, datos e integraciones</td><td>1</td><td>100%</td><td>14 a 19</td></tr>
+        <tr><td>Diseño UX/UI</td><td>Experiencia y diseño de pantallas</td><td>1</td><td>85%</td><td>1 a 9</td></tr>
+        <tr><td>Tech lead</td><td>Arquitectura y decisiones técnicas</td><td>1</td><td>30%</td><td>1 a 19</td></tr>
+        <tr><td>DevOps</td><td>Nube, ambientes y monitoreo</td><td>1</td><td>40%</td><td>1 a 4</td></tr>
+        <tr><td>DevOps</td><td>Nube, ambientes y monitoreo</td><td>1</td><td>15%</td><td>5 a 19</td></tr>
+        <tr><td>Product owner</td><td>Prioriza con Lilly, responde por entregas</td><td>1</td><td>20%</td><td>1 a 19</td></tr>
+      </tbody>
+    </table></div>
+    <p class="nota">Porcentaje sobre una jornada completa de cada persona. Cada sprint dura una semana. Si Lilly incluye la consulta rápida con IA, se suma capacidad en las semanas 17 a 19. El diseño se concentra en los primeros dos meses, antes de que se programen las pantallas.</p>
+    <button type="button" class="btn-sig" data-go="cronograma">Siguiente: Cronograma</button>
+  </div>
+</section>
+
+<!-- 07 CRONOGRAMA -->
+<section class="hoja" id="cronograma">
+  <div class="in" style="width:min(100%,1080px)">
+    <span class="num-sec">08</span>
+    <h2>Del 1 de octubre al 10 de febrero</h2>
+    <p class="sub">19 semanas. Cada semana termina con una demostración el viernes. Fase 0 es la investigación; las fases 1 a 3 son la construcción.</p>
+
+    <div class="gantt">
+      <div class="gantt-scroll"><div class="gt">
+        <div class="gt-cab"></div>
+        <div class="gt-top">
+          <div class="gt-f">
+            <div class="f1" style="grid-column:1/span 11">Fase 1 · Lanzamiento</div>
+            <div class="f2" style="grid-column:12/span 5">Fase 2 · Consolidación</div>
+            <div class="f3" style="grid-column:17/span 3">Fase 3 · Cierre</div>
+          </div>
+          <div class="gt-m">
+            <div style="grid-column:1/span 5;--n:5">Octubre<span class="n"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></span></div>
+            <div style="grid-column:6/span 4;--n:4">Noviembre<span class="n"><span>6</span><span>7</span><span>8</span><span>9</span></span></div>
+            <div style="grid-column:10/span 4;--n:4">Diciembre<span class="n"><span>10</span><span>11</span><span>12</span><span>13</span></span></div>
+            <div style="grid-column:14/span 5;--n:5">Enero<span class="n"><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span></span></div>
+            <div style="grid-column:19/span 1;--n:1">Feb<span class="n"><span>19</span></span></div>
+          </div>
+        </div>
+        <div>
+          <div class="gt-e">Investigación con médicos</div>
+          <div class="gt-e">Plataforma y nube</div>
+          <div class="gt-e">Acceso y registro</div>
+          <div class="gt-e">Portal del médico</div>
+          <div class="gt-e">Métricas por médico</div>
+          <div class="gt-e">Video y webinars</div>
+          <div class="gt-e">Microlearnings y certificados</div>
+          <div class="gt-e">Deeplinks y OCE</div>
+          <div class="gt-e">Cierre y aceptación</div>
+          <div class="gt-e">Consulta rápida con IA</div>
+        </div>
+        <div class="gt-p">
+          <div class="gt-c" aria-hidden="true">
+            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div class="lan"></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+          </div>
+          <div class="gt-r"><div class="bar f0" style="grid-column:1/span 2">S1 a S2</div></div>
+          <div class="gt-r"><div class="bar f1" style="grid-column:1/span 4">S1 a S4</div></div>
+          <div class="gt-r"><div class="bar f1" style="grid-column:4/span 3">S4 a S6</div></div>
+          <div class="gt-r"><div class="bar f1" style="grid-column:6/span 6">S6 a S11</div></div>
+          <div class="gt-r"><div class="bar f1" style="grid-column:9/span 3">S9 a S11</div><div class="bar f2" style="grid-column:16/span 2">S16 a S17</div></div>
+          <div class="gt-r"><div class="bar f2" style="grid-column:11/span 3">S11 a S13</div></div>
+          <div class="gt-r"><div class="bar estab" style="grid-column:14/span 1">S14</div><div class="bar f2" style="grid-column:15/span 2">S15 a S16</div></div>
+          <div class="gt-r"><div class="bar f2" style="grid-column:16/span 1">S16</div></div>
+          <div class="gt-r"><div class="bar f3" style="grid-column:17/span 3">S17 a S19</div></div>
+          <div class="gt-r"><div class="bar opc" style="grid-column:17/span 3">Opcional</div></div>
+        </div>
+      </div></div>
+      <div class="leyenda">
+        <span><i class="pt f0"></i> Fase 0</span><span><i class="pt f1"></i> Fase 1</span><span><i class="pt f2"></i> Fase 2</span><span><i class="pt f3"></i> Fase 3</span>
+        <span><i class="pt" style="border:1px dashed var(--ambar)"></i> Estabilización de fin de año</span><span>S = semana</span>
+        <span><i class="pt" style="background:rgba(213,43,30,.3); border:1px solid var(--lilly)"></i> Semana del lanzamiento</span>
+      </div>
+    </div>
+
+    <div class="hitos">
+      <div class="hito"><p class="s">Semana 4</p><p class="t">Plataforma en pie</p><p class="f">Tres ambientes y gestor de contenido</p></div>
+      <div class="hito"><p class="s">Semana 6</p><p class="t">Acceso verificado</p><p class="f">Un médico entra con Passport</p></div>
+      <div class="hito"><p class="s">Semana 11 · 15 de diciembre</p><p class="t">Lanzamiento</p><p class="f">Portal, guías, búsqueda y métricas</p></div>
+      <div class="hito"><p class="s">Semana 13</p><p class="t">Biblioteca completa</p><p class="f">Video con encuestas y webinar</p></div>
+      <div class="hito"><p class="s">Semana 19</p><p class="t">Entrega final</p><p class="f">Pruebas de aceptación y traspaso</p></div>
+    </div>
+    <p class="nota">La semana 14 cruza el fin de año y se dedica a estabilizar, sin funcionalidad nueva.</p>
+    <button type="button" class="btn-sig" data-go="inversion">Siguiente: Inversión</button>
+  </div>
+</section>
+
+<!-- 08 INVERSION -->
+<section class="hoja" id="inversion">
+  <div class="in">
+    <span class="num-sec">09</span>
+    <h2>Inversión total del proyecto</h2>
+    <p class="sub">Un rango que se convierte en precio fijo cuando Lilly aprueba el alcance.</p>
+
+    <div class="total" style="margin-top:clamp(30px,4vh,44px)"><div class="a">Investigación y desarrollo, antes de IVA</div><div class="b">$380 a $425 millones</div></div>
+
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card"><p class="et">Investigación con médicos</p><p class="big" style="font-size:clamp(24px,2.6vw,32px)">$25 millones<small>Valor fijo dentro del proyecto completo. Semanas 1 y 2, 20 médicos.</small></p></div>
+      <div class="card rojo"><p class="et">Desarrollo</p><p class="big" style="font-size:clamp(24px,2.6vw,32px)">$355 a $400 millones<small>19 semanas, del 1 de octubre al 10 de febrero. Lanzamiento el 15 de diciembre.</small></p></div>
+    </div>
+
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card"><h3>Incluido</h3><ul class="pts"><li>Investigación con 20 médicos y su informe (solo dentro del proyecto completo)</li><li>Diseño, desarrollo, pruebas y puesta en producción</li><li>30 días de acompañamiento reforzado tras el lanzamiento</li></ul></div>
+      <div class="card"><h3>Se cobra aparte</h3><ul class="pts"><li>Honorarios de los médicos: $2 a $3 millones</li><li>Operación mensual: $33 a $47 millones más IVA, con hosting incluido</li><li>Creación de contenido nuevo</li></ul></div>
+    </div>
+
+    <h3 class="sub-tit">Qué define dónde queda el precio</h3>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card"><h3>Lilly Passport</h3><p class="d">Qué tan compleja resulte la integración de acceso y consentimientos.</p></div>
+      <div class="card"><h3>Alcance que acepte Lilly</h3><p class="d">Qué partes de la propuesta se incluyen después de conocer los resultados de la investigación.</p></div>
+      <div class="card"><h3>Consulta rápida con IA</h3><p class="d">Es opcional. Sin ella el precio queda cerca del extremo bajo; con ella, cerca del alto.</p></div>
+    </div>
+
+    <h3 class="sub-tit">Cómo se paga</h3>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card rojo"><p class="et">Al firmar</p><p class="big">30%<small>de anticipo, de $114 a $128 millones</small></p></div>
+      <div class="card"><p class="et">15 de diciembre</p><p class="big">40%<small>al lanzamiento, de $152 a $170 millones</small></p></div>
+      <div class="card"><p class="et">Contra entrega</p><p class="big">30%<small>en la entrega final, de $114 a $128 millones</small></p></div>
+    </div>
+    <div class="prop" aria-hidden="true"><div style="width:30%; background:var(--lilly)"></div><div style="width:40%; background:rgba(255,255,255,.5)"></div><div style="width:30%; background:rgba(255,255,255,.22)"></div></div>
+
+    <p class="nota">Valores en pesos colombianos, antes de IVA. Cambios fuera del alcance se cotizan por escrito antes de empezar. Propuesta con vigencia de 30 días.</p>
+    <button type="button" class="btn-sig" data-go="pasos">Siguiente: Próximos pasos</button>
+  </div>
+</section>
+
+<!-- 09 PASOS -->
+<section class="hoja" id="pasos">
+  <div class="in">
+    <span class="num-sec">10</span>
+    <h2>Lo que sigue y lo que necesitamos</h2>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Los pasos</h3>
+        <div style="margin-top:10px">
+          <div class="paso"><span class="num">1</span><div><p class="t">Presentación a Lilly</p><p class="d">Revisamos el alcance, el cronograma y el rango de precio.</p></div></div>
+          <div class="paso"><span class="num">2</span><div><p class="t">Definición de Passport</p><p class="d">Lilly define cómo se integra el acceso; con eso el precio queda fijo dentro del rango.</p></div></div>
+          <div class="paso"><span class="num">3</span><div><p class="t">Inicio de entrevistas</p><p class="d">20 médicos en las semanas 1 y 2, a partir del 1 de octubre.</p></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Lo que necesitamos de Lilly</h3>
+        <ul class="pts">
+          <li>Acceso a Passport y un contacto técnico desde la semana 3</li>
+          <li>Documentación y credenciales de OCE</li>
+          <li>Contenido aprobado de los tres productos antes de la semana 8</li>
+          <li>Un interlocutor médico y regulatorio con decisión</li>
+          <li>Un comité que reciba cada demostración</li>
+          <li>Apoyo para convocar médicos a las entrevistas, si Lilly lo desea</li>
+        </ul>
+      </div>
+    </div>
+
+    <button type="button" class="btn-sig" data-go="resumen">Volver al inicio</button>
+  </div>
+</section>
+
+</main>
+
+<script>
+  // Navegacion sin tocar la URL: funciona tambien dentro de visores incrustados.
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('[data-go]') : null;
+    if (!a) return;
+    var el = document.getElementById(a.getAttribute('data-go'));
+    if (!el) return;
+    e.preventDefault();
+    el.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+  // Pestanas de la seccion Arquitectura (sin tocar la URL)
+  (function(){
+    try{
+      var tabs=document.getElementById('tabs'); if(!tabs) return;
+      tabs.addEventListener('click', function(e){
+        var b=e.target.closest('button[data-tab]'); if(!b) return;
+        tabs.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x===b); });
+        document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('on', p.id===b.getAttribute('data-tab')); });
+      });
+    }catch(e){}
+  })();
+  // Tablero de ejemplo (datos ilustrativos)
+  (function(){
+    try{
+      var D={
+        com:{k:[['Médicos activos','1.240','▲ 12%'],['Vistas de contenido','18.450','▲ 9%'],['Tiempo por contenido','3:42','▲ 6%'],['Video visto completo','61%','▲ 4 pts'],['Clics en deeplinks','2.310','▲ 18%']],
+          w:[820,910,1040,980,1120,1260,1180,1340,1410,1380,1520,1610], u:[300,340,390,380,430,480,470,520,560,540,600,640],
+          bt:'Consumo por producto',b:[['Mounjaro',7200],['Verzenio',6100],['Ebglyss',4200],['Otros',950]],
+          f:[['Registrados',3400],['Activos',1240],['Vieron contenido',1010],['Video completo',620],['Volvieron',480]],
+          dt:'Consumo por especialidad',d:[['Endocrinología',38],['Oncología',26],['Dermatología',16],['Medicina interna',12],['Otras',8]],
+          st:'Origen de la visita',s:[['Correo',4200],['WhatsApp',3100],['Visita médica',2600],['Directo',8500]],
+          r:[['HCP-0142','Endocrinología','48','12:30','80%','Correo'],['HCP-0377','Oncología','36','9:05','54%','Visita médica'],['HCP-0518','Dermatología','29','7:40','72%','WhatsApp'],['HCP-0093','Medicina interna','22','5:10','35%','Directo'],['HCP-0654','Endocrinología','19','6:25','66%','Correo']]},
+        med:{k:[['Médicos activos','610','▲ 8%'],['Vistas de contenido','6.980','▲ 11%'],['Tiempo por contenido','5:18','▲ 9%'],['Video visto completo','72%','▲ 6 pts'],['Descargas de guías','1.120','▲ 14%']],
+          w:[300,330,360,410,390,450,480,520,500,560,590,640], u:[120,130,150,160,155,180,190,210,205,230,245,260],
+          bt:'Consumo por tipo de contenido',b:[['Guías clínicas',3100],['Estudios',2200],['Webinars',1300],['Microlearnings',380]],
+          f:[['Registrados',1500],['Activos',610],['Vieron contenido',520],['Video completo',380],['Volvieron',300]],
+          dt:'Consumo por especialidad',d:[['Oncología',34],['Endocrinología',28],['Medicina interna',18],['Dermatología',12],['Otras',8]],
+          st:'Origen de la visita',s:[['Solicitud médica',1400],['Correo',1900],['Directo',3680]],
+          r:[['HCP-0377','Oncología','21','14:10','88%','Solicitud médica'],['HCP-0142','Endocrinología','18','10:45','74%','Correo'],['HCP-0761','Oncología','14','9:20','69%','Directo'],['HCP-0518','Dermatología','11','6:30','60%','Correo'],['HCP-0205','Medicina interna','9','5:05','48%','Directo']]}
+      };
+      var C=['#D52B1E','#1F5FA8','#0F7C7C','#F2B84B','#8A8A8A'];
+      function fmt(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
+      function spark(a){var mx=Math.max.apply(null,a),mn=Math.min.apply(null,a),p=a.map(function(v,i){return (i*100/(a.length-1)).toFixed(1)+','+(24-(v-mn)/(mx-mn||1)*22).toFixed(1);}).join(' ');return '<svg viewBox="0 0 100 26" preserveAspectRatio="none"><polyline fill="none" stroke="currentColor" stroke-width="1.6" points="'+p+'"/></svg>';}
+      function line(w,u){var W=600,H=200,l=34,b=24,t=8,mx=Math.ceil(Math.max.apply(null,w)/500)*500,g='',i;
+        for(i=0;i<=4;i++){var y=t+(H-t-b)*i/4;g+='<line x1="'+l+'" x2="'+W+'" y1="'+y+'" y2="'+y+'" stroke="rgba(255,255,255,.08)"/><text x="0" y="'+(y+4)+'" fill="rgba(255,255,255,.5)" font-size="11">'+fmt(Math.round(mx*(1-i/4)))+'</text>';}
+        function pts(a,m){return a.map(function(v,j){return (l+(W-l)*j/(a.length-1)).toFixed(1)+','+(t+(H-t-b)*(1-v/m)).toFixed(1);}).join(' ');}
+        var lab='';for(i=0;i<w.length;i+=2){lab+='<text x="'+(l+(W-l)*i/(w.length-1))+'" y="'+(H-6)+'" fill="rgba(255,255,255,.5)" font-size="11" text-anchor="middle">S'+(i+1)+'</text>';}
+        var area=pts(w,mx)+' '+W+','+(H-b)+' '+l+','+(H-b);
+        return '<svg class="ln" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Vistas y médicos únicos por semana">'+g+lab+'<polygon points="'+area+'" fill="rgba(213,43,30,.16)"/><polyline fill="none" stroke="#D52B1E" stroke-width="2.4" points="'+pts(w,mx)+'"/><polyline fill="none" stroke="#5B9BE0" stroke-width="2.2" stroke-dasharray="5 4" points="'+pts(u,mx)+'"/></svg><div class="d-leg"><span><i style="background:#D52B1E"></i>Vistas</span><span><i style="background:#5B9BE0"></i>Médicos únicos</span></div>';}
+      function hb(a,colors){var mx=Math.max.apply(null,a.map(function(x){return x[1];}));return a.map(function(x,i){return '<div class="hb"><span>'+x[0]+'</span><span class="tr"><i style="width:'+(x[1]/mx*100).toFixed(0)+'%; background:'+(colors?C[i%5]:C[0])+'"></i></span><span>'+fmt(x[1])+'</span></div>';}).join('');}
+      function fun(a){var t=a[0][1];return a.map(function(x,i){var pc=Math.round(x[1]/t*100);return '<div class="hb"><span>'+x[0]+'</span><span class="tr"><i style="width:'+pc+'%; background:'+C[1]+'; opacity:'+(1-i*.13)+'"></i></span><span>'+pc+'%</span></div>';}).join('');}
+      function donut(a){var R=44,Cc=2*Math.PI*R,off=0,seg='',leg='';a.forEach(function(x,i){var l=Cc*x[1]/100;seg+='<circle r="'+R+'" cx="60" cy="60" fill="none" stroke="'+C[i%5]+'" stroke-width="18" stroke-dasharray="'+l.toFixed(1)+' '+(Cc-l).toFixed(1)+'" stroke-dashoffset="'+(-off).toFixed(1)+'" transform="rotate(-90 60 60)"/>';off+=l;leg+='<li><i style="background:'+C[i%5]+'"></i>'+x[0]+' '+x[1]+'%</li>';});return '<div class="dn"><svg viewBox="0 0 120 120" role="img" aria-label="Distribución por especialidad">'+seg+'</svg><ul>'+leg+'</ul></div>';}
+      function tabla(r){return '<table class="d-t"><thead><tr><th>Médico (ID)</th><th>Especialidad</th><th>Vistas</th><th>Tiempo total</th><th>Video completo</th><th>Origen</th></tr></thead><tbody>'+r.map(function(x){return '<tr><td>'+x[0]+'</td><td>'+x[1]+'</td><td>'+x[2]+'</td><td>'+x[3]+'</td><td>'+x[4]+'</td><td><span class="d-pill">'+x[5]+'</span></td></tr>';}).join('')+'</tbody></table>';}
+      function render(k){var d=D[k],h='<div class="d-kpis">';
+        d.k.forEach(function(x,i){h+='<div class="d-k"><p>'+x[0]+'</p><b>'+x[1]+'</b><em>'+x[2]+'</em>'+spark(i%2?d.w:d.u)+'</div>';});
+        h+='</div><div class="d-grid">';
+        h+='<div class="d-c c8"><h4>Vistas y médicos únicos por semana</h4>'+line(d.w,d.u)+'</div>';
+        h+='<div class="d-c c4"><h4>'+d.bt+'</h4>'+hb(d.b,false)+'</div>';
+        h+='<div class="d-c c4"><h4>Del registro a la recurrencia</h4>'+fun(d.f)+'</div>';
+        h+='<div class="d-c c4"><h4>'+d.dt+'</h4>'+donut(d.d)+'</div>';
+        h+='<div class="d-c c4"><h4>'+d.st+'</h4>'+hb(d.s,true)+'</div>';
+        h+='<div class="d-c c12"><h4>Detalle por médico, con ID para cruzar con OCE</h4><div class="tw">'+tabla(d.r)+'</div></div></div>';
+        document.getElementById('dbody').innerHTML=h;}
+      var seg=document.getElementById('dseg'); if(!seg) return;
+      seg.addEventListener('click',function(e){var b=e.target.closest('button[data-d]'); if(!b) return; seg.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b);}); render(b.getAttribute('data-d'));});
+      render('com');
+    }catch(e){}
+  })();
+  // Opcional: resalta en el menu la seccion visible y actualiza la miga de pan.
+  (function(){
+    try{
+      var links = document.querySelectorAll('#menu button');
+      var act = document.getElementById('miga-act');
+      var secs = Array.prototype.map.call(links, function(a){ return document.getElementById(a.dataset.s); });
+      function marca(id){
+        links.forEach(function(a){ a.classList.toggle('on', a.dataset.s === id); if (a.dataset.s === id && act) act.textContent = a.textContent.replace(/^\d+/, ''); });
+        var on = document.querySelector('#menu button.on'); if (on && on.scrollIntoView && window.innerWidth <= 900) on.scrollIntoView({block:'nearest', inline:'center'});
+      }
+      function pos(){
+        var y = window.scrollY + window.innerHeight * 0.35, cur = secs[0].id;
+        secs.forEach(function(s){ if (s.offsetTop <= y) cur = s.id; });
+        marca(cur);
+      }
+      window.addEventListener('scroll', pos, {passive:true}); window.addEventListener('resize', pos); pos();
+    }catch(e){}
+  })();
+</script>
+</body>
+</html>
