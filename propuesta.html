@@ -272,10 +272,79 @@
     h1,h2,h3,.card .big,.rango,.total .b,.gt-e,td,.hito .t,.sla .r,.paso .t{color:#111}
     .sub,ul.pts li,.card p.d,.card .et,.total .a,.nota{color:#444}
   }
+
+  .cpm-lead{margin:8px 0 0; font-size:17px; line-height:1.5; color:var(--t-2); max-width:62ch}
+  .cpm{margin-top:20px}
+  .cpm-hero{display:grid; grid-template-columns:.8fr 1.1fr 1.3fr; gap:14px; align-items:stretch}
+  .cpm-sel,.cpm-k{border:1px solid var(--linea); border-radius:20px; padding:22px 24px; background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.012))}
+  .cpm-sel{display:flex; flex-direction:column; justify-content:center; border-color:rgba(213,43,30,.55); background:linear-gradient(180deg,rgba(213,43,30,.16),rgba(213,43,30,.03))}
+  .cpm-sel-l{font-size:14px; color:var(--t-3)}
+  .cpm-sel-n{font-size:clamp(38px,4.4vw,54px); font-weight:600; letter-spacing:-.03em; line-height:1.05; margin:6px 0 4px; font-variant-numeric:tabular-nums}
+  .cpm-k .et{font-size:14px; color:var(--t-3); margin:0}
+  .cpm-k .big{font-size:clamp(22px,2vw,27px); font-weight:600; letter-spacing:-.02em; line-height:1.15; margin:10px 0 0; font-variant-numeric:tabular-nums}
+  .cpm-k2 .big{color:var(--rojo-txt)}
+  .cpm-u{margin:6px 0 0; font-size:14px; color:var(--t-3)}
+  .cpm-leg{display:flex; flex-wrap:wrap; gap:8px 22px; margin:22px 0 10px; font-size:14px; color:var(--t-2)}
+  .cpm-dot{display:inline-block; width:12px; height:12px; border-radius:4px; margin-right:8px; vertical-align:-1px}
+  .cpm-inv{background:var(--lilly)} .cpm-op{background:rgba(255,255,255,.34)}
+  .cpm-row{all:unset; box-sizing:border-box; display:grid; grid-template-columns:96px 1fr 196px; gap:16px; align-items:center; width:100%; padding:11px 14px; border-radius:14px; border:1px solid transparent; cursor:pointer; color:var(--t-1)}
+  .cpm-row:hover{background:rgba(255,255,255,.04)}
+  .cpm-row:focus-visible{outline:2px solid var(--rojo-txt); outline-offset:2px}
+  .cpm-row[aria-pressed="true"]{background:rgba(213,43,30,.10); border-color:rgba(213,43,30,.5)}
+  .cpm-n{font-size:20px; font-weight:600; font-variant-numeric:tabular-nums; line-height:1.1}
+  .cpm-n small{display:block; font-size:12px; font-weight:400; color:var(--t-3); margin-top:2px}
+  .cpm-track{display:flex; height:22px; border-radius:8px; overflow:hidden; background:rgba(255,255,255,.05)}
+  .cpm-track .cpm-inv{border-radius:0} .cpm-track .cpm-op{border-radius:0}
+  .cpm-v{font-size:15px; text-align:right; font-variant-numeric:tabular-nums; color:var(--t-2)}
+  .cpm-row[aria-pressed="true"] .cpm-v{color:var(--t-1); font-weight:600}
+  .cpm-hint{margin:12px 0 0; font-size:13px; color:var(--t-4)}
+  @media (max-width:900px){ .cpm-hero{grid-template-columns:1fr 1fr} .cpm-sel{grid-column:1/-1} }
+  @media (max-width:600px){ .cpm-hero{grid-template-columns:1fr} .cpm-row{grid-template-columns:78px 1fr; row-gap:6px} .cpm-v{grid-column:1/-1; text-align:left; padding-left:0} }
+  @media print{ .cpm-row{border-color:#ccc} .cpm-sel-n,.cpm-k .big,.cpm-n{color:#111} .cpm-hint{display:none} }
+
+  /* ===== MENU SUPERIOR: el mismo del prototipo, para no perder la navegacion al entrar a la propuesta ===== */
+  .topbar{position:fixed; top:0; left:0; right:0; height:56px; z-index:50; display:flex; align-items:center; gap:12px; padding:0 22px; background:#0D0D10; border-bottom:1px solid var(--linea)}
+  .tb-marca{display:flex; align-items:center; gap:10px; color:#fff; text-decoration:none; font-weight:600; font-size:15px; letter-spacing:-.01em; flex:none}
+  .tb-marca i{display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--lilly)}
+  .tb-marca img{height:17px; width:45px; object-fit:contain}
+  .tb-marca span{font-weight:400; font-size:13px; color:rgba(255,255,255,.35)}
+  .tb-nav{margin-left:auto; display:flex; align-items:center; gap:4px; font-size:13px}
+  .tb-nav a{padding:6px 14px; border-radius:999px; color:rgba(255,255,255,.5); text-decoration:none; white-space:nowrap; transition:color .2s,background .2s}
+  .tb-nav a:hover{color:rgba(255,255,255,.85); background:rgba(255,255,255,.05)}
+  .tb-nav a[aria-current="page"]{background:rgba(255,255,255,.12); color:#fff}
+  .tb-sep{display:inline-block; width:1px; height:16px; margin:0 8px; background:rgba(255,255,255,.15)}
+  .side{top:56px}
+  main{margin-top:56px}
+  .miga{top:56px}
+  section.hoja{scroll-margin-top:104px}
+  @media (max-width:900px){
+    .topbar{height:48px; padding:0 12px; gap:8px}
+    .tb-marca{display:none}
+    .tb-nav{flex:1}
+    .tb-nav{overflow-x:auto; scrollbar-width:none; margin-left:auto; min-width:0}
+    .tb-nav::-webkit-scrollbar{display:none}
+    .tb-nav a{padding:6px 10px; font-size:12.5px}
+    .side{top:48px}
+    main{margin-top:48px}
+    section.hoja{scroll-margin-top:150px}
+  }
+  @media print{ .topbar{display:none} main{margin-top:0} }
 </style>
 </head>
 <body>
 <div class="luz" aria-hidden="true"></div>
+
+<!-- MENU SUPERIOR: igual al del prototipo. Las tres primeras entradas abren el prototipo; Propuesta es esta pagina -->
+<header class="topbar">
+  <a class="tb-marca" href="index.html"><i></i><img src="img/lilly-firma-blanca.png" alt="Lilly">360<span>propuesta</span></a>
+  <nav class="tb-nav" id="tb-nav" aria-label="Menú principal">
+    <a href="index.html?p=docred">Por qué DocRed</a>
+    <a href="index.html?p=historia">El día a día de un médico</a>
+    <a href="index.html?p=registro">Lilly 360</a>
+    <span class="tb-sep" aria-hidden="true"></span>
+    <a href="propuesta.html" aria-current="page">Propuesta</a>
+  </nav>
+</header>
 
 <!-- MENU LATERAL: cada enlace lleva a su seccion -->
 <aside class="side">
@@ -806,20 +875,53 @@
     </div>
 
     <h3 class="sub-tit">Costo por médico alcanzado</h3>
-    <p class="sub" style="margin-top:8px">El brief no fija una meta de médicos para el primer año. Estos escenarios son un supuesto de DocRed, pendiente de validar con Lilly, para dimensionar el valor de la inversión por médico y no solo el total del proyecto. México llegó a 28.243 médicos registrados en 90 especialidades; estos escalones son una fracción de esa base, con las tres especialidades priorizadas en fase 1.</p>
-    <div class="tw" style="margin-top:12px"><table class="tnum">
-      <thead><tr><th class="l">Médicos activos, año 1</th><th>Costo por médico, solo inversión</th><th>Costo por médico, 24 meses con operación</th></tr></thead>
-      <tbody>
-        <tr><td class="l">2.000</td><td>$275.000 a $320.000</td><td>$791.000 a $980.000</td></tr>
-        <tr><td class="l">4.000</td><td>$137.500 a $160.000</td><td>$395.500 a $490.000</td></tr>
-        <tr><td class="l">6.000</td><td>$91.667 a $106.667</td><td>$263.667 a $326.667</td></tr>
-        <tr><td class="l">8.000</td><td>$68.750 a $80.000</td><td>$197.750 a $245.000</td></tr>
-        <tr><td class="l">10.000</td><td>$55.000 a $64.000</td><td>$158.200 a $196.000</td></tr>
-        <tr><td class="l">12.000</td><td>$45.833 a $53.333</td><td>$131.833 a $163.333</td></tr>
-        <tr><td class="l">15.000</td><td>$36.667 a $42.667</td><td>$105.467 a $130.667</td></tr>
-      </tbody>
-    </table></div>
-    <p class="nota">Columna de solo inversión: $550 a $640 millones divididos entre médicos activos en el año 1. Columna a 24 meses: inversión más operación mensual de $43 a $55 millones durante los 24 meses de vigencia, dividida entre la misma base de médicos. Cifras en pesos colombianos por médico, antes de IVA.</p>
+    <p class="cpm-lead">El brief no fija una meta de médicos para el primer año. Estos escenarios son un supuesto de DocRed, pendiente de validar con Lilly. Como referencia, Lilly 360 México registró 28.243 médicos en 90 especialidades.</p>
+
+    <div class="cpm" id="cpm">
+      <div class="cpm-hero">
+        <div class="cpm-sel"><span class="cpm-sel-l">Escenario elegido</span><span class="cpm-sel-n" id="cpm-n">6.000</span><span class="cpm-sel-l">médicos activos en el año 1</span></div>
+        <div class="cpm-k"><p class="et">Solo la inversión</p><p class="big" id="cpm-i">$91.667 a $106.667</p><p class="cpm-u">por médico</p></div>
+        <div class="cpm-k cpm-k2"><p class="et">Inversión más 24 meses de operación</p><p class="big" id="cpm-t">$263.667 a $326.667</p><p class="cpm-u">por médico</p></div>
+      </div>
+      <div class="cpm-leg"><span><i class="cpm-dot cpm-inv"></i>Inversión ($550 a $640 millones)</span><span><i class="cpm-dot cpm-op"></i>Operación ($43 a $55 millones al mes, 24 meses)</span></div>
+      <button type="button" class="cpm-row" data-n="2.000" data-i="$275.000 a $320.000" data-t="$791.000 a $980.000" aria-pressed="false">
+        <span class="cpm-n">2.000<small>médicos</small></span>
+        <span class="cpm-track"><span class="cpm-inv" style="width:32.65%"></span><span class="cpm-op" style="width:67.35%"></span></span>
+        <span class="cpm-v">$791.000 a $980.000</span>
+      </button>
+      <button type="button" class="cpm-row" data-n="4.000" data-i="$137.500 a $160.000" data-t="$395.500 a $490.000" aria-pressed="false">
+        <span class="cpm-n">4.000<small>médicos</small></span>
+        <span class="cpm-track"><span class="cpm-inv" style="width:16.33%"></span><span class="cpm-op" style="width:33.67%"></span></span>
+        <span class="cpm-v">$395.500 a $490.000</span>
+      </button>
+      <button type="button" class="cpm-row" data-n="6.000" data-i="$91.667 a $106.667" data-t="$263.667 a $326.667" aria-pressed="false">
+        <span class="cpm-n">6.000<small>médicos</small></span>
+        <span class="cpm-track"><span class="cpm-inv" style="width:10.88%"></span><span class="cpm-op" style="width:22.45%"></span></span>
+        <span class="cpm-v">$263.667 a $326.667</span>
+      </button>
+      <button type="button" class="cpm-row" data-n="8.000" data-i="$68.750 a $80.000" data-t="$197.750 a $245.000" aria-pressed="false">
+        <span class="cpm-n">8.000<small>médicos</small></span>
+        <span class="cpm-track"><span class="cpm-inv" style="width:8.16%"></span><span class="cpm-op" style="width:16.84%"></span></span>
+        <span class="cpm-v">$197.750 a $245.000</span>
+      </button>
+      <button type="button" class="cpm-row" data-n="10.000" data-i="$55.000 a $64.000" data-t="$158.200 a $196.000" aria-pressed="false">
+        <span class="cpm-n">10.000<small>médicos</small></span>
+        <span class="cpm-track"><span class="cpm-inv" style="width:6.53%"></span><span class="cpm-op" style="width:13.47%"></span></span>
+        <span class="cpm-v">$158.200 a $196.000</span>
+      </button>
+      <button type="button" class="cpm-row" data-n="12.000" data-i="$45.833 a $53.333" data-t="$131.833 a $163.333" aria-pressed="false">
+        <span class="cpm-n">12.000<small>médicos</small></span>
+        <span class="cpm-track"><span class="cpm-inv" style="width:5.44%"></span><span class="cpm-op" style="width:11.22%"></span></span>
+        <span class="cpm-v">$131.833 a $163.333</span>
+      </button>
+      <button type="button" class="cpm-row" data-n="15.000" data-i="$36.667 a $42.667" data-t="$105.467 a $130.667" aria-pressed="false">
+        <span class="cpm-n">15.000<small>médicos</small></span>
+        <span class="cpm-track"><span class="cpm-inv" style="width:4.35%"></span><span class="cpm-op" style="width:8.98%"></span></span>
+        <span class="cpm-v">$105.467 a $130.667</span>
+      </button>
+      <p class="cpm-hint">Toca un escenario para ver su costo por médico. Las barras muestran el extremo alto del rango.</p>
+    </div>
+    <p class="nota">Pesos colombianos por médico, antes de IVA. Costo por médico igual a la inversión, más la operación de los 24 meses cuando aplica, dividida entre los médicos activos del año 1.</p>
 
     <h3 class="sub-tit">Qué podría cambiar el precio</h3>
     <div class="grid g3" style="margin-top:16px">
@@ -953,5 +1055,16 @@
     }catch(e){}
   })();
 </script>
+<script>
+(function(){var root=document.getElementById('cpm');if(!root)return;
+var rows=root.querySelectorAll('.cpm-row');
+function pick(r){rows.forEach(function(x){x.setAttribute('aria-pressed',x===r?'true':'false')});
+document.getElementById('cpm-n').textContent=r.dataset.n;
+document.getElementById('cpm-i').textContent=r.dataset.i;
+document.getElementById('cpm-t').textContent=r.dataset.t;}
+rows.forEach(function(r){r.addEventListener('click',function(){pick(r)})});
+if(rows[2])pick(rows[2]);})();
+</script>
+<script>(function(){var n=document.getElementById("tb-nav");if(n&&window.innerWidth<=900){var a=n.querySelector("[aria-current]");if(a)n.scrollLeft=a.offsetLeft-12;}})();</script>
 </body>
 </html>
