@@ -527,7 +527,7 @@ function app() {
       if (q.get('e') && this.enfermedades[q.get('e')]) this.enfermedad = q.get('e');
       if (q.get('t')) this.tab = q.get('t');
       if (q.get('d') && this.marcos[q.get('d')]) this.dispositivo = q.get('d');
-      if (q.get('p') && this.guias[q.get('p')]) { this.pantalla = q.get('p'); this.ir(q.get('p')); }
+      if (q.get('p') && (this.guias[q.get('p')] || q.get('p') === 'docred')) { this.pantalla = q.get('p'); this.ir(q.get('p')); }
       this.refrescar();
       this.$watch('tab', () => { this.refrescar(); this.cargando = true; clearTimeout(this._sk); this._sk = setTimeout(() => { this.cargando = false; this.$nextTick(() => lucide.createIcons()); }, 250); });
       this.$watch('formato', () => this.refrescar());
